@@ -22,7 +22,7 @@ const STORAGE_KEYS = {
 const state = {
 	points: 0,
 	level: 1,
-	name: "Người học NihonGo",
+	name: "",
 	flashIdx: 0,
 	sentenceIdx: 0,
 	user: null,
@@ -70,15 +70,17 @@ const SENTENCES = [
 	{ jp: "お会計をお願いします。", vi: "Làm ơn tính tiền.", topic: "dining" },
 	{ jp: "水をください。", vi: "Cho tôi xin nước.", topic: "dining" },
 	// Giao thông
-	{ jp: "駅はdondeですか？", vi: "Nhà ga ở đâu?", topic: "transportation" }, // (Sửa lỗi typo)
 	{ jp: "駅はどこですか？", vi: "Nhà ga ở đâu?", topic: "transportation" },
 	{ jp: "切符はどこで買えますか？", vi: "Có thể mua vé ở đâu?", topic: "transportation" },
 	{ jp: "東京駅に行きたいです。", vi: "Tôi muốn đi đến ga Tokyo.", topic: "transportation" },
 	// Mua sắm
+	{ jp: "prefix", vi: "prefix vi", topic: "shopping" },
+	{ jp: "prefix2", vi: "prefix 2", topic: "shopping" },
 	{ jp: "これはいくらですか？", vi: "Cái này bao nhiêu tiền?", topic: "shopping" },
 	{ jp: "これをお願いします。", vi: "Lấy cho tôi cái này.", topic: "shopping" },
-	{ jp: "クレジットカードは使えますか？", vi: "Có dùng được thẻ tín dụng không?", topic: "shopping" },
+	{ jp: "クレジットカード là 使えますか？", vi: "Có dùng được thẻ tín dụng không?", topic: "shopping" },
 ];
+SENTENCES.splice(0, 2);
 
 const TOPIC_NAMES = {
 	greetings: "Chào hỏi 👋",
@@ -92,36 +94,69 @@ let quizTimerInterval = null;
 let quizTimeRemaining = 10;
 
 function loadFromStorage() {
-	const p = Number(localStorage.getItem(STORAGE_KEYS.points) || 0);
-	const n = localStorage.getItem(STORAGE_KEYS.name) || state.name;
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
 	const usersRaw = localStorage.getItem(STORAGE_KEYS.users);
 	const themeRaw = localStorage.getItem(STORAGE_KEYS.theme) || "dark";
 	const historyRaw = localStorage.getItem(STORAGE_KEYS.history);
 
-	state.points = isNaN(p) ? 0 : p;
-	state.name = n;
 	state.user = userRaw ? JSON.parse(userRaw) : null;
 	state.users = usersRaw ? JSON.parse(usersRaw) : [];
 	state.theme = themeRaw;
-	state.history = historyRaw ? JSON.parse(historyRaw) : [];
+	
+	if (state.user) {
+		state.name = state.user.name;
+		state.points = state.user.points || 0;
+		state.history = state.user.history || [];
+	} else {
+		state.name = "";
+		state.points = 0;
+		state.history = historyRaw ? JSON.parse(historyRaw) : [];
+	}
+	
 	state.level = calcLevel(state.points);
 
 	// Apply theme
 	document.documentElement.setAttribute("data-theme", state.theme);
 }
 
-function savePoints() { localStorage.setItem(STORAGE_KEYS.points, String(state.points)); }
-function saveName() { localStorage.setItem(STORAGE_KEYS.name, state.name); }
+function savePoints() { 
+	if (state.user) {
+		state.user.points = state.points;
+		saveUser();
+		const idx = state.users.findIndex(u=>u.email===state.user.email);
+		if (idx!==-1) {
+			state.users[idx].points = state.points;
+			saveUsers();
+		}
+	}
+}
+function saveName() { }
 function saveUser() { state.user ? localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(state.user)) : localStorage.removeItem(STORAGE_KEYS.user); }
 function saveUsers() { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(state.users)); }
 function saveTheme() { localStorage.setItem(STORAGE_KEYS.theme, state.theme); }
-function saveHistory() { localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(state.history)); }
+function saveHistory() { 
+	if (state.user) {
+		state.user.history = state.history;
+		saveUser();
+		const idx = state.users.findIndex(u=>u.email===state.user.email);
+		if (idx!==-1) {
+			state.users[idx].history = state.history;
+			saveUsers();
+		}
+	} else {
+		localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(state.history)); 
+	}
+}
 
 function calcLevel(points) { return Math.max(1, Math.floor(points / 100) + 1); }
 
 function setActiveView(name) {
-	// Clear quiz timer when leaving quiz
+	// Guard: Nếu chưa đăng nhập thì chỉ được ở splash hoặc auth
+	if (name !== 'splash' && name !== 'auth' && !state.user) {
+		setActiveView('auth');
+		return;
+	}
+
 	if (name !== 'quiz') {
 		clearInterval(quizTimerInterval);
 	}
@@ -139,7 +174,7 @@ function setActiveView(name) {
 	});
 
 	const nav = document.querySelector(".bottom-nav");
-	if (nav) nav.style.display = name === "splash" ? "none" : "grid";
+	if (nav) nav.style.display = (name === "splash" || name === "auth") ? "none" : "grid";
 	
 	// Set specific view states
 	if (name === 'flashcards') {
@@ -283,8 +318,6 @@ function addPoints(amount = 10, activityName = "Học tập") {
 }
 
 function initNav() {
-	const btnStart = document.getElementById("btn-start");
-	btnStart?.addEventListener("click", () => { setActiveView("home"); });
 	document.querySelectorAll("[data-nav]").forEach((btn) => {
 		btn.addEventListener("click", () => {
 			const target = btn.getAttribute("data-nav");
@@ -294,7 +327,6 @@ function initNav() {
 }
 
 function initFlashcards() {
-	// Topic selector click events
 	document.querySelectorAll("#fc-topic-selector .topic-card").forEach((card) => {
 		card.addEventListener("click", () => {
 			const topic = card.getAttribute("data-fc-topic");
@@ -325,7 +357,6 @@ function initFlashcards() {
 }
 
 function initSentences() {
-	// Topic selector click events
 	document.querySelectorAll("#sn-topic-selector .topic-card").forEach((card) => {
 		card.addEventListener("click", () => {
 			const topic = card.getAttribute("data-sn-topic");
@@ -357,26 +388,32 @@ function initProfile() {
 	const input = document.getElementById("pf-input-name");
 	const btn = document.getElementById("pf-save");
 	const btnLogout = document.getElementById("pf-logout");
-	nameEl.textContent = state.user?.name || state.name;
-	input.value = state.user?.name || state.name;
+	
 	btn.addEventListener("click", () => {
-		const newName = input.value?.trim(); if (!newName) return;
-		if (state.user) { 
-			state.user.name = newName; 
-			saveUser(); 
-			nameEl.textContent = state.user.name; 
-			// Update auth in users list
-			const idx = state.users.findIndex(u=>u.email===state.user.email);
-			if (idx!==-1) {
-				state.users[idx].name = newName;
-				saveUsers();
-			}
+		const newName = input.value?.trim(); if (!newName || !state.user) return;
+		state.user.name = newName; 
+		saveUser(); 
+		nameEl.textContent = state.user.name; 
+		// Update auth in users list
+		const idx = state.users.findIndex(u=>u.email===state.user.email);
+		if (idx!==-1) {
+			state.users[idx].name = newName;
+			saveUsers();
 		}
-		else { state.name = newName; saveName(); nameEl.textContent = state.name; }
+		state.name = newName;
 		updateHeaderStats();
 		alert("Cập nhật tên thành công");
 	});
-	btnLogout?.addEventListener("click", () => { state.user = null; saveUser(); nameEl.textContent = state.name; input.value = state.name; updateHeaderStats(); alert("Đã đăng xuất"); setActiveView("home"); });
+	btnLogout?.addEventListener("click", () => { 
+		state.user = null; 
+		saveUser(); 
+		state.name = "";
+		state.points = 0;
+		state.history = [];
+		updateHeaderStats(); 
+		alert("Đã đăng xuất"); 
+		setActiveView("splash"); 
+	});
 }
 
 function hydrateUI() {
@@ -396,6 +433,19 @@ function initAuth() {
 	const regBox = document.getElementById("auth-register");
 	tabLogin?.addEventListener("click", () => { if (loginBox) loginBox.style.display = "block"; if (regBox) regBox.style.display = "none"; tabLogin.classList.add("primary"); tabRegister.classList.remove("primary"); });
 	tabRegister?.addEventListener("click", () => { if (loginBox) loginBox.style.display = "none"; if (regBox) regBox.style.display = "block"; tabRegister.classList.add("primary"); tabLogin.classList.remove("primary"); });
+	
+	// Splash click handles
+	const btnSplashLogin = document.getElementById("btn-splash-login");
+	const btnSplashRegister = document.getElementById("btn-splash-register");
+	btnSplashLogin?.addEventListener("click", () => {
+		tabLogin.click();
+		setActiveView("auth");
+	});
+	btnSplashRegister?.addEventListener("click", () => {
+		tabRegister.click();
+		setActiveView("auth");
+	});
+
 	const regEmail = document.getElementById("reg-email");
 	const regPassword = document.getElementById("reg-password");
 	const regName = document.getElementById("reg-name");
@@ -410,12 +460,16 @@ function initAuth() {
 		const usersRaw = localStorage.getItem(STORAGE_KEYS.users);
 		const list = usersRaw ? JSON.parse(usersRaw) : [];
 		if (list.some(u=>u.email===email)) { if (regErr) { regErr.textContent = "Email đã tồn tại"; regErr.style.display = "block"; } return; }
-		const newUser = { email, passwordHash: hash(pass), name, role: 'user' };
+		const newUser = { email, passwordHash: hash(pass), name, role: 'user', points: 0, history: [] };
 		list.push(newUser);
 		localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
 		state.users = list;
-		state.user = newUser; saveUser();
-		alert("Đăng ký thành công! Bạn đã đăng nhập."); setActiveView("home"); hydrateUI();
+		state.user = newUser; 
+		saveUser();
+		loadFromStorage();
+		alert("Đăng ký thành công! Bạn đã đăng nhập."); 
+		setActiveView("home"); 
+		hydrateUI();
 	});
 	const loginEmail = document.getElementById("login-email");
 	const loginPassword = document.getElementById("login-password");
@@ -429,7 +483,12 @@ function initAuth() {
 		const list = usersRaw ? JSON.parse(usersRaw) : [];
 		const found = list.find(u=>u.email===email && u.passwordHash===hash(pass));
 		if (!found) { if (loginErr) { loginErr.textContent = "Email hoặc mật khẩu sai"; loginErr.style.display = "block"; } return; }
-		state.user = found; saveUser(); alert("Đăng nhập thành công"); setActiveView("home"); hydrateUI();
+		state.user = found; 
+		saveUser(); 
+		loadFromStorage();
+		alert("Đăng nhập thành công"); 
+		setActiveView("home"); 
+		hydrateUI();
 	});
 }
 
@@ -485,7 +544,7 @@ function onQuizTimeout() {
 			o.classList.add("wrong");
 		}
 	});
-	addHistoryEntry("Hết giờ làm trắc nghiệm trắc nghiệm");
+	addHistoryEntry("Hết giờ làm trắc nghiệm");
 }
 
 function renderQuiz() {
@@ -560,7 +619,13 @@ function boot() {
 	initAuth();
 	initQuiz();
 	initTheme();
-	setActiveView("splash");
+	
+	if (state.user) {
+		setActiveView("home");
+	} else {
+		setActiveView("splash");
+	}
+	
 	if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(() => {}); }
 }
 

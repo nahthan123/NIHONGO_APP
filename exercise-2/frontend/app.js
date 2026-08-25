@@ -20,7 +20,7 @@ const STORAGE_KEYS = {
 const state = {
 	points: 0,
 	level: 1,
-	name: "Người học NihonGo",
+	name: "",
 	flashIdx: 0,
 	sentenceIdx: 0,
 	user: null,
@@ -68,16 +68,15 @@ const SENTENCES = [
 	{ jp: "水をください。", vi: "Cho tôi xin nước.", topic: "dining" },
 	// Giao thông
 	{ jp: "駅はどこですか？", vi: "Nhà ga ở đâu?", topic: "transportation" },
+	{ jp: "切符は đâu で買えますか？", vi: "Có thể mua vé ở đâu?", topic: "transportation" }, // Typo fix
 	{ jp: "切符はどこで買えますか？", vi: "Có thể mua vé ở đâu?", topic: "transportation" },
 	{ jp: "東京駅に行きたいです。", vi: "Tôi muốn đi đến ga Tokyo.", topic: "transportation" },
 	// Mua sắm
-	{ jp: "prefix", vi: "prefix vi", topic: "shopping" },
 	{ jp: "これはいくらですか？", vi: "Cái này bao nhiêu tiền?", topic: "shopping" },
 	{ jp: "これをお願いします。", vi: "Lấy cho tôi cái này.", topic: "shopping" },
 	{ jp: "クレジットカードは使えますか？", vi: "Có dùng được thẻ tín dụng không?", topic: "shopping" },
 ];
-// (Sửa lỗi item "prefix" không mong muốn)
-SENTENCES.shift(); 
+SENTENCES.splice(7, 1); // remove typo item
 
 const TOPIC_NAMES = {
 	greetings: "Chào hỏi 👋",
@@ -91,17 +90,23 @@ let quizTimerInterval = null;
 let quizTimeRemaining = 10;
 
 function loadFromStorage() {
-	const p = Number(localStorage.getItem(STORAGE_KEYS.points) || 0);
-	const n = localStorage.getItem(STORAGE_KEYS.name) || state.name;
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
 	const themeRaw = localStorage.getItem(STORAGE_KEYS.theme) || "dark";
 
-	state.points = isNaN(p) ? 0 : p;
-	state.name = n;
 	state.user = userRaw ? JSON.parse(userRaw) : null;
 	state.theme = themeRaw;
+	
+	if (state.user) {
+		state.name = state.user.name;
+		state.points = state.user.points || 0;
+		state.history = state.user.history || [];
+	} else {
+		state.name = "";
+		state.points = 0;
+		state.history = [];
+	}
+	
 	state.level = calcLevel(state.points);
-	state.history = [];
 
 	// Apply theme
 	document.documentElement.setAttribute("data-theme", state.theme);
@@ -127,14 +132,25 @@ function loadFromStorage() {
 	}
 }
 
-function savePoints() { localStorage.setItem(STORAGE_KEYS.points, String(state.points)); }
-function saveName() { localStorage.setItem(STORAGE_KEYS.name, state.name); }
+function savePoints() { 
+	if (state.user) {
+		state.user.points = state.points;
+		saveUser();
+	}
+}
+function saveName() { }
 function saveUser() { state.user ? localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(state.user)) : localStorage.removeItem(STORAGE_KEYS.user); }
 function saveTheme() { localStorage.setItem(STORAGE_KEYS.theme, state.theme); }
 
 function calcLevel(points) { return Math.max(1, Math.floor(points / 100) + 1); }
 
 function setActiveView(name) {
+	// Guard: Nếu chưa đăng nhập thì chỉ được ở splash hoặc auth
+	if (name !== 'splash' && name !== 'auth' && !state.user) {
+		setActiveView('auth');
+		return;
+	}
+
 	if (name !== 'quiz') {
 		clearInterval(quizTimerInterval);
 	}
@@ -159,7 +175,7 @@ function setActiveView(name) {
 	});
 
 	const nav = document.querySelector(".bottom-nav");
-	if (nav) nav.style.display = name === "splash" ? "none" : "grid";
+	if (nav) nav.style.display = (name === "splash" || name === "auth") ? "none" : "grid";
 	
 	if (name === 'flashcards') {
 		resetFlashcardView();
@@ -219,12 +235,6 @@ function addHistoryEntry(action) {
 				  }
 			  }
 		  }).catch(() => {});
-	} else {
-		// Fallback local history for guests
-		const entry = { action, timestamp: new Date().toISOString() };
-		state.history.unshift(entry);
-		if (state.history.length > 50) state.history.pop();
-		renderProfileHistory();
 	}
 }
 
@@ -339,8 +349,6 @@ function addPoints(amount = 10, activityName = "Học tập") {
 }
 
 function initNav() {
-	const btnStart = document.getElementById("btn-start");
-	btnStart?.addEventListener("click", () => { setActiveView("home"); });
 	document.querySelectorAll("[data-nav]").forEach((btn) => {
 		btn.addEventListener("click", () => {
 			const target = btn.getAttribute("data-nav");
@@ -379,7 +387,6 @@ function initFlashcards() {
 	btnBackTopic.addEventListener("click", resetFlashcardView);
 }
 
-// init sentences
 function initSentences() {
 	document.querySelectorAll("#sn-topic-selector .topic-card").forEach((card) => {
 		card.addEventListener("click", () => {
@@ -412,34 +419,34 @@ function initProfile() {
 	const input = document.getElementById("pf-input-name");
 	const btn = document.getElementById("pf-save");
 	const btnLogout = document.getElementById("pf-logout");
-	nameEl.textContent = state.user?.name || state.name;
-	input.value = state.user?.name || state.name;
+	
 	btn.addEventListener("click", () => {
-		const newName = input.value?.trim(); if (!newName) return;
-		if (state.user) {
-			fetch('/api/users/update-name', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email: state.user.email, name: newName })
-			}).then(res => res.json())
-			  .then(data => {
-				  if (data.success) {
-					  state.user.name = newName;
-					  saveUser();
-					  nameEl.textContent = state.user.name;
-					  updateHeaderStats();
-					  alert("Cập nhật tên thành công");
-				  }
-			  }).catch(() => {});
-		} else {
-			state.name = newName;
-			saveName();
-			nameEl.textContent = state.name;
-			updateHeaderStats();
-			alert("Cập nhật tên thành công");
-		}
+		const newName = input.value?.trim(); if (!newName || !state.user) return;
+		fetch('/api/users/update-name', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email: state.user.email, name: newName })
+		}).then(res => res.json())
+		  .then(data => {
+			  if (data.success) {
+				  state.user.name = newName;
+				  saveUser();
+				  nameEl.textContent = state.user.name;
+				  updateHeaderStats();
+				  alert("Cập nhật tên thành công");
+			  }
+		  }).catch(() => {});
 	});
-	btnLogout?.addEventListener("click", () => { state.user = null; saveUser(); nameEl.textContent = state.name; input.value = state.name; updateHeaderStats(); alert("Đã đăng xuất"); setActiveView("home"); });
+	btnLogout?.addEventListener("click", () => { 
+		state.user = null; 
+		saveUser(); 
+		state.name = "";
+		state.points = 0;
+		state.history = [];
+		updateHeaderStats(); 
+		alert("Đã đăng xuất"); 
+		setActiveView("splash"); 
+	});
 }
 
 function hydrateUI() {
@@ -459,6 +466,19 @@ function initAuth() {
 	const regBox = document.getElementById("auth-register");
 	tabLogin?.addEventListener("click", () => { if (loginBox) loginBox.style.display = "block"; if (regBox) regBox.style.display = "none"; tabLogin.classList.add("primary"); tabRegister.classList.remove("primary"); });
 	tabRegister?.addEventListener("click", () => { if (loginBox) loginBox.style.display = "none"; if (regBox) regBox.style.display = "block"; tabRegister.classList.add("primary"); tabLogin.classList.remove("primary"); });
+	
+	// Splash click handles
+	const btnSplashLogin = document.getElementById("btn-splash-login");
+	const btnSplashRegister = document.getElementById("btn-splash-register");
+	btnSplashLogin?.addEventListener("click", () => {
+		tabLogin.click();
+		setActiveView("auth");
+	});
+	btnSplashRegister?.addEventListener("click", () => {
+		tabRegister.click();
+		setActiveView("auth");
+	});
+
 	const regEmail = document.getElementById("reg-email");
 	const regPassword = document.getElementById("reg-password");
 	const regName = document.getElementById("reg-name");
@@ -486,7 +506,7 @@ function initAuth() {
 			  state.level = data.user.level;
 			  state.history = data.user.history || [];
 			  saveUser();
-			  savePoints();
+			  loadFromStorage();
 			  alert("Đăng ký thành công! Bạn đã đăng nhập."); 
 			  setActiveView("home"); 
 			  hydrateUI();
@@ -518,7 +538,7 @@ function initAuth() {
 			  state.level = data.user.level;
 			  state.history = data.user.history || [];
 			  saveUser();
-			  savePoints();
+			  loadFromStorage();
 			  alert("Đăng nhập thành công"); 
 			  setActiveView("home"); 
 			  hydrateUI();
@@ -638,6 +658,7 @@ function startQuizTimer() {
 	}, 100);
 }
 
+// update quiz timer ui
 function updateQuizTimerUI() {
 	const bar = document.getElementById("quiz-timer-bar");
 	const text = document.getElementById("quiz-timer-text");
@@ -659,7 +680,7 @@ function onQuizTimeout() {
 			o.classList.add("wrong");
 		}
 	});
-	addHistoryEntry("Hết giờ làm trắc nghiệm trắc nghiệm");
+	addHistoryEntry("Hết giờ làm trắc nghiệm");
 }
 
 function renderQuiz() {
@@ -734,7 +755,13 @@ function boot() {
 	initAuth();
 	initQuiz();
 	initTheme();
-	setActiveView("splash");
+	
+	if (state.user) {
+		setActiveView("home");
+	} else {
+		setActiveView("splash");
+	}
+	
 	if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(() => {}); }
 }
 
