@@ -175,7 +175,7 @@ function setActiveView(name) {
 	});
 
 	const nav = document.querySelector(".bottom-nav");
-	if (nav) nav.style.display = (name === "splash" || name === "auth") ? "none" : "grid";
+	if (nav) nav.style.display = (name === "splash" || name === "auth") ? "none" : "";
 	
 	if (name === 'flashcards') {
 		resetFlashcardView();
