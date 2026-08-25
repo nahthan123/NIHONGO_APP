@@ -1,0 +1,24 @@
+{
+  "name": "NihonGo App",
+  "short_name": "NihonGo",
+  "description": "Học ít – Nhớ lâu. Ứng dụng học tiếng Nhật tối giản.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#22c55e",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
+

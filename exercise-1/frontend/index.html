@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NihonGo App</title>
+  <meta name="theme-color" content="#22c55e" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Splash Screen -->
+  <section id="view-splash" class="view active">
+    <div class="splash-inner">
+      <div class="logo">NihonGo App</div>
+      <div class="tagline">Học ít – Nhớ lâu • Chinh phục tiếng Nhật</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <button id="btn-start" class="btn primary">Bắt đầu học 🚀</button>
+        <button data-nav="auth" class="btn">Đăng nhập / Đăng ký 🔑</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Home -->
+  <section id="view-home" class="view">
+    <header class="app-header">
+      <div class="brand">NihonGo App</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="theme-toggle" class="btn" style="padding:6px 12px; border-radius:999px; font-size:14px;" title="Đổi giao diện">🌓 Giao diện</button>
+        <div class="score-pill"><span id="points">0</span> điểm • Lv <span id="level">1</span></div>
+      </div>
+    </header>
+    <main class="home-grid">
+      <button class="card action" data-nav="flashcards">
+        <div class="card-title">📚 Học từ vựng</div>
+        <div class="card-sub">Flashcards chia theo chủ đề tiện lợi</div>
+      </button>
+      <button class="card action" data-nav="sentences">
+        <div class="card-title">💬 Học mẫu câu</div>
+        <div class="card-sub">Mẫu câu cơ bản kèm phát âm chuẩn</div>
+      </button>
+      <button class="card action" data-nav="leaderboard">
+        <div class="card-title">🏆 Bảng điểm</div>
+        <div class="card-sub">Theo dõi cấp độ và bảng điểm tích lũy</div>
+      </button>
+      <button class="card action" data-nav="profile">
+        <div class="card-title">👤 Hồ sơ</div>
+        <div class="card-sub">Xem thông tin và lịch sử học tập</div>
+      </button>
+      <button class="card action" data-nav="auth">
+        <div class="card-title">🔑 Đăng nhập</div>
+        <div class="card-sub">Quản lý và đồng bộ tài khoản</div>
+      </button>
+      <button class="card action" data-nav="quiz">
+        <div class="card-title">🎮 Trắc nghiệm</div>
+        <div class="card-sub">Chọn nghĩa đúng dưới áp lực 10 giây (+10)</div>
+      </button>
+    </main>
+  </section>
+
+  <!-- Flashcards View -->
+  <section id="view-flashcards" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1 id="fc-title">Từ vựng</h1>
+      <div class="spacer"></div>
+    </header>
+    
+    <!-- Topic Selection Section -->
+    <div id="fc-topic-selector" class="content">
+      <h3 style="text-align:center; color:var(--primary);">Chọn chủ đề học từ vựng</h3>
+      <div class="topic-grid">
+        <div class="topic-card" data-fc-topic="greetings">
+          <div class="topic-icon">👋</div>
+          <div class="topic-name">Chào hỏi</div>
+        </div>
+        <div class="topic-card" data-fc-topic="dining">
+          <div class="topic-icon">🍣</div>
+          <div class="topic-name">Ăn uống</div>
+        </div>
+        <div class="topic-card" data-fc-topic="transportation">
+          <div class="topic-icon">🚄</div>
+          <div class="topic-name">Giao thông</div>
+        </div>
+        <div class="topic-card" data-fc-topic="shopping">
+          <div class="topic-icon">🛍️</div>
+          <div class="topic-name">Mua sắm</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flashcard Study Section -->
+    <div id="fc-study-container" class="content" style="display:none;">
+      <div class="flashcard" id="flashcard">
+        <div class="front" id="fc-front">
+          <div class="jp" id="fc-jp">日本語</div>
+          <div class="romaji" id="fc-romaji">Nihongo</div>
+        </div>
+        <div class="back" id="fc-back">
+          <div class="vi" id="fc-vi">Tiếng Nhật</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="btn-fc-back-topic" class="btn">🔄 Chọn chủ đề</button>
+        <button id="btn-fc-flip" class="btn">🔄 Lật thẻ</button>
+        <button id="btn-fc-speak" class="btn">🔊 Nghe</button>
+        <button id="btn-fc-next" class="btn primary">Tiếp theo +10</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz View -->
+  <section id="view-quiz" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1>Trắc nghiệm 10s</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content">
+      <!-- Quiz Timer -->
+      <div class="timer-container" style="width:100%; height:6px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:12px;">
+        <div id="quiz-timer-bar" style="width:100%; height:100%; background:var(--primary); transition: width 0.1s linear;"></div>
+      </div>
+      <div style="text-align:right; font-size:13px; color:var(--muted); margin-bottom:12px; font-weight:600;" id="quiz-timer-text">Thời gian còn lại: 10 giây</div>
+
+      <div class="quiz-card">
+        <div class="jp" id="q-jp">こんにちは</div>
+        <div class="romaji" id="q-romaji">Konnichiwa</div>
+      </div>
+      <div class="options" id="q-options">
+        <!-- buttons injected by JS -->
+      </div>
+      <div class="controls" style="margin-top:16px">
+        <button id="btn-q-next" class="btn primary">Câu tiếp theo ➡️</button>
+      </div>
+      <div id="q-feedback" style="text-align:center;margin-top:12px;color:var(--muted);font-weight:700;"></div>
+    </main>
+  </section>
+
+  <!-- Sentences View -->
+  <section id="view-sentences" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1 id="sn-title">Mẫu câu</h1>
+      <div class="spacer"></div>
+    </header>
+
+    <!-- Topic Selection Section -->
+    <div id="sn-topic-selector" class="content">
+      <h3 style="text-align:center; color:var(--primary);">Chọn chủ đề học mẫu câu</h3>
+      <div class="topic-grid">
+        <div class="topic-card" data-sn-topic="greetings">
+          <div class="topic-icon">👋</div>
+          <div class="topic-name">Chào hỏi</div>
+        </div>
+        <div class="topic-card" data-sn-topic="dining">
+          <div class="topic-icon">🍣</div>
+          <div class="topic-name">Ăn uống</div>
+        </div>
+        <div class="topic-card" data-sn-topic="transportation">
+          <div class="topic-icon">🚄</div>
+          <div class="topic-name">Giao thông</div>
+        </div>
+        <div class="topic-card" data-sn-topic="shopping">
+          <div class="topic-icon">🛍️</div>
+          <div class="topic-name">Mua sắm</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sentence Study Section -->
+    <div id="sn-study-container" class="content" style="display:none;">
+      <div class="sentence-card">
+        <div class="jp" id="sn-jp">おはようございます。</div>
+        <div class="vi" id="sn-vi">Chào buổi sáng.</div>
+      </div>
+      <div class="controls">
+        <button id="btn-sn-back-topic" class="btn">🔄 Chọn chủ đề</button>
+        <button id="btn-sn-speak" class="btn">🔊 Nghe</button>
+        <button id="btn-sn-next" class="btn primary">Tiếp theo +10</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leaderboard / Points View -->
+  <section id="view-leaderboard" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1>Bảng điểm</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content">
+      <div class="leader">
+        <div class="me">
+          <div style="font-weight:bold; font-size:16px; margin-bottom:4px;">Bạn</div>
+          <div class="pts" style="color:var(--primary); font-weight:800; font-size:18px;"><span id="lb-points">0</span> điểm</div>
+          <div class="lvl" style="color:var(--accent); font-weight:600;">Cấp độ: <span id="lb-level">1</span></div>
+        </div>
+        <div class="desc">Học xong 1 từ hoặc 1 câu sẽ nhận +10 điểm.</div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Profile View -->
+  <section id="view-profile" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1>Hồ sơ</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content">
+      <div class="profile">
+        <div class="avatar" id="pf-avatar">NG</div>
+        <div class="info">
+          <div class="name" id="pf-name" style="font-weight:800; font-size:18px;">Người học NihonGo</div>
+          <div class="stats">Điểm: <span id="pf-points">0</span> • Cấp: <span id="pf-level">1</span></div>
+        </div>
+      </div>
+      
+      <div class="auth-mock">
+        <div class="field">
+          <label>Tên hiển thị</label>
+          <input id="pf-input-name" placeholder="Nhập tên của bạn" />
+        </div>
+        <button id="pf-save" class="btn primary">Lưu tên 💾</button>
+        <button id="pf-logout" class="btn ghost">Đăng xuất 🚪</button>
+      </div>
+
+      <!-- Study History Section -->
+      <div class="profile-history" style="margin-top:20px;">
+        <h3 style="color:var(--primary); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;">🕒 Lịch sử học tập</h3>
+        <div id="pf-history-list" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; padding-right:4px;">
+          <!-- Items will be injected by JS -->
+          <div style="text-align:center; color:var(--muted); font-size:13px; padding:16px;">Chưa có hoạt động học tập nào. Hãy bắt đầu học!</div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Auth View -->
+  <section id="view-auth" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1>Tài khoản</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content">
+      <div class="tabbar" style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="tab-login" class="btn primary">Đăng nhập</button>
+        <button id="tab-register" class="btn">Đăng ký</button>
+      </div>
+      <div id="auth-login" class="auth-mock">
+        <div class="field">
+          <label>Email</label>
+          <input id="login-email" type="email" placeholder="email@domain.com" />
+        </div>
+        <div class="field">
+          <label>Mật khẩu</label>
+          <input id="login-password" type="password" placeholder="******" />
+        </div>
+        <button id="btn-login" class="btn primary">Đăng nhập 🔑</button>
+        <div id="login-error" style="color:#fca5a5;margin-top:8px;display:none;font-size:13px;"></div>
+      </div>
+      <div id="auth-register" class="auth-mock" style="display:none">
+        <div class="field">
+          <label>Email</label>
+          <input id="reg-email" type="email" placeholder="email@domain.com" />
+        </div>
+        <div class="field">
+          <label>Mật khẩu</label>
+          <input id="reg-password" type="password" placeholder="ít nhất 6 ký tự" />
+        </div>
+        <div class="field">
+          <label>Tên hiển thị</label>
+          <input id="reg-name" placeholder="Tên của bạn" />
+        </div>
+        <button id="btn-register" class="btn primary">Tạo tài khoản ✨</button>
+        <div id="reg-error" style="color:#fca5a5;margin-top:8px;display:none;font-size:13px;"></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-nav="home">
+      <span>🏠</span>
+      <span>Trang chủ</span>
+    </button>
+    <button class="nav-btn" data-nav="flashcards">
+      <span>📚</span>
+      <span>Từ vựng</span>
+    </button>
+    <button class="nav-btn" data-nav="sentences">
+      <span>💬</span>
+      <span>Mẫu câu</span>
+    </button>
+    <button class="nav-btn" data-nav="leaderboard">
+      <span>🏆</span>
+      <span>Bảng điểm</span>
+    </button>
+    <button class="nav-btn" data-nav="profile">
+      <span>👤</span>
+      <span>Hồ sơ</span>
+    </button>
+  </nav>
+
+  <!-- Floating Auth Button -->
+  <button class="fab-auth" data-nav="auth" title="Tài khoản">🔐</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
