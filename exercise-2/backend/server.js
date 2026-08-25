@@ -261,8 +261,15 @@ app.get('/api/health', (req, res) => {
     res.status(200).send('OK');
 });
 
-// Serve static frontend files (ideal for local testing without Docker!)
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve static frontend files (ideal for local testing and Docker)
+const frontendDockerPath = path.join(__dirname, 'frontend');
+const frontendLocalPath = path.join(__dirname, '../frontend');
+
+if (fs.existsSync(path.join(frontendDockerPath, 'index.html'))) {
+    app.use(express.static(frontendDockerPath));
+} else {
+    app.use(express.static(frontendLocalPath));
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
