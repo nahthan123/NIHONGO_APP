@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nihongo-cache-v2';
+const CACHE_NAME = 'nihongo-cache-v3';
 const ASSETS = [
 	'./',
 	'./index.html',
@@ -36,5 +36,3 @@ self.addEventListener('fetch', (event) => {
 		)
 	);
 });
-
-

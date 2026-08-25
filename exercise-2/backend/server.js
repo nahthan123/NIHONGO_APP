@@ -94,6 +94,12 @@ app.post('/api/auth/register', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'Email and password are required' });
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ success: false, message: 'Vui lòng nhập đúng định dạng email (ví dụ: name@domain.com)' });
+    }
+
     if (users.some(u => u.email === email)) {
         return res.status(400).json({ success: false, message: 'Email already exists' });
     }
@@ -130,6 +136,11 @@ app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ success: false, message: 'Vui lòng nhập đúng định dạng email' });
     }
 
     const user = users.find(u => u.email === email && u.passwordHash === hash(password));

@@ -456,7 +456,17 @@ function initAuth() {
 		const email = regEmail.value.trim();
 		const pass = regPassword.value;
 		const name = regName.value.trim() || "Người học NihonGo";
-		if (!email || !pass || pass.length < 6) { if (regErr) { regErr.textContent = "Vui lòng nhập email hợp lệ và mật khẩu ≥ 6 ký tự"; regErr.style.display = "block"; } return; }
+		
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!email || !emailRegex.test(email)) {
+			if (regErr) { regErr.textContent = "Vui lòng nhập đúng định dạng email (ví dụ: email@domain.com)"; regErr.style.display = "block"; }
+			return;
+		}
+		if (!pass || pass.length < 6) {
+			if (regErr) { regErr.textContent = "Mật khẩu phải chứa ít nhất 6 ký tự"; regErr.style.display = "block"; }
+			return;
+		}
+		
 		const usersRaw = localStorage.getItem(STORAGE_KEYS.users);
 		const list = usersRaw ? JSON.parse(usersRaw) : [];
 		if (list.some(u=>u.email===email)) { if (regErr) { regErr.textContent = "Email đã tồn tại"; regErr.style.display = "block"; } return; }
@@ -479,6 +489,13 @@ function initAuth() {
 		if (loginErr) loginErr.style.display = "none";
 		const email = loginEmail.value.trim();
 		const pass = loginPassword.value;
+		
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!email || !emailRegex.test(email)) {
+			if (loginErr) { loginErr.textContent = "Vui lòng nhập đúng định dạng email"; loginErr.style.display = "block"; }
+			return;
+		}
+		
 		const usersRaw = localStorage.getItem(STORAGE_KEYS.users);
 		const list = usersRaw ? JSON.parse(usersRaw) : [];
 		const found = list.find(u=>u.email===email && u.passwordHash===hash(pass));
