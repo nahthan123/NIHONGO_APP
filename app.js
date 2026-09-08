@@ -229,18 +229,66 @@ function initAuth() {
 // Admin
 function renderAdmin(){
 	const totalEl = document.getElementById('admin-total');
-	const listEl = document.getElementById('admin-users');
+	const tbodyEl = document.getElementById('admin-users-tbody');
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	const list = raw ? JSON.parse(raw) : [];
-	totalEl.textContent = String(list.length);
-	listEl.innerHTML = '';
-	list.forEach(u=>{
-		const li = document.createElement('li');
-		li.textContent = `${u.email}${u.role==='admin' ? ' (admin)' : ''}`;
-		listEl.appendChild(li);
-	});
+	if(totalEl) totalEl.textContent = String(list.length);
+	
+	if (tbodyEl) {
+		tbodyEl.innerHTML = '';
+		list.forEach(u => {
+			const tr = document.createElement('tr');
+			tr.style.borderBottom = "1px solid #334155";
+			
+			const tdName = document.createElement('td');
+			tdName.style.padding = "8px 4px";
+			tdName.textContent = u.name || "N/A";
+			
+			const tdEmail = document.createElement('td');
+			tdEmail.style.padding = "8px 4px";
+			tdEmail.textContent = u.email;
+			
+			const tdRole = document.createElement('td');
+			tdRole.style.padding = "8px 4px";
+			tdRole.textContent = u.role === 'admin' ? 'Admin 👑' : 'User';
+			
+			const tdAction = document.createElement('td');
+			tdAction.style.padding = "8px 4px";
+			if (u.role !== 'admin') {
+				const btnDel = document.createElement('button');
+				btnDel.textContent = "Xóa";
+				btnDel.style.padding = "4px 8px";
+				btnDel.style.fontSize = "12px";
+				btnDel.style.background = "#ef4444";
+				btnDel.style.border = "none";
+				btnDel.style.color = "white";
+				btnDel.style.borderRadius = "4px";
+				btnDel.style.cursor = "pointer";
+				btnDel.onclick = () => deleteUser(u.email);
+				tdAction.appendChild(btnDel);
+			}
+			
+			tr.appendChild(tdName);
+			tr.appendChild(tdEmail);
+			tr.appendChild(tdRole);
+			tr.appendChild(tdAction);
+			tbodyEl.appendChild(tr);
+		});
+	}
 	const btn = document.getElementById('admin-refresh');
+	btn?.removeEventListener('click', renderAdmin);
 	btn?.addEventListener('click', renderAdmin);
+}
+
+function deleteUser(email) {
+	if (!confirm(`Bạn có chắc muốn xóa người dùng ${email}?`)) return;
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	list = list.filter(u => u.email !== email);
+	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+	state.users = list;
+	alert("Đã xóa người dùng!");
+	renderAdmin();
 }
 
 // Quiz

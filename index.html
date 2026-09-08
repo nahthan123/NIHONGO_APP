@@ -99,9 +99,23 @@
         <div><strong>Tổng số tài khoản:</strong> <span id="admin-total">0</span></div>
         <div class="desc">Mặc định có sẵn tài khoản admin.</div>
       </div>
-      <div class="sentence-card" style="margin-top:12px">
-        <div class="jp" style="font-size:18px">Danh sách (email)</div>
-        <ul id="admin-users" style="margin:8px 0 0 16px; padding:0 0 0 0; list-style:disc; color:#cbd5e1"></ul>
+      <div class="sentence-card" style="margin-top:12px; padding:16px;">
+        <div class="jp" style="font-size:18px; margin-bottom:12px;">Danh sách người dùng</div>
+        <div style="overflow-x:auto;">
+          <table id="admin-users-table" style="width:100%; text-align:left; border-collapse: collapse; color:#cbd5e1; font-size:14px;">
+            <thead>
+              <tr style="border-bottom: 1px solid #475569;">
+                <th style="padding: 8px 4px;">Tên</th>
+                <th style="padding: 8px 4px;">Email</th>
+                <th style="padding: 8px 4px;">Vai trò</th>
+                <th style="padding: 8px 4px;">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <!-- JS render -->
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="controls" style="margin-top:12px">
         <button id="admin-refresh" class="btn">Làm mới</button>
