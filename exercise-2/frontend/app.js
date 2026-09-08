@@ -7,7 +7,7 @@ const VIEWS = [
 	"leaderboard",
 	"profile",
 	"auth",
-	"quiz"
+	"quiz", "admin"
 ];
 
 const STORAGE_KEYS = {
@@ -163,6 +163,7 @@ function setActiveView(name) {
 		}
 	}
 	
+	if(name === 'admin') { if(!state.user || state.user.role !== 'admin') { alert('Ch? admin!'); return; } renderAdmin(); }
 	VIEWS.forEach((v) => {
 		const el = document.getElementById(`view-${v}`);
 		if (!el) return;
@@ -781,3 +782,61 @@ function boot() {
 }
 
 document.addEventListener("DOMContentLoaded", boot);
+
+// Admin Functions
+function renderAdmin(){
+	const totalEl = document.getElementById('admin-total');
+	const tbodyEl = document.getElementById('admin-users-tbody');
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	const list = raw ? JSON.parse(raw) : [];
+	if(totalEl) totalEl.textContent = String(list.length);
+	if (tbodyEl) {
+		tbodyEl.innerHTML = '';
+		list.forEach(u => {
+			const tr = document.createElement('tr');
+			tr.style.borderBottom = "1px solid var(--border)";
+			const tdName = document.createElement('td');
+			tdName.style.padding = "8px 4px";
+			tdName.textContent = u.name || "N/A";
+			const tdEmail = document.createElement('td');
+			tdEmail.style.padding = "8px 4px";
+			tdEmail.textContent = u.email;
+			const tdRole = document.createElement('td');
+			tdRole.style.padding = "8px 4px";
+			tdRole.textContent = u.role === 'admin' ? 'Admin ??' : 'User';
+			const tdAction = document.createElement('td');
+			tdAction.style.padding = "8px 4px";
+			if (u.role !== 'admin') {
+				const btnDel = document.createElement('button');
+				btnDel.textContent = "Xóa";
+				btnDel.style.padding = "4px 8px";
+				btnDel.style.fontSize = "12px";
+				btnDel.style.background = "#ef4444";
+				btnDel.style.border = "none";
+				btnDel.style.color = "white";
+				btnDel.style.borderRadius = "4px";
+				btnDel.style.cursor = "pointer";
+				btnDel.onclick = () => deleteUser(u.email);
+				tdAction.appendChild(btnDel);
+			}
+			tr.appendChild(tdName);
+			tr.appendChild(tdEmail);
+			tr.appendChild(tdRole);
+			tr.appendChild(tdAction);
+			tbodyEl.appendChild(tr);
+		});
+	}
+	const btn = document.getElementById('admin-refresh');
+	btn?.removeEventListener('click', renderAdmin);
+	btn?.addEventListener('click', renderAdmin);
+}
+function deleteUser(email) {
+	if (!confirm('B?n có ch?c mu?n xóa ngý?i dùng ' + email + '?')) return;
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	list = list.filter(u => u.email !== email);
+	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+	state.users = list;
+	alert('Ð? xóa ngý?i dùng!');
+	renderAdmin();
+}

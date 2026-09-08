@@ -58,6 +58,10 @@
         <div class="card-title">🎮 Trắc nghiệm</div>
         <div class="card-sub">Chọn nghĩa đúng dưới áp lực 10 giây (+10)</div>
       </button>
+      <button class="card action" data-nav="admin">
+        <div class="card-title">🛡️ Admin</div>
+        <div class="card-sub">Quản lý người dùng</div>
+      </button>
     </main>
   </section>
 
@@ -279,6 +283,42 @@
         </div>
         <button id="btn-register" class="btn primary">Tạo tài khoản ✨</button>
         <div id="reg-error" style="color:#fca5a5;margin-top:8px;display:none;font-size:13px;"></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Admin View -->
+  <section id="view-admin" class="view">
+    <header class="view-header">
+      <button class="btn ghost" data-nav="home">← Trang chủ</button>
+      <h1>Admin</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content">
+      <div class="leader">
+        <div><strong>Tổng số tài khoản:</strong> <span id="admin-total">0</span></div>
+        <div class="desc">Chỉ hiển thị dữ liệu Local Storage hoặc DB tương ứng.</div>
+      </div>
+      <div class="sentence-card" style="margin-top:12px; padding:16px;">
+        <div class="jp" style="font-size:18px; margin-bottom:12px;">Danh sách người dùng</div>
+        <div style="overflow-x:auto;">
+          <table id="admin-users-table" style="width:100%; text-align:left; border-collapse: collapse; color:var(--text); font-size:14px;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <th style="padding: 8px 4px;">Tên</th>
+                <th style="padding: 8px 4px;">Email</th>
+                <th style="padding: 8px 4px;">Vai trò</th>
+                <th style="padding: 8px 4px;">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <!-- JS render -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="controls" style="margin-top:12px">
+        <button id="admin-refresh" class="btn primary">Làm mới 🔄</button>
       </div>
     </main>
   </section>
