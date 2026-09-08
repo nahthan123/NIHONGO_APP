@@ -255,7 +255,7 @@ function renderAdmin(){
 			
 			const tdRole = document.createElement('td');
 			tdRole.style.padding = "8px 4px";
-			tdRole.textContent = u.role === 'admin' ? 'Admin 👑' : 'User';
+			tdRole.textContent = u.role === 'admin' ? 'Admin' : 'User';
 			
 			const tdAction = document.createElement('td');
 			tdAction.style.padding = "8px 4px";

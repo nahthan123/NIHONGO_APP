@@ -178,7 +178,7 @@ function setActiveView(name) {
 		}
 	}
 	
-	if(name === 'admin') { if(!state.user || state.user.role !== 'admin') { alert('Ch? admin!'); return; } renderAdmin(); }
+	if(name === 'admin') { if(!state.user || state.user.role !== 'admin') { alert('Chỉ admin!'); return; } renderAdmin(); }
 	VIEWS.forEach((v) => {
 		const el = document.getElementById(`view-${v}`);
 		if (!el) return;
@@ -818,12 +818,12 @@ function renderAdmin(){
 			tdEmail.textContent = u.email;
 			const tdRole = document.createElement('td');
 			tdRole.style.padding = "8px 4px";
-			tdRole.textContent = u.role === 'admin' ? 'Admin ??' : 'User';
+			tdRole.textContent = u.role === 'admin' ? 'Admin' : 'User';
 			const tdAction = document.createElement('td');
 			tdAction.style.padding = "8px 4px";
 			if (u.role !== 'admin') {
 				const btnDel = document.createElement('button');
-				btnDel.textContent = "X�a";
+				btnDel.textContent = "Xóa";
 				btnDel.style.padding = "4px 8px";
 				btnDel.style.fontSize = "12px";
 				btnDel.style.background = "#ef4444";
@@ -846,12 +846,12 @@ function renderAdmin(){
 	btn?.addEventListener('click', renderAdmin);
 }
 function deleteUser(email) {
-	if (!confirm('B?n c� ch?c mu?n x�a ng�?i d�ng ' + email + '?')) return;
+	if (!confirm('Bạn có chắc muốn xóa người dùng ' + email + '?')) return;
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	let list = raw ? JSON.parse(raw) : [];
 	list = list.filter(u => u.email !== email);
 	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
 	state.users = list;
-	alert('�? x�a ng�?i d�ng!');
+	alert('�Đã xóa người dùng!');
 	renderAdmin();
 }
