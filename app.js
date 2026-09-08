@@ -52,9 +52,14 @@ function seedAdminIfMissing() {
 	let list = raw ? JSON.parse(raw) : [];
 	const exists = list.some(u => u.role === 'admin');
 	if (!exists) {
-		list.push({ email: 'admin@nihongo.local', name: 'Administrator', passwordHash: hash('admin123'), role: 'admin' });
-		localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+		list.push({ email: 'admin@nihongo.local', name: 'Administrator', passwordHash: hash('admin123'), role: 'admin', points: 0, history: [] });
 	}
+	if (!list.some(u => u.email === 'student1@gmail.com')) {
+		list.push({ email: 'student1@gmail.com', name: 'Nguyễn Văn A', passwordHash: hash('123456'), role: 'user', points: 150, history: [] });
+		list.push({ email: 'student2@gmail.com', name: 'Trần Thị B', passwordHash: hash('123456'), role: 'user', points: 420, history: [] });
+		list.push({ email: 'testuser@yahoo.com', name: 'Học sinh Test', passwordHash: hash('123456'), role: 'user', points: 30, history: [] });
+	}
+	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
 }
 
 function loadFromStorage() {

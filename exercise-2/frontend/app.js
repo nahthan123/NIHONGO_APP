@@ -1,3 +1,17 @@
+function seedAdminIfMissing() {
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const exists = list.some(u => u.role === 'admin');
+	if (!exists) {
+		list.push({ email: 'admin@nihongo.local', name: 'Administrator', passwordHash: hash('admin123'), role: 'admin', points: 0, history: [] });
+	}
+	if (!list.some(u => u.email === 'student1@gmail.com')) {
+		list.push({ email: 'student1@gmail.com', name: 'Nguyá»…n VÄƒn A', passwordHash: hash('123456'), role: 'user', points: 150, history: [] });
+		list.push({ email: 'student2@gmail.com', name: 'Tráº§n Thá»‹ B', passwordHash: hash('123456'), role: 'user', points: 420, history: [] });
+		list.push({ email: 'testuser@yahoo.com', name: 'Há»c sinh Test', passwordHash: hash('123456'), role: 'user', points: 30, history: [] });
+	}
+	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+}
 // Simple SPA state
 const VIEWS = [
 	"splash",
@@ -90,6 +104,7 @@ let quizTimerInterval = null;
 let quizTimeRemaining = 10;
 
 function loadFromStorage() {
+	seedAdminIfMissing();
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
 	const themeRaw = localStorage.getItem(STORAGE_KEYS.theme) || "dark";
 
@@ -808,7 +823,7 @@ function renderAdmin(){
 			tdAction.style.padding = "8px 4px";
 			if (u.role !== 'admin') {
 				const btnDel = document.createElement('button');
-				btnDel.textContent = "Xóa";
+				btnDel.textContent = "Xï¿½a";
 				btnDel.style.padding = "4px 8px";
 				btnDel.style.fontSize = "12px";
 				btnDel.style.background = "#ef4444";
@@ -831,12 +846,12 @@ function renderAdmin(){
 	btn?.addEventListener('click', renderAdmin);
 }
 function deleteUser(email) {
-	if (!confirm('B?n có ch?c mu?n xóa ngý?i dùng ' + email + '?')) return;
+	if (!confirm('B?n cï¿½ ch?c mu?n xï¿½a ngï¿½?i dï¿½ng ' + email + '?')) return;
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	let list = raw ? JSON.parse(raw) : [];
 	list = list.filter(u => u.email !== email);
 	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
 	state.users = list;
-	alert('Ð? xóa ngý?i dùng!');
+	alert('ï¿½? xï¿½a ngï¿½?i dï¿½ng!');
 	renderAdmin();
 }
