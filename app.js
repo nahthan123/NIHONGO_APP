@@ -181,8 +181,25 @@ function hydrateUI() {
 	updateHeaderStats();
 	const pfName = document.getElementById("pf-name");
 	const input = document.getElementById("pf-input-name");
-	if (state.user?.name) { pfName.textContent = state.user.name; if (input) input.value = state.user.name; }
-	else { pfName.textContent = state.name; if (input) input.value = state.name; }
+	if (state.user && state.user.name) { 
+		if(pfName) pfName.textContent = state.user.name; 
+		if (input) input.value = state.user.name; 
+	} else { 
+		if(pfName) pfName.textContent = state.name; 
+		if (input) input.value = state.name; 
+	}
+
+	// Toggle Auth buttons
+	const authCards = document.querySelectorAll('[data-nav="auth"]');
+	authCards.forEach(el => {
+		el.style.display = state.user ? 'none' : '';
+	});
+
+	// Toggle Admin button
+	const adminCards = document.querySelectorAll('[data-nav="admin"]');
+	adminCards.forEach(el => {
+		el.style.display = (state.user && state.user.role === 'admin') ? '' : 'none';
+	});
 }
 
 function hash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; } return String(h); }
