@@ -313,7 +313,18 @@ function boot() {
 	initAuth();
 	initQuiz();
 	setActiveView("splash");
-	if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(() => {}); }
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('./sw.js').then(reg => {
+			reg.addEventListener('updatefound', () => {
+				const newWorker = reg.installing;
+				newWorker.addEventListener('statechange', () => {
+					if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+						window.location.reload(true);
+					}
+				});
+			});
+		}).catch(() => {});
+	}
 }
 
 document.addEventListener("DOMContentLoaded", boot);

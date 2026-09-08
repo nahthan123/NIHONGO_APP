@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nihongo-cache-v2';
+const CACHE_NAME = 'nihongo-cache-v5';
 const ASSETS = [
 	'./',
 	'./index.html',
@@ -27,13 +27,11 @@ self.addEventListener('fetch', (event) => {
 	const { request } = event;
 	if (request.method !== 'GET') return;
 	event.respondWith(
-		caches.match(request).then((cached) =>
-			cached || fetch(request).then((response) => {
-				const copy = response.clone();
-				caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-				return response;
-			}).catch(() => cached)
-		)
+		fetch(request).then((response) => {
+			const copy = response.clone();
+			caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+			return response;
+		}).catch(() => caches.match(request))
 	);
 });
 
