@@ -93,10 +93,10 @@ const SENTENCES = [
 SENTENCES.splice(7, 1); // remove typo item
 
 const TOPIC_NAMES = {
-	greetings: "Chào hỏi 👋",
-	dining: "Ăn uống 🍣",
-	transportation: "Giao thông 🚄",
-	shopping: "Mua sắm 🛍️"
+	greetings: "Chào hỏi",
+	dining: "Ăn uống",
+	transportation: "Giao thông",
+	shopping: "Mua sắm"
 };
 
 // Timer variables

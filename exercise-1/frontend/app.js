@@ -94,13 +94,13 @@ const SENTENCES = [
 	{ jp: "これをお願いします。", vi: "Lấy cho tôi cái này.", topic: "shopping" },
 	{ jp: "クレジットカード là 使えますか？", vi: "Có dùng được thẻ tín dụng không?", topic: "shopping" },
 ];
-SENTENCES.splice(0, 2);
+
 
 const TOPIC_NAMES = {
-	greetings: "Chào hỏi 👋",
-	dining: "Ăn uống 🍣",
-	transportation: "Giao thông 🚄",
-	shopping: "Mua sắm 🛍️"
+	greetings: "Chào hỏi",
+	dining: "Ăn uống",
+	transportation: "Giao thông",
+	shopping: "Mua sắm"
 };
 
 // Timer variables

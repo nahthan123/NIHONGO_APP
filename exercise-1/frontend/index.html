@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+.inline-icon { vertical-align: middle; margin-right: 6px; display: inline-block; }
+.bottom-nav .nav-btn span:first-child .inline-icon { margin-right: 0; margin-bottom: 4px; display: block; margin: 0 auto; }
+.topic-icon .inline-icon { width: 32px; height: 32px; margin: 0; }
+</style>
 </head>
 <body>
   <!-- Splash Screen -->
@@ -18,8 +23,8 @@
       <div class="logo">NihonGo App</div>
       <div class="tagline">Học ít – Nhớ lâu • Chinh phục tiếng Nhật</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-        <button id="btn-splash-login" class="btn primary">Đăng nhập 🔑</button>
-        <button id="btn-splash-register" class="btn">Đăng ký ✨</button>
+        <button id="btn-splash-login" class="btn primary">Đăng nhập <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></button>
+        <button id="btn-splash-register" class="btn">Đăng ký <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
       </div>
     </div>
   </section>
@@ -29,33 +34,33 @@
     <header class="app-header">
       <div class="brand">NihonGo App</div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <button id="theme-toggle" class="btn" style="padding:6px 12px; border-radius:999px; font-size:14px;" title="Đổi giao diện">🌓 Giao diện</button>
+        <button id="theme-toggle" class="btn" style="padding:6px 12px; border-radius:999px; font-size:14px;" title="Đổi giao diện"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> Giao diện</button>
         <div class="score-pill"><span id="points">0</span> điểm • Lv <span id="level">1</span></div>
       </div>
     </header>
     <main class="home-grid">
       <button class="card action" data-nav="flashcards">
-        <div class="card-title">📚 Học từ vựng</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Học từ vựng</div>
         <div class="card-sub">Flashcards chia theo chủ đề tiện lợi</div>
       </button>
       <button class="card action" data-nav="sentences">
-        <div class="card-title">💬 Học mẫu câu</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Học mẫu câu</div>
         <div class="card-sub">Mẫu câu cơ bản kèm phát âm chuẩn</div>
       </button>
       <button class="card action" data-nav="leaderboard">
-        <div class="card-title">🏆 Bảng điểm</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Bảng điểm</div>
         <div class="card-sub">Theo dõi cấp độ và bảng điểm tích lũy</div>
       </button>
       <button class="card action" data-nav="profile">
-        <div class="card-title">👤 Hồ sơ</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Hồ sơ</div>
         <div class="card-sub">Xem thông tin và lịch sử học tập</div>
       </button>
       <button class="card action" data-nav="auth">
-        <div class="card-title">🔑 Đăng nhập</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> Đăng nhập</div>
         <div class="card-sub">Quản lý và đồng bộ tài khoản</div>
       </button>
       <button class="card action" data-nav="quiz">
-        <div class="card-title">🎮 Trắc nghiệm</div>
+        <div class="card-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><path d="M22 12a10 10 0 0 1-20 0"></path></svg> Trắc nghiệm</div>
         <div class="card-sub">Chọn nghĩa đúng dưới áp lực 10 giây (+10)</div>
       </button>
       <button class="card action" data-nav="admin">
@@ -78,19 +83,19 @@
       <h3 style="text-align:center; color:var(--primary);">Chọn chủ đề học từ vựng</h3>
       <div class="topic-grid">
         <div class="topic-card" data-fc-topic="greetings">
-          <div class="topic-icon">👋</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg></div>
           <div class="topic-name">Chào hỏi</div>
         </div>
         <div class="topic-card" data-fc-topic="dining">
-          <div class="topic-icon">🍣</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M2 12h20"></path><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M10 8h4"></path><path d="M6 12C6 7 9 4 12 4s6 3 6 8"></path></svg></div>
           <div class="topic-name">Ăn uống</div>
         </div>
         <div class="topic-card" data-fc-topic="transportation">
-          <div class="topic-icon">🚄</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M4 8h16"></path><path d="M8 21l-2 3"></path><path d="M16 21l2 3"></path><path d="M10 15h4"></path></svg></div>
           <div class="topic-name">Giao thông</div>
         </div>
         <div class="topic-card" data-fc-topic="shopping">
-          <div class="topic-icon">🛍️</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></div>
           <div class="topic-name">Mua sắm</div>
         </div>
       </div>
@@ -108,9 +113,9 @@
         </div>
       </div>
       <div class="controls">
-        <button id="btn-fc-back-topic" class="btn">🔄 Chọn chủ đề</button>
-        <button id="btn-fc-flip" class="btn">🔄 Lật thẻ</button>
-        <button id="btn-fc-speak" class="btn">🔊 Nghe</button>
+        <button id="btn-fc-back-topic" class="btn"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Chọn chủ đề</button>
+        <button id="btn-fc-flip" class="btn"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Lật thẻ</button>
+        <button id="btn-fc-speak" class="btn"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Nghe</button>
         <button id="btn-fc-next" class="btn primary">Tiếp theo +10</button>
       </div>
     </div>
@@ -138,7 +143,7 @@
         <!-- buttons injected by JS -->
       </div>
       <div class="controls" style="margin-top:16px">
-        <button id="btn-q-next" class="btn primary">Câu tiếp theo ➡️</button>
+        <button id="btn-q-next" class="btn primary">Câu tiếp theo <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
       </div>
       <div id="q-feedback" style="text-align:center;margin-top:12px;color:var(--muted);font-weight:700;"></div>
     </main>
@@ -157,19 +162,19 @@
       <h3 style="text-align:center; color:var(--primary);">Chọn chủ đề học mẫu câu</h3>
       <div class="topic-grid">
         <div class="topic-card" data-sn-topic="greetings">
-          <div class="topic-icon">👋</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg></div>
           <div class="topic-name">Chào hỏi</div>
         </div>
         <div class="topic-card" data-sn-topic="dining">
-          <div class="topic-icon">🍣</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M2 12h20"></path><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M10 8h4"></path><path d="M6 12C6 7 9 4 12 4s6 3 6 8"></path></svg></div>
           <div class="topic-name">Ăn uống</div>
         </div>
         <div class="topic-card" data-sn-topic="transportation">
-          <div class="topic-icon">🚄</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M4 8h16"></path><path d="M8 21l-2 3"></path><path d="M16 21l2 3"></path><path d="M10 15h4"></path></svg></div>
           <div class="topic-name">Giao thông</div>
         </div>
         <div class="topic-card" data-sn-topic="shopping">
-          <div class="topic-icon">🛍️</div>
+          <div class="topic-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></div>
           <div class="topic-name">Mua sắm</div>
         </div>
       </div>
@@ -182,8 +187,8 @@
         <div class="vi" id="sn-vi">Chào buổi sáng.</div>
       </div>
       <div class="controls">
-        <button id="btn-sn-back-topic" class="btn">🔄 Chọn chủ đề</button>
-        <button id="btn-sn-speak" class="btn">🔊 Nghe</button>
+        <button id="btn-sn-back-topic" class="btn"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Chọn chủ đề</button>
+        <button id="btn-sn-speak" class="btn"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Nghe</button>
         <button id="btn-sn-next" class="btn primary">Tiếp theo +10</button>
       </div>
     </div>
@@ -229,13 +234,13 @@
           <label>Tên hiển thị</label>
           <input id="pf-input-name" placeholder="Nhập tên của bạn" />
         </div>
-        <button id="pf-save" class="btn primary">Lưu tên 💾</button>
-        <button id="pf-logout" class="btn ghost">Đăng xuất 🚪</button>
+        <button id="pf-save" class="btn primary">Lưu tên <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></button>
+        <button id="pf-logout" class="btn ghost">Đăng xuất <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
       </div>
 
       <!-- Study History Section -->
       <div class="profile-history" style="margin-top:20px;">
-        <h3 style="color:var(--primary); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;">🕒 Lịch sử học tập</h3>
+        <h3 style="color:var(--primary); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Lịch sử học tập</h3>
         <div id="pf-history-list" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; padding-right:4px;">
           <!-- Items will be injected by JS -->
           <div style="text-align:center; color:var(--muted); font-size:13px; padding:16px;">Chưa có hoạt động học tập nào. Hãy bắt đầu học!</div>
@@ -265,7 +270,7 @@
           <label>Mật khẩu</label>
           <input id="login-password" type="password" placeholder="******" />
         </div>
-        <button id="btn-login" class="btn primary">Đăng nhập 🔑</button>
+        <button id="btn-login" class="btn primary">Đăng nhập <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></button>
         <div id="login-error" style="color:#fca5a5;margin-top:8px;display:none;font-size:13px;"></div>
       </div>
       <div id="auth-register" class="auth-mock" style="display:none">
@@ -281,7 +286,7 @@
           <label>Tên hiển thị</label>
           <input id="reg-name" placeholder="Tên của bạn" />
         </div>
-        <button id="btn-register" class="btn primary">Tạo tài khoản ✨</button>
+        <button id="btn-register" class="btn primary">Tạo tài khoản <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
         <div id="reg-error" style="color:#fca5a5;margin-top:8px;display:none;font-size:13px;"></div>
       </div>
     </main>
@@ -326,29 +331,29 @@
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-nav="home">
-      <span>🏠</span>
+      <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
       <span>Trang chủ</span>
     </button>
     <button class="nav-btn" data-nav="flashcards">
-      <span>📚</span>
+      <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
       <span>Từ vựng</span>
     </button>
     <button class="nav-btn" data-nav="sentences">
-      <span>💬</span>
+      <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
       <span>Mẫu câu</span>
     </button>
     <button class="nav-btn" data-nav="leaderboard">
-      <span>🏆</span>
+      <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg></span>
       <span>Bảng điểm</span>
     </button>
     <button class="nav-btn" data-nav="profile">
-      <span>👤</span>
+      <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
       <span>Hồ sơ</span>
     </button>
   </nav>
 
   <!-- Floating Auth Button -->
-  <button class="fab-auth" data-nav="auth" title="Tài khoản">🔐</button>
+  <button class="fab-auth" data-nav="auth" title="Tài khoản"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></button>
 
   <script src="app.js"></script>
 </body>
