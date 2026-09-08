@@ -1,3 +1,12 @@
+function seedAdminIfMissing() {
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const exists = list.some(u => u.role === 'admin');
+	if (!exists) {
+		list.push({ email: 'admin@nihongo.local', name: 'Administrator', passwordHash: hash('admin123'), role: 'admin', points: 0, history: [] });
+		localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+	}
+}
 // Simple SPA state
 const VIEWS = [
 	"splash",
@@ -94,6 +103,7 @@ let quizTimerInterval = null;
 let quizTimeRemaining = 10;
 
 function loadFromStorage() {
+	seedAdminIfMissing();
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
 	const usersRaw = localStorage.getItem(STORAGE_KEYS.users);
 	const themeRaw = localStorage.getItem(STORAGE_KEYS.theme) || "dark";
@@ -706,3 +716,4 @@ function deleteUser(email) {
 	alert('Ð? xóa ngý?i dùng!');
 	renderAdmin();
 }
+
