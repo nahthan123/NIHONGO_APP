@@ -251,10 +251,14 @@ function initAuth() {
 // Admin
 function renderAdmin(){
 	const totalEl = document.getElementById('admin-total');
+	const adminCountEl = document.getElementById('admin-count');
+	const adminPointsEl = document.getElementById('admin-points');
 	const tbodyEl = document.getElementById('admin-users-tbody');
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	const list = raw ? JSON.parse(raw) : [];
 	if(totalEl) totalEl.textContent = String(list.length);
+	if(adminCountEl) adminCountEl.textContent = String(list.filter(u=>u.role==='admin').length);
+	if(adminPointsEl) adminPointsEl.textContent = String(list.reduce((sum, u)=>sum + (u.points||0), 0));
 	if (tbodyEl) {
 		tbodyEl.innerHTML = '';
 		list.forEach(u => {
@@ -277,29 +281,29 @@ function renderAdmin(){
 			const tdAction = document.createElement('td');
 			tdAction.style.padding = "10px 4px";
 			
+			if (u.role !== 'admin' || u.email !== state.user.email) {
+				const btnHistory = document.createElement('button');
+				btnHistory.innerHTML = '📋 Lịch sử';
+				btnHistory.style.cssText = "padding:4px 8px; font-size:12px; background:#10b981; border:none; color:white; border-radius:4px; cursor:pointer; margin-right:6px;";
+				btnHistory.onclick = () => viewUserHistory(u.email);
+				tdAction.appendChild(btnHistory);
+				
+				const btnRole = document.createElement('button');
+				btnRole.innerHTML = u.role === 'admin' ? 'Hạ quyền' : 'Lên Admin';
+				btnRole.style.cssText = "padding:4px 8px; font-size:12px; background:#fbbf24; border:none; color:black; border-radius:4px; cursor:pointer; margin-right:6px;";
+				btnRole.onclick = () => toggleUserRole(u.email);
+				tdAction.appendChild(btnRole);
+			}
 			if (u.role !== 'admin') {
 				const btnEdit = document.createElement('button');
-				btnEdit.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Sửa';
-				btnEdit.style.padding = "4px 8px";
-				btnEdit.style.fontSize = "12px";
-				btnEdit.style.background = "#3b82f6";
-				btnEdit.style.border = "none";
-				btnEdit.style.color = "white";
-				btnEdit.style.borderRadius = "4px";
-				btnEdit.style.cursor = "pointer";
-				btnEdit.style.marginRight = "6px";
+				btnEdit.innerHTML = 'Sửa Điểm';
+				btnEdit.style.cssText = "padding:4px 8px; font-size:12px; background:#3b82f6; border:none; color:white; border-radius:4px; cursor:pointer; margin-right:6px;";
 				btnEdit.onclick = () => editUserPoints(u.email);
 				tdAction.appendChild(btnEdit);
 				
 				const btnDel = document.createElement('button');
-				btnDel.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Xóa';
-				btnDel.style.padding = "4px 8px";
-				btnDel.style.fontSize = "12px";
-				btnDel.style.background = "#ef4444";
-				btnDel.style.border = "none";
-				btnDel.style.color = "white";
-				btnDel.style.borderRadius = "4px";
-				btnDel.style.cursor = "pointer";
+				btnDel.innerHTML = 'Xóa';
+				btnDel.style.cssText = "padding:4px 8px; font-size:12px; background:#ef4444; border:none; color:white; border-radius:4px; cursor:pointer;";
 				btnDel.onclick = () => deleteUser(u.email);
 				tdAction.appendChild(btnDel);
 			}
@@ -374,3 +378,31 @@ function boot() {
 document.addEventListener("DOMContentLoaded", boot);
 
 
+
+
+function toggleUserRole(email) {
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const user = list.find(u => u.email === email);
+	if (!user) return;
+	if (user.email === state.user.email) {
+		alert("Không thể tự thay đổi quyền của chính mình!");
+		return;
+	}
+	user.role = user.role === 'admin' ? 'user' : 'admin';
+	localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+	alert('Đã thay đổi quyền thành: ' + user.role);
+	renderAdmin();
+}
+function viewUserHistory(email) {
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const user = list.find(u => u.email === email);
+	if (!user) return;
+	if (!user.history || user.history.length === 0) {
+		alert("Người dùng này chưa có hoạt động nào.");
+		return;
+	}
+	const histStr = user.history.slice(0, 10).map(h => "- " + h.action + " (" + new Date(h.timestamp).toLocaleString() + ")").join("\n");
+	alert("Lịch sử hoạt động của " + (user.name || email) + ":\n\n" + histStr);
+}
