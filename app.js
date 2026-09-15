@@ -255,30 +255,44 @@ function renderAdmin(){
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	const list = raw ? JSON.parse(raw) : [];
 	if(totalEl) totalEl.textContent = String(list.length);
-	
 	if (tbodyEl) {
 		tbodyEl.innerHTML = '';
 		list.forEach(u => {
 			const tr = document.createElement('tr');
-			tr.style.borderBottom = "1px solid #334155";
-			
+			tr.style.borderBottom = "1px solid var(--border)";
 			const tdName = document.createElement('td');
-			tdName.style.padding = "8px 4px";
+			tdName.style.padding = "10px 4px";
 			tdName.textContent = u.name || "N/A";
-			
 			const tdEmail = document.createElement('td');
-			tdEmail.style.padding = "8px 4px";
+			tdEmail.style.padding = "10px 4px";
 			tdEmail.textContent = u.email;
-			
+			const tdPoints = document.createElement('td');
+			tdPoints.style.padding = "10px 4px";
+			let pts = u.points || 0;
+			let lvl = Math.max(1, Math.floor(pts / 100) + 1);
+			tdPoints.textContent = pts + " (Lv" + lvl + ")";
 			const tdRole = document.createElement('td');
-			tdRole.style.padding = "8px 4px";
-			tdRole.textContent = u.role === 'admin' ? 'Admin' : 'User';
-			
+			tdRole.style.padding = "10px 4px";
+			tdRole.innerHTML = u.role === 'admin' ? '<span style="color:#fbbf24;font-weight:bold;">Admin</span>' : 'User';
 			const tdAction = document.createElement('td');
-			tdAction.style.padding = "8px 4px";
+			tdAction.style.padding = "10px 4px";
+			
 			if (u.role !== 'admin') {
+				const btnEdit = document.createElement('button');
+				btnEdit.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Sửa';
+				btnEdit.style.padding = "4px 8px";
+				btnEdit.style.fontSize = "12px";
+				btnEdit.style.background = "#3b82f6";
+				btnEdit.style.border = "none";
+				btnEdit.style.color = "white";
+				btnEdit.style.borderRadius = "4px";
+				btnEdit.style.cursor = "pointer";
+				btnEdit.style.marginRight = "6px";
+				btnEdit.onclick = () => editUserPoints(u.email);
+				tdAction.appendChild(btnEdit);
+				
 				const btnDel = document.createElement('button');
-				btnDel.textContent = "Xóa";
+				btnDel.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Xóa';
 				btnDel.style.padding = "4px 8px";
 				btnDel.style.fontSize = "12px";
 				btnDel.style.background = "#ef4444";
@@ -289,9 +303,9 @@ function renderAdmin(){
 				btnDel.onclick = () => deleteUser(u.email);
 				tdAction.appendChild(btnDel);
 			}
-			
 			tr.appendChild(tdName);
 			tr.appendChild(tdEmail);
+			tr.appendChild(tdPoints);
 			tr.appendChild(tdRole);
 			tr.appendChild(tdAction);
 			tbodyEl.appendChild(tr);
@@ -302,6 +316,19 @@ function renderAdmin(){
 	btn?.addEventListener('click', renderAdmin);
 }
 
+function editUserPoints(email) {
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const user = list.find(u => u.email === email);
+	if (!user) return;
+	const newPoints = prompt("Sửa điểm cho tài khoản " + (user.name || email) + ":\nNhập số điểm mới:", user.points || 0);
+	if (newPoints !== null && !isNaN(newPoints) && newPoints.trim() !== '') {
+		user.points = Number(newPoints);
+		localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+		alert('Cập nhật điểm thành công!');
+		renderAdmin();
+	}
+}
 function deleteUser(email) {
 	if (!confirm(`Bạn có chắc muốn xóa người dùng ${email}?`)) return;
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
