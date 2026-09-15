@@ -101,7 +101,20 @@
     </header>
     <main class="content">
       <div class="leader">
-        <div><strong>Tổng số tài khoản:</strong> <span id="admin-total">0</span></div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; width:100%;">
+            <div style="background:var(--bg); padding:16px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
+              <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Tổng Tài Khoản</div>
+              <div style="font-size:28px; font-weight:bold; color:var(--primary)" id="admin-total">0</div>
+            </div>
+            <div style="background:var(--bg); padding:16px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
+              <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Quản Trị Viên</div>
+              <div style="font-size:28px; font-weight:bold; color:#fbbf24" id="admin-count">0</div>
+            </div>
+            <div style="background:var(--bg); padding:16px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
+              <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Tổng Điểm</div>
+              <div style="font-size:28px; font-weight:bold; color:#10b981" id="admin-points">0</div>
+            </div>
+          </div>
         <div class="desc">Mặc định có sẵn tài khoản admin.</div>
       </div>
       <div class="sentence-card" style="margin-top:12px; padding:16px;">
