@@ -556,8 +556,6 @@ function initTheme() {
 // Quiz Logic (10-Question Round)
 let quizRound = 1;
 let quizScore = 0;
-let quizTimerInterval;
-let quizTimeRemaining = 10;
 let currentQuizData = null;
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
@@ -684,6 +682,31 @@ function initQuiz() {
 	});
 }
 
+function boot() {
+	loadFromStorage();
+	hydrateUI();
+	initNav();
+	initFlashcards();
+	initSentences();
+	initProfile();
+	initAuth();
+	initQuiz();
+	initTheme();
+	
+	if (state.user) {
+		setActiveView("home");
+	} else {
+		setActiveView("splash");
+	}
+	
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('./sw.js').then(reg => {
+			reg.addEventListener('updatefound', () => {
+				const newWorker = reg.installing;
+				newWorker.addEventListener('statechange', () => {
+					if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+						window.location.reload(true);
+					}
 				});
 			});
 		}).catch(() => {});
