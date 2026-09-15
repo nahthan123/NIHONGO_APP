@@ -297,6 +297,45 @@ function selectFlashcardTopic(topic) {
 	renderFlashcard();
 }
 
+
+function updateFlashcardProgress() {
+	const bar = document.getElementById('fc-progress-bar');
+	const txt = document.getElementById('fc-progress-text');
+	const total = FLASHCARDS.length;
+	let memorizedCount = 0;
+	
+	if (state.user && state.user.memorizedWords) {
+		memorizedCount = state.user.memorizedWords.length;
+	}
+	
+	if (txt) txt.textContent = memorizedCount + " / " + total + " từ";
+	if (bar) bar.style.width = ((memorizedCount / total) * 100) + "%";
+}
+
+function toggleMemorized() {
+	if (!state.user) {
+		alert("Vui lòng đăng nhập để lưu tiến độ!");
+		return;
+	}
+	const fc = FLASHCARDS[state.fcIdx];
+	const wordId = fc.jp;
+	
+	const btnMem = document.getElementById('btn-fc-memorized');
+	if(btnMem) btnMem.textContent = "...";
+	
+	fetch('/api/users/toggle-word', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email: state.user.email, word: wordId })
+	}).then(res => res.json()).then(data => {
+		if (data.success) {
+			state.user.memorizedWords = data.memorizedWords;
+			updateFlashcardProgress();
+			renderFlashcard();
+		}
+	});
+}
+
 function renderFlashcard() {
 	const list = getFilteredFlashcards();
 	if (list.length === 0) return;
@@ -634,6 +673,11 @@ function renderAdmin(){
 					let pts = u.points || 0;
 					let lvl = Math.max(1, Math.floor(pts / 100) + 1);
 					tdPoints.textContent = pts + " (Lv" + lvl + ")";
+					const tdProgress = document.createElement('td');
+					tdProgress.style.padding = "10px 4px";
+					tdProgress.style.fontWeight = "bold";
+					tdProgress.style.color = "#10b981";
+					tdProgress.textContent = (u.progress || 0) + " từ";
 					const tdRole = document.createElement('td');
 					tdRole.style.padding = "10px 4px";
 					tdRole.innerHTML = u.role === 'admin' ? '<span style="color:#fbbf24;font-weight:bold;">Admin</span>' : 'User';

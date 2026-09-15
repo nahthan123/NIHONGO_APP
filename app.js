@@ -116,6 +116,48 @@ function updateHeaderStats() {
 	levelEls.forEach((el) => el && (el.textContent = String(state.level)));
 }
 
+
+function updateFlashcardProgress() {
+	const bar = document.getElementById('fc-progress-bar');
+	const txt = document.getElementById('fc-progress-text');
+	const total = FLASHCARDS.length;
+	let memorizedCount = 0;
+	
+	if (state.user && state.user.memorizedWords) {
+		memorizedCount = state.user.memorizedWords.length;
+	}
+	
+	if (txt) txt.textContent = memorizedCount + " / " + total + " từ";
+	if (bar) bar.style.width = ((memorizedCount / total) * 100) + "%";
+}
+
+function toggleMemorized() {
+	if (!state.user) {
+		alert("Vui lòng đăng nhập để lưu tiến độ!");
+		return;
+	}
+	const fc = FLASHCARDS[state.fcIdx];
+	const wordId = fc.jp; // Use JP as unique ID
+	
+	const raw = localStorage.getItem(STORAGE_KEYS.users);
+	let list = raw ? JSON.parse(raw) : [];
+	const userObj = list.find(u => u.email === state.user.email);
+	
+	if (userObj) {
+		if (!userObj.memorizedWords) userObj.memorizedWords = [];
+		const idx = userObj.memorizedWords.indexOf(wordId);
+		if (idx > -1) {
+			userObj.memorizedWords.splice(idx, 1);
+		} else {
+			userObj.memorizedWords.push(wordId);
+		}
+		localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(list));
+		state.user.memorizedWords = userObj.memorizedWords;
+		updateFlashcardProgress();
+		renderFlashcard();
+	}
+}
+
 function renderFlashcard() {
 	const data = FLASHCARDS[state.flashIdx % FLASHCARDS.length];
 	document.getElementById("fc-jp").textContent = data.jp;
@@ -275,7 +317,12 @@ function renderAdmin(){
 			let pts = u.points || 0;
 			let lvl = Math.max(1, Math.floor(pts / 100) + 1);
 			tdPoints.textContent = pts + " (Lv" + lvl + ")";
-			const tdRole = document.createElement('td');
+			const tdProgress = document.createElement('td');
+					tdProgress.style.padding = "10px 4px";
+					tdProgress.style.fontWeight = "bold";
+					tdProgress.style.color = "#10b981";
+					tdProgress.textContent = (u.memorizedWords ? u.memorizedWords.length : 0) + " từ";
+					const tdRole = document.createElement('td');
 			tdRole.style.padding = "10px 4px";
 			tdRole.innerHTML = u.role === 'admin' ? '<span style="color:#fbbf24;font-weight:bold;">Admin</span>' : 'User';
 			const tdAction = document.createElement('td');

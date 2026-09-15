@@ -103,7 +103,16 @@
 
     <!-- Flashcard Study Section -->
     <div id="fc-study-container" class="content" style="display:none;">
-      <div class="flashcard" id="flashcard">
+      <div style="margin-bottom:24px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px; font-weight:bold; color:var(--muted);">
+            <span>Tiến độ học từ vựng</span>
+            <span id="fc-progress-text">0 / 0 từ</span>
+          </div>
+          <div style="width:100%; height:8px; background:var(--border); border-radius:999px; overflow:hidden;">
+            <div id="fc-progress-bar" style="width:0%; height:100%; background:#10b981; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+        <div class="flashcard" id="flashcard">
         <div class="front" id="fc-front">
           <div class="jp" id="fc-jp">日本語</div>
           <div class="romaji" id="fc-romaji">Nihongo</div>

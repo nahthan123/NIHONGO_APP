@@ -83,7 +83,8 @@ app.get('/api/users/me', (req, res) => {
             points: user.points,
             level: user.level,
             role: user.role,
-            history: user.history || []
+			history: user.history || [],
+			memorizedWords: user.memorizedWords || []
         }
     });
 });
@@ -112,10 +113,11 @@ app.post('/api/auth/register', (req, res) => {
         role: 'user',
         points: startPoints,
         level: calcLevel(startPoints),
-        history: []
-    };
+        history: [],
+		memorizedWords: []
+	};
 
-    users.push(newUser);
+	users.push(newUser);
     saveUsers();
 
     res.json({
@@ -235,6 +237,27 @@ app.post('/api/users/add-history', (req, res) => {
     });
 });
 
+
+// POST /api/users/toggle-word
+app.post('/api/users/toggle-word', (req, res) => {
+    const { email, word } = req.body;
+    if (!email || !word) return res.status(400).json({ success: false });
+    const user = users.find(u => u.email === email);
+    if (!user) return res.status(404).json({ success: false });
+    
+    if (!user.memorizedWords) user.memorizedWords = [];
+    const idx = user.memorizedWords.indexOf(word);
+    let isMemorized = false;
+    if (idx > -1) {
+        user.memorizedWords.splice(idx, 1);
+    } else {
+        user.memorizedWords.push(word);
+        isMemorized = true;
+    }
+    saveUsers();
+    res.json({ success: true, memorizedWords: user.memorizedWords, isMemorized });
+});
+
 // GET /api/users/leaderboard
 app.get('/api/users/leaderboard', (req, res) => {
     const leaderboard = users
@@ -251,8 +274,9 @@ app.get('/api/admin/users', (req, res) => {
         name: u.name,
         role: u.role,
         points: u.points,
-        level: u.level
-    }));
+        level: u.level,
+		progress: u.memorizedWords ? u.memorizedWords.length : 0
+	}));
     res.json(list);
 });
 
