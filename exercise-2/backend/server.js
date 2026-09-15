@@ -256,6 +256,25 @@ app.get('/api/admin/users', (req, res) => {
     res.json(list);
 });
 
+
+// POST /api/admin/delete-user
+app.post('/api/admin/delete-user', (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ success: false, message: 'Email required' });
+    }
+    const userIndex = users.findIndex(u => u.email === email);
+    if (userIndex === -1) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    if (users[userIndex].role === 'admin') {
+        return res.status(403).json({ success: false, message: 'Cannot delete admin' });
+    }
+    users.splice(userIndex, 1);
+    saveUsers();
+    res.json({ success: true });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.status(200).send('OK');
