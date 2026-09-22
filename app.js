@@ -303,7 +303,13 @@ function renderAdmin(){
 	if(adminPointsEl) adminPointsEl.textContent = String(list.reduce((sum, u)=>sum + (u.points||0), 0));
 	if (tbodyEl) {
 		tbodyEl.innerHTML = '';
-		list.forEach(u => {
+		const searchEl = document.getElementById('admin-search');
+				let filteredList = list;
+				if (searchEl && searchEl.value) {
+					const term = searchEl.value.toLowerCase();
+					filteredList = list.filter(u => (u.name && u.name.toLowerCase().includes(term)) || (u.email && u.email.toLowerCase().includes(term)));
+				}
+				filteredList.forEach(u => {
 			const tr = document.createElement('tr');
 			tr.style.borderBottom = "1px solid var(--border)";
 			const tdName = document.createElement('td');
@@ -363,6 +369,11 @@ tdAction.style.flexWrap = "wrap";
 			tr.appendChild(tdAction);
 			tbodyEl.appendChild(tr);
 		});
+	}
+	const searchInput = document.getElementById('admin-search');
+	if(searchInput) {
+		searchInput.removeEventListener('input', renderAdmin);
+		searchInput.addEventListener('input', renderAdmin);
 	}
 	const btn = document.getElementById('admin-refresh');
 	btn?.removeEventListener('click', renderAdmin);
@@ -497,6 +508,16 @@ function showQuizResult(score) {
 	const box = document.createElement('div');
 	box.style.cssText = "background:var(--bg); padding:32px; border-radius:16px; text-align:center; max-width:90%; width:320px; box-shadow:0 10px 25px rgba(0,0,0,0.5);";
 	
+	
+	if (score >= 8) {
+		const script = document.createElement('script');
+		script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+		script.onload = () => {
+			confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+		};
+		document.body.appendChild(script);
+	}
+
 	let msg = score >= 8 ? "Tuyệt vời! 🎉" : score >= 5 ? "Khá lắm! 👍" : "Cố lên nhé! 💪";
 	
 	box.innerHTML = '<h2 style="margin-top:0; font-size:24px;">Kết quả</h2><div style="font-size:48px; margin:16px 0; font-weight:bold; color:var(--primary)">' + score + '/10</div><p style="margin-bottom:24px; color:var(--muted); font-size:16px;">' + msg + '</p><button id="btn-quiz-done" style="background:var(--primary); color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; font-size:16px;">Nhận ' + (score * 10) + ' Điểm</button>';

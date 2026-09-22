@@ -659,7 +659,13 @@ function renderAdmin(){
 			if(adminPointsEl) adminPointsEl.textContent = String(list.reduce((sum, u)=>sum + (u.points||0), 0));
 			if (tbodyEl) {
 				tbodyEl.innerHTML = '';
-				list.forEach(u => {
+				const searchEl = document.getElementById('admin-search');
+				let filteredList = list;
+				if (searchEl && searchEl.value) {
+					const term = searchEl.value.toLowerCase();
+					filteredList = list.filter(u => (u.name && u.name.toLowerCase().includes(term)) || (u.email && u.email.toLowerCase().includes(term)));
+				}
+				filteredList.forEach(u => {
 					const tr = document.createElement('tr');
 					tr.style.borderBottom = "1px solid var(--border)";
 					const tdName = document.createElement('td');
@@ -723,6 +729,11 @@ tdAction.style.flexWrap = "wrap";
 		})
 		.catch(err => console.error("Admin fetch error:", err));
 	
+	const searchInput = document.getElementById('admin-search');
+	if(searchInput) {
+		searchInput.removeEventListener('input', renderAdmin);
+		searchInput.addEventListener('input', renderAdmin);
+	}
 	const btn = document.getElementById('admin-refresh');
 	btn?.removeEventListener('click', renderAdmin);
 	btn?.addEventListener('click', renderAdmin);
