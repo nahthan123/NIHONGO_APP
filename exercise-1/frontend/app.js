@@ -24,6 +24,11 @@ const VIEWS = [
 	"quiz", "admin"
 ];
 
+/**
+ * ĐỊNH NGHĨA KHÓA LƯU TRỮ (STORAGE KEYS)
+ * Các hằng số này được dùng làm tên (key) để lưu dữ liệu vào Local Storage của trình duyệt.
+ * Tránh việc gõ sai chữ (typo) khi lập trình.
+ */
 const STORAGE_KEYS = {
 	points: "nihongo_points",
 	name: "nihongo_name",
@@ -33,6 +38,11 @@ const STORAGE_KEYS = {
 	history: "nihongo_history"
 };
 
+/**
+ * QUẢN LÝ TRẠNG THÁI (STATE MANAGEMENT)
+ * Biến 'state' đóng vai trò như một "kho lưu trữ tạm thời" trên RAM để ứng dụng hoạt động mượt mà.
+ * Thay vì liên tục đọc/ghi vào LocalStorage (ổ cứng), ta đọc lên 'state' một lần và sử dụng.
+ */
 const state = {
 	points: 0,
 	level: 1,
@@ -107,6 +117,11 @@ const TOPIC_NAMES = {
 let quizTimerInterval = null;
 let quizTimeRemaining = 10;
 
+/**
+ * TẢI DỮ LIỆU TỪ TRÌNH DUYỆT (LOCAL STORAGE)
+ * Đọc thông tin người dùng, lịch sử, điểm số từ bộ nhớ của trình duyệt (LocalStorage)
+ * và nạp vào biến 'state' để sử dụng.
+ */
 function loadFromStorage() {
 	seedAdminIfMissing();
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
@@ -146,6 +161,10 @@ function savePoints() {
 	}
 }
 function saveName() { }
+/**
+ * LƯU THÔNG TIN NGƯỜI DÙNG (SAVE USER)
+ * Sau khi thay đổi điểm số, lịch sử học tập, gọi hàm này để ghi đè dữ liệu mới vào LocalStorage.
+ */
 function saveUser() { state.user ? localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(state.user)) : localStorage.removeItem(STORAGE_KEYS.user); }
 function saveUsers() { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(state.users)); }
 function saveTheme() { localStorage.setItem(STORAGE_KEYS.theme, state.theme); }
@@ -165,6 +184,11 @@ function saveHistory() {
 
 function calcLevel(points) { return Math.max(1, Math.floor(points / 100) + 1); }
 
+/**
+ * ĐIỀU HƯỚNG CÁC MÀN HÌNH (ROUTING / SPA ROUTER)
+ * Ứng dụng này là dạng SPA (Single Page Application) - Chỉ có 1 trang HTML duy nhất.
+ * Hàm này làm nhiệm vụ ẩn/hiện các khối <section> tương ứng để tạo cảm giác chuyển trang.
+ */
 function setActiveView(name) {
 	// Guard: Nếu chưa đăng nhập thì chỉ được ở splash hoặc auth
 	if (name !== 'splash' && name !== 'auth' && !state.user) {
@@ -328,6 +352,11 @@ function toggleMemorized() {
 	}
 }
 
+/**
+ * HIỂN THỊ THẺ TỪ VỰNG (FLASHCARD RENDER)
+ * Đổ dữ liệu chữ Tiếng Nhật, Romaji, Nghĩa Tiếng Việt vào thẻ HTML.
+ * Hàm này cũng chịu trách nhiệm kiểm tra xem từ này đã được lưu tiến độ (Đã thuộc) chưa.
+ */
 function renderFlashcard() {
 	const list = getFilteredFlashcards();
 	if (list.length === 0) return;
@@ -499,8 +528,18 @@ function hydrateUI() {
 	});
 }
 
+/**
+ * MÃ HÓA MẬT KHẨU (PASSWORD HASHING)
+ * Hàm băm đơn giản để mã hóa mật khẩu người dùng trước khi lưu vào LocalStorage.
+ * Trong thực tế (Ex 2), việc mã hóa này phải được thực hiện ở Backend (như dùng bcrypt).
+ */
 function hash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; } return String(h); }
 
+/**
+ * KHỞI TẠO CHỨC NĂNG ĐĂNG NHẬP / ĐĂNG KÝ (AUTHENTICATION)
+ * Lắng nghe sự kiện click trên các nút Đăng nhập / Đăng ký.
+ * Kiểm tra tính hợp lệ của Email, Mật khẩu (Validation), và mã hóa mật khẩu.
+ */
 function initAuth() {
 	const tabLogin = document.getElementById("tab-login");
 	const tabRegister = document.getElementById("tab-register");
@@ -613,6 +652,11 @@ function buildQuizQuestion(){
 	return { correct, options, correctIndex }; 
 }
 
+/**
+ * HIỂN THỊ CÂU HỎI TRẮC NGHIỆM (QUIZ GENERATOR)
+ * Lấy ngẫu nhiên 1 từ làm đáp án đúng, và trộn lẫn 3 đáp án sai.
+ * Hiển thị ra màn hình và bắt đầu đếm ngược thời gian.
+ */
 function renderQuizQuestion() {
 	if (quizRound > 10) {
 		showQuizResult(quizScore);
@@ -734,6 +778,11 @@ function initQuiz() {
 	});
 }
 
+/**
+ * HÀM KHỞI ĐỘNG (BOOTSTRAP / ENTRY POINT)
+ * Khi trang web vừa tải xong, hàm này sẽ chạy đầu tiên.
+ * Nó sẽ gọi các hàm init (Khởi tạo) và đăng ký Service Worker (để app có thể chạy Offline - PWA).
+ */
 function boot() {
 	loadFromStorage();
 	hydrateUI();
