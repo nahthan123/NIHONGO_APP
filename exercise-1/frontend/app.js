@@ -907,6 +907,11 @@ tdAction.style.flexWrap = "wrap";
 	btn?.addEventListener('click', renderAdmin);
 }
 
+/**
+ * CHỈNH SỬA ĐIỂM NGƯỜI DÙNG (CẬP NHẬT LEVEL)
+ * Dùng lệnh prompt() để hỏi Admin số điểm mới.
+ * Sau khi nhập, hàm calcLevel() sẽ tự động tính lại cấp độ tương ứng với điểm mới.
+ */
 function editUserPoints(email) {
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	let list = raw ? JSON.parse(raw) : [];
@@ -920,6 +925,11 @@ function editUserPoints(email) {
 		renderAdmin();
 	}
 }
+/**
+ * XÓA NGƯỜI DÙNG (DELETE - TRONG CRUD)
+ * Dùng lệnh confirm() để chống xóa nhầm.
+ * Dùng hàm mảng .filter() để giữ lại những ai CÓ EMAIL KHÁC với email cần xóa.
+ */
 function deleteUser(email) {
 	if (!confirm('Bạn có chắc muốn xóa người dùng ' + email + '?')) return;
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
@@ -933,6 +943,11 @@ function deleteUser(email) {
 
 
 
+/**
+ * CẤP / HẠ QUYỀN ADMIN (ROLE MANAGEMENT)
+ * Chuyển đổi trạng thái role giữa 'admin' và 'user'.
+ * Có code chặn (guard) không cho phép admin tự thay đổi quyền của chính mình.
+ */
 function toggleUserRole(email) {
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	let list = raw ? JSON.parse(raw) : [];
@@ -947,6 +962,11 @@ function toggleUserRole(email) {
 	alert('Đã thay đổi quyền thành: ' + user.role);
 	renderAdmin();
 }
+/**
+ * XEM NHẬT KÝ HOẠT ĐỘNG (AUDIT LOG)
+ * Trích xuất mảng 'history' của người dùng.
+ * Dùng .slice(0, 10) để chỉ lấy 10 hành động mới nhất, tránh bị tràn màn hình.
+ */
 function viewUserHistory(email) {
 	const raw = localStorage.getItem(STORAGE_KEYS.users);
 	let list = raw ? JSON.parse(raw) : [];
