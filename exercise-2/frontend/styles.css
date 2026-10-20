@@ -500,26 +500,11 @@ button, input, select, textarea {
   overflow: hidden;
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: transparent;
-  transition: background-color 0.2s;
-}
-
 .card:hover {
   background: var(--card-hover);
   border-color: var(--primary);
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.16);
-}
-
-.card:hover::before {
-  background: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.22);
 }
 
 .card-icon-box {
