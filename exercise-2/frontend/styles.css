@@ -1192,26 +1192,67 @@ button, input, select, textarea {
   gap: 6px;
 }
 
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.field label,
 .auth-mock label {
   font-size: 13px;
   font-weight: 700;
   color: var(--muted);
+  display: block;
 }
 
+.field input,
+.auth-box input,
 .auth-mock input {
-  padding: 12px 14px;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  padding: 13px 16px;
   border-radius: 12px;
   border: 1.5px solid var(--border);
   background: var(--input-bg);
-  color: var(--text);
+  color: #f8fafc !important;
   font-size: 15px;
-  transition: border-color 0.2s;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
+.field input::placeholder,
+.auth-box input::placeholder,
+.auth-mock input::placeholder {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.field input:focus,
+.auth-box input:focus,
 .auth-mock input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  background: var(--panel);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="light"] .field input,
+[data-theme="light"] .auth-box input,
+[data-theme="light"] .auth-mock input {
+  background: #ffffff;
+  color: #0f172a !important;
+  border-color: #cbd5e1;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .field input::placeholder,
+[data-theme="light"] .auth-box input::placeholder,
+[data-theme="light"] .auth-mock input::placeholder {
+  color: #94a3b8;
 }
 
 .btn-group {
