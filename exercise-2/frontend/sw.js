@@ -1,9 +1,12 @@
-const CACHE_NAME = 'nihongo-cache-v5';
+const CACHE_NAME = 'nihongo-cache-v9';
 const ASSETS = [
 	'./',
 	'./index.html',
 	'./styles.css',
 	'./app.js',
+	'./admin.html',
+	'./admin.css',
+	'./admin.js',
 	'./manifest.webmanifest',
 ];
 
@@ -26,6 +29,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
 	const { request } = event;
 	if (request.method !== 'GET') return;
+	// Do not cache API requests
+	if (request.url.includes('/api/')) return;
+
 	event.respondWith(
 		fetch(request).then((response) => {
 			const copy = response.clone();

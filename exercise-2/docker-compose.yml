@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     container_name: nihongo-backend
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     volumes:
       - backend-data:/app/data
     environment:
@@ -21,10 +21,11 @@ services:
       dockerfile: Dockerfile.frontend
     container_name: nihongo-frontend-full
     ports:
-      - "8081:80"
+      - "${PORT:-80}:80"
     depends_on:
       - backend
     restart: always
 
 volumes:
   backend-data:
+    name: nihongo-backend-data

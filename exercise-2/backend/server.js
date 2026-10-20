@@ -38,18 +38,72 @@ if (fs.existsSync(DATA_FILE)) {
     }
 }
 
-// Seed admin if not present
+// Seed admin and demo learners for testing/evaluation
 const adminExists = users.some(u => u.role === 'admin');
-if (!adminExists) {
-    users.push({
-        email: 'admin@nihongo.local',
-        name: 'Administrator',
-        passwordHash: hash('admin123'),
-        role: 'admin',
-        points: 0,
-        level: 1,
-        history: []
+if (!adminExists || users.length <= 1) {
+    if (!adminExists) {
+        users.push({
+            email: 'admin@nihongo.local',
+            name: 'Quản trị viên (Admin)',
+            passwordHash: hash('admin123'),
+            role: 'admin',
+            points: 500,
+            level: 6,
+            history: [
+                { action: 'Khởi tạo hệ thống NihonGo', timestamp: new Date(Date.now() - 3600000 * 24).toISOString() },
+                { action: 'Đăng nhập vào hệ thống Quản trị', timestamp: new Date(Date.now() - 3600000).toISOString() }
+            ],
+            memorizedWords: ['こんにちは', 'ありがとう', 'さようなら', 'おはよう']
+        });
+    }
+
+    // Add demo learners if missing
+    const demoLearners = [
+        {
+            email: 'sakura@nihongo.local',
+            name: 'Sakura Tanaka',
+            passwordHash: hash('123456'),
+            role: 'user',
+            points: 420,
+            level: 5,
+            history: [
+                { action: 'Hoàn thành vòng trắc nghiệm 10 câu (+100 điểm)', timestamp: new Date(Date.now() - 3600000 * 2).toISOString() },
+                { action: 'Ghi nhớ từ vựng: 美味しい, お茶, 水', timestamp: new Date(Date.now() - 3600000 * 6).toISOString() }
+            ],
+            memorizedWords: ['こんにちは', 'ありがとう', '水', 'ご飯', '美味しい', 'お茶']
+        },
+        {
+            email: 'kenji@nihongo.local',
+            name: 'Kenji Sato',
+            passwordHash: hash('123456'),
+            role: 'user',
+            points: 250,
+            level: 3,
+            history: [
+                { action: 'Luyện tập Flashcard chủ đề Giao thông', timestamp: new Date(Date.now() - 3600000 * 8).toISOString() }
+            ],
+            memorizedWords: ['駅', '電車', '切符']
+        },
+        {
+            email: 'hocvien@nihongo.local',
+            name: 'Học viên Demo',
+            passwordHash: hash('123456'),
+            role: 'user',
+            points: 90,
+            level: 1,
+            history: [
+                { action: 'Đăng ký tài khoản thành công', timestamp: new Date(Date.now() - 3600000 * 12).toISOString() }
+            ],
+            memorizedWords: ['こんにちは']
+        }
+    ];
+
+    demoLearners.forEach(learner => {
+        if (!users.some(u => u.email === learner.email)) {
+            users.push(learner);
+        }
     });
+
     saveUsers();
 }
 
@@ -83,8 +137,8 @@ app.get('/api/users/me', (req, res) => {
             points: user.points,
             level: user.level,
             role: user.role,
-			history: user.history || [],
-			memorizedWords: user.memorizedWords || []
+            history: user.history || [],
+            memorizedWords: user.memorizedWords || []
         }
     });
 });
@@ -101,23 +155,23 @@ app.post('/api/auth/register', (req, res) => {
         return res.status(400).json({ success: false, message: 'Vui lòng nhập đúng định dạng email (ví dụ: name@domain.com)' });
     }
 
-    if (users.some(u => u.email === email)) {
+    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
         return res.status(400).json({ success: false, message: 'Email already exists' });
     }
 
     const startPoints = Number(points) || 0;
     const newUser = {
-        email,
-        name: name || 'Người học NihonGo',
+        email: email.trim().toLowerCase(),
+        name: name ? name.trim() : 'Người học NihonGo',
         passwordHash: hash(password),
         role: 'user',
         points: startPoints,
         level: calcLevel(startPoints),
-        history: [],
-		memorizedWords: []
-	};
+        history: [{ action: 'Tạo tài khoản mới', timestamp: new Date().toISOString() }],
+        memorizedWords: []
+    };
 
-	users.push(newUser);
+    users.push(newUser);
     saveUsers();
 
     res.json({
@@ -128,7 +182,8 @@ app.post('/api/auth/register', (req, res) => {
             points: newUser.points,
             level: newUser.level,
             role: newUser.role,
-            history: newUser.history
+            history: newUser.history,
+            memorizedWords: newUser.memorizedWords
         }
     });
 });
@@ -145,9 +200,9 @@ app.post('/api/auth/login', (req, res) => {
         return res.status(400).json({ success: false, message: 'Vui lòng nhập đúng định dạng email' });
     }
 
-    const user = users.find(u => u.email === email && u.passwordHash === hash(password));
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim() && u.passwordHash === hash(password));
     if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        return res.status(401).json({ success: false, message: 'Email hoặc mật khẩu không chính xác' });
     }
 
     res.json({
@@ -158,7 +213,8 @@ app.post('/api/auth/login', (req, res) => {
             points: user.points,
             level: user.level,
             role: user.role,
-            history: user.history || []
+            history: user.history || [],
+            memorizedWords: user.memorizedWords || []
         }
     });
 });
@@ -170,12 +226,12 @@ app.post('/api/users/update-points', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email and points are required' });
     }
 
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.points = Number(points) || 0;
+    user.points = Math.max(0, Number(points) || 0);
     user.level = calcLevel(user.points);
     saveUsers();
 
@@ -193,7 +249,7 @@ app.post('/api/users/update-name', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email and name are required' });
     }
 
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -214,7 +270,7 @@ app.post('/api/users/add-history', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email and action are required' });
     }
 
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -237,13 +293,12 @@ app.post('/api/users/add-history', (req, res) => {
     });
 });
 
-
 // POST /api/users/toggle-word
 app.post('/api/users/toggle-word', (req, res) => {
     const { email, word } = req.body;
-    if (!email || !word) return res.status(400).json({ success: false });
-    const user = users.find(u => u.email === email);
-    if (!user) return res.status(404).json({ success: false });
+    if (!email || !word) return res.status(400).json({ success: false, message: 'Email and word required' });
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     
     if (!user.memorizedWords) user.memorizedWords = [];
     const idx = user.memorizedWords.indexOf(word);
@@ -261,11 +316,48 @@ app.post('/api/users/toggle-word', (req, res) => {
 // GET /api/users/leaderboard
 app.get('/api/users/leaderboard', (req, res) => {
     const leaderboard = users
-        .map(u => ({ name: u.name, points: u.points, level: u.level }))
+        .map(u => ({ 
+            name: u.name, 
+            points: u.points || 0, 
+            level: u.level || 1, 
+            words: (u.memorizedWords || []).length 
+        }))
         .sort((a, b) => b.points - a.points)
         .slice(0, 10);
     res.json(leaderboard);
 });
+
+// ========================================================
+// Middleware: Role-Based Authorization for Admin APIs
+// ========================================================
+function requireAdmin(req, res, next) {
+    const adminEmail = (
+        req.headers['x-admin-email'] || 
+        req.query.adminEmail || 
+        (req.body && req.body.adminEmail) || 
+        ''
+    ).toString().trim().toLowerCase();
+
+    if (!adminEmail) {
+        return res.status(401).json({ 
+            success: false, 
+            message: 'Yêu cầu xác thực: Vui lòng cung cấp thông tin tài khoản Quản trị viên (x-admin-email header).' 
+        });
+    }
+
+    const adminUser = users.find(u => u.email.toLowerCase() === adminEmail && u.role === 'admin');
+    if (!adminUser) {
+        return res.status(403).json({ 
+            success: false, 
+            message: 'Từ chối truy cập: Tài khoản không có đặc quyền Quản trị viên (Admin).' 
+        });
+    }
+
+    req.admin = adminUser;
+    next();
+}
+
+app.use('/api/admin', requireAdmin);
 
 // GET /api/admin/users
 app.get('/api/admin/users', (req, res) => {
@@ -273,13 +365,117 @@ app.get('/api/admin/users', (req, res) => {
         email: u.email,
         name: u.name,
         role: u.role,
-        points: u.points,
-        level: u.level,
-		progress: u.memorizedWords ? u.memorizedWords.length : 0
-	}));
+        points: u.points || 0,
+        level: u.level || 1,
+        progress: u.memorizedWords ? u.memorizedWords.length : 0,
+        historyCount: (u.history || []).length
+    }));
     res.json(list);
 });
 
+// GET /api/admin/stats - Overview metrics
+app.get('/api/admin/stats', (req, res) => {
+    let totalPoints = 0;
+    let totalWords = 0;
+    let adminCount = 0;
+    let userCount = 0;
+
+    users.forEach(u => {
+        totalPoints += (u.points || 0);
+        totalWords += ((u.memorizedWords || []).length);
+        if (u.role === 'admin') adminCount++;
+        else userCount++;
+    });
+
+    res.json({
+        success: true,
+        totalUsers: users.length,
+        adminCount,
+        userCount,
+        totalPoints,
+        totalWords,
+        serverUptime: Math.floor(process.uptime()),
+        nodeVersion: process.version,
+        memoryUsage: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB',
+        environment: process.env.NODE_ENV || 'production',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// POST /api/admin/create-user
+app.post('/api/admin/create-user', (req, res) => {
+    const { email, password, name, role, points } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email và mật khẩu là bắt buộc' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ success: false, message: 'Định dạng email không hợp lệ' });
+    }
+
+    if (users.some(u => u.email.toLowerCase() === email.toLowerCase().trim())) {
+        return res.status(400).json({ success: false, message: 'Email này đã tồn tại trong hệ thống' });
+    }
+
+    const pts = Math.max(0, Number(points) || 0);
+    const newUser = {
+        email: email.trim().toLowerCase(),
+        name: name ? name.trim() : 'Người dùng mới',
+        passwordHash: hash(password),
+        role: role === 'admin' ? 'admin' : 'user',
+        points: pts,
+        level: calcLevel(pts),
+        history: [{ action: 'Quản trị viên tạo tài khoản', timestamp: new Date().toISOString() }],
+        memorizedWords: []
+    };
+
+    users.push(newUser);
+    saveUsers();
+
+    res.json({ success: true, message: 'Tạo tài khoản thành công', user: newUser });
+});
+
+// POST /api/admin/update-user
+app.post('/api/admin/update-user', (req, res) => {
+    const { email, name, points, role } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email là bắt buộc' });
+
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+
+    if (name !== undefined) user.name = name.trim();
+    if (points !== undefined) {
+        user.points = Math.max(0, Number(points) || 0);
+        user.level = calcLevel(user.points);
+    }
+    if (role !== undefined) {
+        // Protect last admin
+        if (user.role === 'admin' && role !== 'admin') {
+            const adminTotal = users.filter(u => u.role === 'admin').length;
+            if (adminTotal <= 1) {
+                return res.status(400).json({ success: false, message: 'Không thể hạ quyền Admin duy nhất của hệ thống' });
+            }
+        }
+        user.role = role === 'admin' ? 'admin' : 'user';
+    }
+
+    saveUsers();
+    res.json({ success: true, user });
+});
+
+// POST /api/admin/reset-password
+app.post('/api/admin/reset-password', (req, res) => {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) return res.status(400).json({ success: false, message: 'Email và mật khẩu mới là bắt buộc' });
+
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+
+    user.passwordHash = hash(newPassword);
+    saveUsers();
+    res.json({ success: true, message: 'Đã đổi mật khẩu thành công' });
+});
 
 // POST /api/admin/delete-user
 app.post('/api/admin/delete-user', (req, res) => {
@@ -287,26 +483,38 @@ app.post('/api/admin/delete-user', (req, res) => {
     if (!email) {
         return res.status(400).json({ success: false, message: 'Email required' });
     }
-    const userIndex = users.findIndex(u => u.email === email);
+    const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
     if (userIndex === -1) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
     if (users[userIndex].role === 'admin') {
-        return res.status(403).json({ success: false, message: 'Cannot delete admin' });
+        const adminTotal = users.filter(u => u.role === 'admin').length;
+        if (adminTotal <= 1) {
+            return res.status(403).json({ success: false, message: 'Không thể xóa Admin duy nhất của hệ thống' });
+        }
     }
     users.splice(userIndex, 1);
     saveUsers();
     res.json({ success: true });
 });
 
-
 // POST /api/admin/toggle-role
 app.post('/api/admin/toggle-role', (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ success: false });
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) return res.status(404).json({ success: false });
-    user.role = user.role === 'admin' ? 'user' : 'admin';
+
+    if (user.role === 'admin') {
+        const adminTotal = users.filter(u => u.role === 'admin').length;
+        if (adminTotal <= 1) {
+            return res.status(400).json({ success: false, message: 'Không thể hạ quyền Admin duy nhất' });
+        }
+        user.role = 'user';
+    } else {
+        user.role = 'admin';
+    }
+
     saveUsers();
     res.json({ success: true, role: user.role });
 });
@@ -314,14 +522,20 @@ app.post('/api/admin/toggle-role', (req, res) => {
 // GET /api/admin/user-history
 app.get('/api/admin/user-history', (req, res) => {
     const { email } = req.query;
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email.toLowerCase() === (email || '').toLowerCase());
     if (!user) return res.status(404).json({ success: false });
     res.json({ success: true, history: user.history || [] });
 });
 
-// Health check
+// Health check for AWS load balancer / Docker
 app.get('/api/health', (req, res) => {
-    res.status(200).send('OK');
+    res.status(200).json({
+        status: 'OK',
+        service: 'nihongo-backend',
+        version: '2.0.0',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Serve static frontend files (ideal for local testing and Docker)
@@ -335,5 +549,5 @@ if (fs.existsSync(path.join(frontendDockerPath, 'index.html'))) {
 }
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`NihonGo Backend running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
 });

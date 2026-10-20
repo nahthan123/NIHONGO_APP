@@ -3,71 +3,498 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản trị hệ thống | NihonGo</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    body { background: var(--bg); color: var(--text); padding-top: 60px; }
-    .admin-container { max-width: 1000px; margin: 0 auto; padding: 24px; }
-    #admin-users-tbody tr { transition: background 0.2s ease; }
-    #admin-users-tbody tr:hover { background: rgba(255,255,255,0.05); }
-    .admin-table th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 12px 24px; }
-    .admin-table td { font-size: 14px; padding: 16px 24px; }
-    #admin-search:focus { outline: 2px solid var(--primary); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
-  </style>
+  <title>NihonGo Cloud Admin | Quản trị Hệ thống</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <header style="position:fixed; top:0; width:100%; height:60px; background:var(--card); display:flex; align-items:center; padding:0 24px; box-shadow:0 2px 10px rgba(0,0,0,0.5); z-index:100;">
-    <h1 style="font-size:18px; margin:0; flex:1;">Quản trị hệ thống</h1>
-    <button onclick="window.location.href='index.html'" class="btn" style="background:transparent; border:1px solid var(--border); color:var(--text);">← Về trang học</button>
+  <!-- Top Navigation Bar -->
+  <header class="admin-navbar">
+    <div class="brand-section">
+      <div class="brand-logo">N</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="brand-title">NihonGo Cloud Admin</span>
+          <span class="brand-badge">AWS Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Live Server Health Badge -->
+      <div class="server-pill" id="live-server-badge" title="Đang kết nối tới Backend API">
+        <span class="server-dot"></span>
+        <span id="server-status-text">AWS Backend: 200 OK</span>
+      </div>
+
+      <!-- Quick Action: Go to Student App -->
+      <a href="index.html" class="btn btn-outline btn-sm" title="Vào giao diện học tập">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        Vào ứng dụng học
+      </a>
+
+      <!-- Admin Profile & Logout -->
+      <div class="admin-profile" id="admin-profile-pill">
+        <div class="profile-avatar" id="admin-avatar">A</div>
+        <div style="line-height:1.2;">
+          <div style="font-size:13px; font-weight:600;" id="admin-name">Administrator</div>
+          <div style="font-size:11px; color:var(--admin-muted);" id="admin-email">admin@nihongo.local</div>
+        </div>
+        <button id="btn-admin-logout" class="btn btn-outline btn-sm" style="padding:4px 8px; margin-left:6px;" title="Đăng xuất">
+          Đăng xuất
+        </button>
+      </div>
+    </div>
   </header>
-  
-  <main class="admin-container">
-    <!-- Thống kê -->
-    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px; width:100%;">
-      <div style="background:var(--card); padding:24px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
-        <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Tổng Tài Khoản</div>
-        <div style="font-size:36px; font-weight:bold; color:var(--primary)" id="admin-total">0</div>
+
+  <!-- Layout with Sidebar + Main Content -->
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-heading">Bảng Điều Khiển</div>
+      <button class="sidebar-btn active" data-tab="tab-overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        Tổng quan hệ thống
+      </button>
+      <button class="sidebar-btn" data-tab="tab-users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Quản lý người dùng
+      </button>
+      <button class="sidebar-btn" data-tab="tab-leaderboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        Bảng xếp hạng
+      </button>
+
+      <div class="sidebar-heading" style="margin-top:20px;">Hạ Tầng & DevOps</div>
+      <button class="sidebar-btn" data-tab="tab-infra">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+        Hạ tầng AWS & Server
+      </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- ================= SECTION 1: OVERVIEW ================= -->
+      <section id="tab-overview" class="tab-section">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>Tổng Quan Hệ Thống</h2>
+            <p>Báo cáo hoạt động người dùng và trạng thái triển khai AWS EC2</p>
+          </div>
+          <div class="header-actions">
+            <button id="btn-refresh-all" class="btn btn-outline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Làm mới
+            </button>
+            <button id="btn-open-create-user" class="btn btn-primary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Thêm tài khoản
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Metrics Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card green">
+            <div class="kpi-top">
+              <span class="kpi-title">Tổng Tài Khoản</span>
+              <div class="kpi-icon green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-users">0</div>
+            <div class="kpi-sub" id="kpi-user-breakdown">Đang tải dữ liệu...</div>
+          </div>
+
+          <div class="kpi-card amber">
+            <div class="kpi-top">
+              <span class="kpi-title">Quản Trị Viên</span>
+              <div class="kpi-icon amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-admin-count">0</div>
+            <div class="kpi-sub">Quyền Admin quản trị tối cao</div>
+          </div>
+
+          <div class="kpi-card indigo">
+            <div class="kpi-top">
+              <span class="kpi-title">Tổng Điểm Thưởng</span>
+              <div class="kpi-icon indigo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-points">0</div>
+            <div class="kpi-sub">Tích lũy từ Flashcards & Quiz</div>
+          </div>
+
+          <div class="kpi-card sky">
+            <div class="kpi-top">
+              <span class="kpi-title">Từ Vựng Đã Học</span>
+              <div class="kpi-icon sky">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-words">0</div>
+            <div class="kpi-sub">Lượt từ vựng đã thuộc toàn hệ thống</div>
+          </div>
+        </div>
+
+        <!-- Quick Summary Table of Users -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title">Tài Khoản Gần Đây</div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('tab-users')">Xem tất cả người dùng →</button>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Người dùng</th>
+                  <th>Vai trò</th>
+                  <th>Cấp độ</th>
+                  <th>Từ đã thuộc</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="overview-recent-tbody">
+                <!-- Render by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 2: USERS MANAGEMENT ================= -->
+      <section id="tab-users" class="tab-section" style="display:none;">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>Quản Lý Người Dùng</h2>
+            <p>Theo dõi tiến độ, thay đổi vai trò, điều chỉnh điểm số và quản trị tài khoản</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-outline btn-sm" id="btn-export-json" title="Xuất dữ liệu người dùng ra file JSON">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Xuất JSON
+            </button>
+            <button class="btn btn-primary" onclick="openCreateUserModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Thêm người dùng mới
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="filter-bar" style="width:100%; justify-content:space-between;">
+              <input type="text" id="admin-search-input" class="search-input" placeholder="🔍 Tìm kiếm theo tên hoặc email...">
+              <div style="display:flex; gap:10px;">
+                <select id="admin-filter-role" class="filter-select">
+                  <option value="all">Tất cả vai trò</option>
+                  <option value="admin">Quản trị viên (Admin)</option>
+                  <option value="user">Học viên (User)</option>
+                </select>
+                <select id="admin-sort-by" class="filter-select">
+                  <option value="points-desc">Điểm cao nhất</option>
+                  <option value="points-asc">Điểm thấp nhất</option>
+                  <option value="words-desc">Nhiều từ thuộc nhất</option>
+                  <option value="name-asc">Tên (A-Z)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Thành viên</th>
+                  <th>Vai trò</th>
+                  <th>Cấp độ & Điểm</th>
+                  <th>Tiến độ từ vựng</th>
+                  <th>Thao tác quản trị</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-tbody">
+                <!-- Render by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 3: LEADERBOARD ================= -->
+      <section id="tab-leaderboard" class="tab-section" style="display:none;">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>Bảng Xếp Hạng Toàn Hệ Thống</h2>
+            <p>Top học viên có thành tích học tập và rèn luyện xuất sắc nhất</p>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title">Top 10 Học Viên Dẫn Đầu</div>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width:80px;">Hạng</th>
+                  <th>Học viên</th>
+                  <th>Điểm tích lũy</th>
+                  <th>Cấp độ (Level)</th>
+                  <th>Từ đã ghi nhớ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-leaderboard-tbody">
+                <!-- Render by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 4: AWS INFRASTRUCTURE ================= -->
+      <section id="tab-infra" class="tab-section" style="display:none;">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>Hạ Tầng AWS & DevOps Deployment</h2>
+            <p>Trạng thái Multi-Container Docker, Nginx Reverse Proxy và cấu hình triển khai EC2</p>
+          </div>
+        </div>
+
+        <div class="infra-grid">
+          <div class="infra-card">
+            <div class="infra-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              Kiến Trúc Multi-Container Docker
+            </div>
+            <p style="font-size:13px; color:var(--admin-muted); line-height:1.6;">
+              • <strong>Frontend Container (Nginx Alpine):</strong> Nhận traffic cổng 80 (HTTP) từ Internet, phục vụ Web tĩnh và chuyển hướng API.<br>
+              • <strong>Backend Container (Node.js 18):</strong> Xử lý REST API trên cổng nội bộ 5000.<br>
+              • <strong>Persistence Volume:</strong> Thư mục <code>/app/data</code> được gắn vào volume <code>backend-data</code> đảm bảo dữ liệu người dùng không bị mất khi reboot EC2.
+            </p>
+            <div class="infra-code-block">docker compose up -d --build</div>
+          </div>
+
+          <div class="infra-card">
+            <div class="infra-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              Trạng Thái Máy Chủ Thời Gian Thực
+            </div>
+            <div style="font-size:13px; line-height:2;">
+              <div>• <strong>Môi trường:</strong> <span style="color:#10b981;" id="infra-env">production</span></div>
+              <div>• <strong>Thời gian hoạt động (Uptime):</strong> <span id="infra-uptime">0s</span></div>
+              <div>• <strong>Bộ nhớ RAM tiêu thụ:</strong> <span id="infra-ram">0 MB</span></div>
+              <div>• <strong>Phiên bản Node.js:</strong> <span id="infra-node">-</span></div>
+              <div>• <strong>Cổng kết nối Nginx:</strong> <span style="color:#38bdf8;">80 (HTTP chuẩn AWS)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card" style="margin-top:24px;">
+          <div class="panel-header">
+            <div class="panel-title">Hướng Dẫn Nhanh Triển Khai Lên AWS EC2 Cho Giảng Viên / Kiểm Thử</div>
+          </div>
+          <div style="padding:20px; font-size:14px; line-height:1.7;">
+            <ol style="padding-left:20px;">
+              <li><strong>Tạo máy chủ EC2 (Ubuntu 22.04 / 24.04 hoặc Amazon Linux):</strong> Đảm bảo mở Security Group cho Inbound Port <strong>80 (HTTP)</strong> và Port <strong>22 (SSH)</strong>.</li>
+              <li><strong>Cài đặt Docker trên EC2:</strong> Chạy lệnh <code>sudo apt update && sudo apt install -y docker.io docker-compose-v2</code></li>
+              <li><strong>Clone dự án và khởi chạy:</strong> 
+                <div class="infra-code-block">cd exercise-2 && docker compose up -d --build</div>
+              </li>
+              <li><strong>Truy cập ứng dụng kiểm thử:</strong>
+                <div>• Trang học tập: <code>http://&lt;EC2_PUBLIC_IP&gt;/</code></div>
+                <div>• Trang Quản trị Admin: <code>http://&lt;EC2_PUBLIC_IP&gt;/admin</code> (hoặc <code>admin.html</code>)</div>
+                <div>• Tài khoản Admin kiểm tra: <code>admin@nihongo.local</code> / Mật khẩu: <code>admin123</code></div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal 1: Edit User -->
+  <div class="modal-overlay" id="modal-edit-user">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Chỉnh Sửa Người Dùng</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-edit-user')">&times;</button>
       </div>
-      <div style="background:var(--card); padding:24px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
-        <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Quản Trị Viên</div>
-        <div style="font-size:36px; font-weight:bold; color:#fbbf24" id="admin-count">0</div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-user-email">
+        <div class="form-group">
+          <label>Email (Khóa tài khoản)</label>
+          <input type="text" id="edit-display-email" class="form-input" disabled style="opacity:0.6;">
+        </div>
+        <div class="form-group">
+          <label>Tên hiển thị</label>
+          <input type="text" id="edit-user-name" class="form-input" placeholder="Nhập tên người dùng">
+        </div>
+        <div class="form-group">
+          <label>Điểm tích lũy</label>
+          <input type="number" id="edit-user-points" class="form-input" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Vai trò hệ thống</label>
+          <select id="edit-user-role" class="form-input">
+            <option value="user">Học viên (User)</option>
+            <option value="admin">Quản trị viên (Admin)</option>
+          </select>
+        </div>
       </div>
-      <div style="background:var(--card); padding:24px; border-radius:12px; border:1px solid var(--border); flex:1; text-align:center;">
-        <div style="font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Tổng Điểm</div>
-        <div style="font-size:36px; font-weight:bold; color:#10b981" id="admin-points">0</div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-edit-user')">Hủy</button>
+        <button class="btn btn-primary" id="btn-save-edit-user">Lưu thay đổi</button>
       </div>
     </div>
-    
-    <!-- Table -->
-    <div class="card" style="padding: 24px 0;">
-      <div style="padding: 0 24px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h3 style="margin:0;">Danh sách người dùng</h3>
-        <button id="admin-refresh" class="btn primary">Làm mới</button>
+  </div>
+
+  <!-- Modal 2: Create User -->
+  <div class="modal-overlay" id="modal-create-user">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Thêm Người Dùng Mới</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-create-user')">&times;</button>
       </div>
-      
-      <div style="padding: 0 24px; margin-bottom: 16px;">
-        <input type="text" id="admin-search" placeholder="🔍 Tìm kiếm người dùng theo tên hoặc email..." style="width:100%; padding:12px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:14px;">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="create-user-email" class="form-input" placeholder="hocvien@nihongo.local">
+        </div>
+        <div class="form-group">
+          <label>Tên người dùng</label>
+          <input type="text" id="create-user-name" class="form-input" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu khởi tạo *</label>
+          <input type="password" id="create-user-pass" class="form-input" placeholder="Tối thiểu 6 ký tự">
+        </div>
+        <div class="form-group">
+          <label>Điểm ban đầu</label>
+          <input type="number" id="create-user-points" class="form-input" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>Vai trò</label>
+          <select id="create-user-role" class="form-input">
+            <option value="user">Học viên (User)</option>
+            <option value="admin">Quản trị viên (Admin)</option>
+          </select>
+        </div>
       </div>
-      
-      <div style="overflow-x: auto;">
-        <table class="admin-table" style="width:100%; text-align:left; border-collapse:collapse;">
-          <thead>
-            <tr style="border-bottom: 1px solid var(--border);">
-              <th>Tên</th>
-              <th>Email</th>
-              <th>Điểm</th>
-              <th>Tiến độ</th>
-              <th>Vai trò</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="admin-users-tbody">
-            <!-- Render by JS -->
-          </tbody>
-        </table>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-create-user')">Hủy</button>
+        <button class="btn btn-primary" id="btn-submit-create-user">Tạo tài khoản</button>
       </div>
     </div>
-  </main>
+  </div>
+
+  <!-- Modal 3: Reset Password -->
+  <div class="modal-overlay" id="modal-reset-password">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Đặt Lại Mật Khẩu</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-reset-password')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="reset-user-email">
+        <p style="font-size:14px; color:var(--admin-muted);" id="reset-user-text">Đặt lại mật khẩu cho tài khoản:</p>
+        <div class="form-group">
+          <label>Mật khẩu mới</label>
+          <input type="password" id="reset-user-newpass" class="form-input" placeholder="Nhập mật khẩu mới">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-reset-password')">Hủy</button>
+        <button class="btn btn-primary" id="btn-submit-reset-password">Cập nhật mật khẩu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Activity History -->
+  <div class="modal-overlay" id="modal-user-history">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="history-modal-title">Lịch Sử Học Tập</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-user-history')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-list" id="history-items-container">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-user-history')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Confirm Action (Delete/Toggle Role) -->
+  <div class="modal-overlay" id="modal-confirm-action">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="confirm-modal-title">Xác Nhận Hành Động</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-confirm-action')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-modal-message" style="font-size:14px; line-height:1.6;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-confirm-action')">Hủy bỏ</button>
+        <button class="btn btn-danger" id="btn-confirm-action-execute">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Admin Gate / Quick Login Dialog -->
+  <div class="modal-overlay" id="modal-admin-gate">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="brand-logo" style="width:28px; height:28px; font-size:14px;">N</div>
+          <h3>Đăng Nhập Quản Trị Viên</h3>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--admin-muted);">
+          Vui lòng đăng nhập với tài khoản Quản trị viên (Admin) để truy cập NihonGo Cloud Admin Panel.
+        </p>
+
+        <!-- Quick Fill Helper for Teacher / Tester -->
+        <div style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); border-radius:8px; padding:12px; font-size:13px;">
+          <div style="font-weight:600; color:#34d399; margin-bottom:4px;">⚡ Tài khoản Kiểm tra nhanh (Demo):</div>
+          <div style="color:var(--admin-muted); font-size:12px;">Email: <code>admin@nihongo.local</code> • Mật khẩu: <code>admin123</code></div>
+          <button id="btn-quick-fill-admin" class="btn btn-primary btn-sm" style="margin-top:8px; width:100%;">
+            Điền nhanh thông tin Admin Demo
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Email Admin</label>
+          <input type="email" id="gate-admin-email" class="form-input" placeholder="admin@nihongo.local">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" id="gate-admin-pass" class="form-input" placeholder="******">
+        </div>
+        <div id="gate-login-err" style="color:var(--admin-danger); font-size:13px; display:none;"></div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <a href="index.html" class="btn btn-outline">← Về trang học</a>
+        <button class="btn btn-primary" id="btn-gate-login">Đăng nhập Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
   <script src="admin.js"></script>
 </body>
 </html>
