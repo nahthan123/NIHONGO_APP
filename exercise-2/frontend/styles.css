@@ -1859,3 +1859,423 @@ button, input, select, textarea {
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 
+/* ========================================================
+   JLPT MOCK EXAM SIMULATOR & DIGITAL CERTIFICATE
+   ======================================================== */
+.exam-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+}
+
+.exam-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-timer-badge.normal {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.exam-container-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 860px) {
+  .exam-container-grid {
+    grid-template-columns: 1fr 280px;
+  }
+}
+
+.exam-question-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 4px 18px var(--shadow);
+}
+
+.exam-q-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.exam-q-type {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.exam-q-type.vocab {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.exam-q-type.sentence {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.exam-q-prompt {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.exam-q-sub {
+  font-size: 13.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 22px;
+}
+
+.exam-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.exam-opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.exam-opt-btn:hover {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.exam-opt-btn.selected {
+  border-color: var(--primary);
+  background: rgba(16, 185, 129, 0.1);
+  color: #ffffff;
+}
+
+.exam-opt-key {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.exam-opt-btn.selected .exam-opt-key {
+  background: var(--primary);
+  color: #0b1120;
+  border-color: var(--primary);
+}
+
+.exam-nav-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-flag.active {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+/* Question Palette */
+.exam-palette-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  height: fit-content;
+}
+
+.palette-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.palette-btn {
+  aspect-ratio: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.palette-btn:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.palette-btn.current {
+  border: 2px solid var(--accent);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.palette-btn.answered {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.palette-btn.flagged::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.palette-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* Digital Certificate Card */
+.certificate-wrapper {
+  max-width: 720px;
+  margin: 0 auto 24px;
+  background: #0f172a;
+  border: 3px solid #fbbf24;
+  border-radius: 18px;
+  padding: 36px 32px;
+  position: relative;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(251, 191, 36, 0.08);
+  text-align: center;
+  color: #f8fafc;
+}
+
+.cert-corner-decor {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fbbf24;
+}
+
+.cert-top-left { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.cert-top-right { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+.cert-bottom-left { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+.cert-bottom-right { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+.cert-logo-seal {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #fbbf24;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.cert-title-jp {
+  font-size: 14px;
+  color: #fbbf24;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.cert-main-title {
+  font-size: clamp(22px, 3.5vw, 28px);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.cert-recipient-pre {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.cert-name {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 12px;
+  text-decoration: underline;
+  text-decoration-color: rgba(56, 189, 248, 0.4);
+  text-underline-offset: 6px;
+}
+
+.cert-desc {
+  font-size: 14px;
+  color: #cbd5e1;
+  max-width: 540px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+
+.cert-metrics {
+  display: inline-flex;
+  gap: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.cert-metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.cert-metric-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.cert-metric-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.cert-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .certificate-wrapper, .certificate-wrapper * {
+    visibility: visible;
+  }
+  .certificate-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border-color: #d97706 !important;
+    background: #ffffff !important;
+    color: #0b1120 !important;
+    box-shadow: none !important;
+  }
+  .cert-name { color: #0284c7 !important; }
+  .cert-desc { color: #334155 !important; }
+}
+
+

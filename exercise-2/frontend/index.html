@@ -125,6 +125,17 @@
           <div class="card-arrow">→</div>
         </button>
 
+        <button class="card action card-exam" data-nav="exam">
+          <div class="card-icon-box bg-rose">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Thi thử JLPT</div>
+            <div class="card-sub">Kỳ thi chuẩn hóa 20 câu N5/N4, tính giờ áp lực 15 phút & cấp Chứng chỉ số</div>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+
         <button class="card action card-leaderboard" data-nav="leaderboard">
           <div class="card-icon-box bg-amber">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
@@ -559,6 +570,181 @@
 
         <div id="q-feedback" class="quiz-feedback"></div>
       </main>
+    </div>
+  </section>
+
+  <!-- JLPT Mock Exam Simulator View -->
+  <section id="view-exam" class="view">
+    <div class="view-container">
+      <header class="view-header">
+        <button class="btn ghost back-btn" data-nav="home" id="btn-exam-back">← Trang chủ</button>
+        <h1 id="exam-main-title">Kỳ Thi Thử JLPT</h1>
+        <div class="spacer"></div>
+      </header>
+      
+      <!-- Phase 1: Exam Lobby -->
+      <div id="exam-lobby-container" class="content">
+        <div class="section-badge-center">CHỌN KỲ THI CHUẨN HÓA</div>
+        <p class="section-lead-text">Thử thách năng lực toàn diện với bài thi tính giờ 15 phút, 20 câu hỏi và nhận Chứng chỉ số</p>
+
+        <div class="tracks-container">
+          <div class="track-card" data-exam-select="n5" id="exam-select-n5">
+            <div class="track-card-header">
+              <span class="track-pill n5-pill">JLPT N5 MOCK EXAM</span>
+              <span class="track-stage-indicator">15 Phút • 20 Câu hỏi</span>
+            </div>
+            <div class="track-card-title">Kỳ Thi Thử JLPT N5 (Sơ cấp)</div>
+            <div class="track-card-desc">Gồm 10 câu nhận diện từ vựng Kanji/Kana và 10 câu ứng dụng mẫu câu đàm thoại. Đạt từ 12/20 câu (60%) nhận Chứng chỉ JLPT N5.</div>
+            <div class="track-card-footer">
+              <span class="track-badge-progress">Tiêu chuẩn: ≥ 60% Đỗ</span>
+              <button class="btn primary btn-sm" id="btn-start-exam-n5" type="button">Bắt đầu thi N5</button>
+            </div>
+          </div>
+
+          <div class="track-card" data-exam-select="n4" id="exam-select-n4">
+            <div class="track-card-header">
+              <span class="track-pill n4-pill">JLPT N4 MOCK EXAM</span>
+              <span class="track-stage-indicator">15 Phút • 20 Câu hỏi</span>
+            </div>
+            <div class="track-card-title">Kỳ Thi Thử JLPT N4 (Trung cấp)</div>
+            <div class="track-card-desc">Gồm 10 câu từ vựng phức hợp và 10 câu cấu trúc giao tiếp công sở, đi lại, thời tiết. Đạt từ 12/20 câu (60%) nhận Chứng chỉ JLPT N4.</div>
+            <div class="track-card-footer">
+              <span class="track-badge-progress">Tiêu chuẩn: ≥ 60% Đỗ</span>
+              <button class="btn primary btn-sm" id="btn-start-exam-n4" type="button">Bắt đầu thi N4</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-box" style="margin-top:24px;">
+          <div class="rule-title">Quy chế phòng thi mô phỏng:</div>
+          <ul class="rule-list">
+            <li><span class="rule-dot"></span> Tổng thời gian làm bài là <b>15 phút (900 giây)</b>, đồng hồ đếm ngược tự động nộp bài khi hết giờ.</li>
+            <li><span class="rule-dot"></span> Có thể <b>chuyển qua lại giữa các câu</b> hoặc bấm nút <b>Đặt cờ xem lại</b> trên Bảng câu hỏi.</li>
+            <li><span class="rule-dot"></span> Đạt điểm từ <b>12/20 câu</b> trở lên sẽ được cấp <b>Chứng chỉ Điện tử (Digital Certificate)</b> có mã xác thực riêng.</li>
+            <li><span class="rule-dot"></span> Thưởng ngay <b>+100 điểm</b> vào tài khoản khi vượt qua kỳ thi.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Phase 2: Live In-Progress Exam View -->
+      <div id="exam-live-container" class="content" style="display:none;">
+        <div class="exam-header-bar">
+          <div>
+            <span class="fc-track-badge badge-beginner" id="exam-live-badge">[JLPT N5 EXAM]</span>
+            <span style="font-size:13px; font-weight:700; margin-left:8px;" id="exam-live-progress">Câu 1 / 20</span>
+          </div>
+          <div class="exam-timer-badge normal" id="exam-timer-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="exam-timer-text">15:00</span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-exam-submit-early" type="button" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">
+            Nộp bài thi
+          </button>
+        </div>
+
+        <div class="exam-container-grid">
+          <!-- Main Question Box -->
+          <div class="exam-question-card">
+            <div class="exam-q-meta">
+              <span class="exam-q-type vocab" id="exam-q-type">TỪ VỰNG KANJI</span>
+              <button class="btn-flag" id="btn-exam-flag" type="button" title="Đánh dấu câu hỏi này để xem lại sau">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                <span id="btn-flag-text">Đặt cờ xem lại</span>
+              </button>
+            </div>
+
+            <div class="exam-q-prompt" id="exam-q-prompt">Câu hỏi đang tải...</div>
+            <div class="exam-q-sub" id="exam-q-sub">Romaji phiên âm</div>
+
+            <div class="exam-options-list" id="exam-options-list">
+              <!-- Injected by JS -->
+            </div>
+
+            <div class="exam-nav-toolbar">
+              <button class="btn ghost btn-sm" id="btn-exam-prev" type="button">← Câu trước</button>
+              <button class="btn primary btn-sm" id="btn-exam-next" type="button">Câu tiếp theo →</button>
+            </div>
+          </div>
+
+          <!-- Question Palette (Right sidebar) -->
+          <div class="exam-palette-card">
+            <div class="palette-title">
+              <span>Bảng câu hỏi</span>
+              <span id="palette-count-text">0/20 đã làm</span>
+            </div>
+            <div class="palette-grid" id="exam-palette-grid">
+              <!-- 20 buttons injected by JS -->
+            </div>
+            <div class="palette-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span><span>Đã chọn đáp án</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span><span>Đã đặt cờ xem lại</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span><span>Đang làm hiện tại</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Results & Digital Certificate -->
+      <div id="exam-result-container" class="content" style="display:none;">
+        <!-- Digital Certificate Card -->
+        <div class="certificate-wrapper" id="exam-certificate-card">
+          <div class="cert-corner-decor cert-top-left"></div>
+          <div class="cert-corner-decor cert-top-right"></div>
+          <div class="cert-corner-decor cert-bottom-left"></div>
+          <div class="cert-corner-decor cert-bottom-right"></div>
+
+          <div class="cert-logo-seal">日</div>
+          <div class="cert-title-jp">NIHONGO CLOUD • CERTIFICATE OF ACHIEVEMENT</div>
+          <h2 class="cert-main-title">CHỨNG CHỈ HOÀN THÀNH KỲ THI JLPT</h2>
+          <div class="cert-recipient-pre">Chứng chỉ này trân trọng trao tặng cho học viên:</div>
+          <div class="cert-name" id="cert-candidate-name">NGUYỄN VĂN NAM</div>
+          <div class="cert-desc" id="cert-desc-text">
+            Đã hoàn thành xuất sắc kỳ thi mô phỏng chuẩn hóa quốc tế năng lực Nhật ngữ, đạt chuẩn kiến thức từ vựng và ngữ pháp phản xạ giao tiếp.
+          </div>
+
+          <div class="cert-metrics">
+            <div class="cert-metric-item">
+              <span class="cert-metric-val" id="cert-score-val">18 / 20</span>
+              <span class="cert-metric-label">Điểm số</span>
+            </div>
+            <div class="cert-metric-item">
+              <span class="cert-metric-val" id="cert-level-val">JLPT N5</span>
+              <span class="cert-metric-label">Trình độ</span>
+            </div>
+            <div class="cert-metric-item">
+              <span class="cert-metric-val" id="cert-rating-val">XUẤT SẮC</span>
+              <span class="cert-metric-label">Xếp loại</span>
+            </div>
+          </div>
+
+          <div class="cert-footer-meta">
+            <div>Mã xác thực: <strong id="cert-code-val">CERT-N5-89412</strong></div>
+            <div>Ngày cấp: <span id="cert-date-val">24/10/2026</span></div>
+            <div>Bản quyền: <strong>NihonGo Cloud</strong></div>
+          </div>
+        </div>
+
+        <!-- Result Action Controls -->
+        <div style="display:flex; justify-content:center; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+          <button class="btn primary" id="btn-print-cert" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            In / Tải Chứng chỉ
+          </button>
+          <button class="btn" id="btn-toggle-exam-review" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Xem đáp án & Giải thích
+          </button>
+          <button class="btn ghost" id="btn-exam-done-home" type="button">
+            Về Trang chủ
+          </button>
+        </div>
+
+        <!-- Review Question List Container -->
+        <div id="exam-review-details" style="display:none; max-width:720px; margin:0 auto;">
+          <h3 style="font-size:18px; margin-bottom:16px;">Chi tiết bài làm & Giải thích 20 câu</h3>
+          <div id="exam-review-list" style="display:flex; flex-direction:column; gap:14px;"></div>
+        </div>
+      </div>
     </div>
   </section>
 

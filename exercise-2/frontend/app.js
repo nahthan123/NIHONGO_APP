@@ -8,7 +8,9 @@ const VIEWS = [
 	"leaderboard",
 	"profile",
 	"auth",
-	"quiz", "admin"
+	"quiz",
+	"exam",
+	"admin"
 ];
 
 const STORAGE_KEYS = {
@@ -1742,6 +1744,415 @@ function addPoints(amount = 10, activityName = "Học tập") {
 	addHistoryEntry(`${activityName} (+${amount} điểm)`);
 }
 
+// ========================================================
+// JLPT MOCK EXAM SIMULATOR & DIGITAL CERTIFICATE
+// ========================================================
+let examData = {
+	track: "n5",
+	questions: [],
+	currentIndex: 0,
+	timerInterval: null,
+	timeRemaining: 900, // 15 mins = 900s
+	isSubmitted: false,
+	score: 0
+};
+
+function generateExamQuestions(track = "n5") {
+	const wordsPool = FLASHCARDS.filter(f => f.track === track);
+	const sentencesPool = SENTENCES.filter(s => s.track === track);
+	const questions = [];
+
+	// Part 1: 10 Vocabulary Questions
+	const shuffledWords = [...wordsPool];
+	shuffle(shuffledWords);
+	const chosenWords = shuffledWords.slice(0, 10);
+
+	chosenWords.forEach((item, idx) => {
+		const isJpToVi = idx % 2 === 0;
+		const others = FLASHCARDS.filter(w => w.jp !== item.jp);
+		shuffle(others);
+
+		if (isJpToVi) {
+			const options = [item.vi, others[0].vi, others[1].vi, others[2].vi];
+			shuffle(options);
+			questions.push({
+				id: idx + 1,
+				type: "vocab",
+				typeName: "Từ vựng • Nghĩa từ vựng",
+				prompt: `Từ 「${item.jp}」 có nghĩa tiếng Việt là gì?`,
+				sub: `Phiên âm Romaji: ${item.romaji}`,
+				options,
+				correctIndex: options.indexOf(item.vi),
+				correctAnswer: item.vi,
+				userAnswer: null,
+				flagged: false,
+				explanation: `「${item.jp}」 (${item.romaji}) nghĩa là: ${item.vi}.`
+			});
+		} else {
+			const options = [item.jp, others[0].jp, others[1].jp, others[2].jp];
+			shuffle(options);
+			questions.push({
+				id: idx + 1,
+				type: "vocab",
+				typeName: "Từ vựng • Chữ viết Kanji / Kana",
+				prompt: `Nghĩa 「${item.vi}」 trong tiếng Nhật viết là gì?`,
+				sub: `Phiên âm: ${item.romaji}`,
+				options,
+				correctIndex: options.indexOf(item.jp),
+				correctAnswer: item.jp,
+				userAnswer: null,
+				flagged: false,
+				explanation: `「${item.jp}」 (${item.romaji}) tương ứng với nghĩa: ${item.vi}.`
+			});
+		}
+	});
+
+	// Part 2: 10 Sentence / Grammar Questions
+	const sentenceCandidates = [...sentencesPool];
+	wordsPool.forEach(w => {
+		if (w.example && w.example.jp) {
+			sentenceCandidates.push({ jp: w.example.jp, vi: w.example.vi, topic: w.topic, track: w.track });
+		}
+	});
+	shuffle(sentenceCandidates);
+	const chosenSentences = sentenceCandidates.slice(0, 10);
+
+	chosenSentences.forEach((item, idx) => {
+		const qId = 11 + idx;
+		const others = sentenceCandidates.filter(s => s.jp !== item.jp);
+		shuffle(others);
+
+		const options = [item.vi, others[0].vi, others[1].vi, others[2].vi];
+		shuffle(options);
+		questions.push({
+			id: qId,
+			type: "sentence",
+			typeName: "Ngữ pháp & Mẫu câu ngữ cảnh",
+			prompt: `Ý nghĩa đúng của câu sau là gì: 「${item.jp}」`,
+			sub: `Hội thoại tình huống giao tiếp chuẩn`,
+			options,
+			correctIndex: options.indexOf(item.vi),
+			correctAnswer: item.vi,
+			userAnswer: null,
+			flagged: false,
+			explanation: `Câu hoàn chỉnh: 「${item.jp}」 mang nghĩa: "${item.vi}".`
+		});
+	});
+
+	return questions;
+}
+
+function resetExamView() {
+	clearInterval(examData.timerInterval);
+	const lobby = document.getElementById("exam-lobby-container");
+	const live = document.getElementById("exam-live-container");
+	const result = document.getElementById("exam-result-container");
+	if (lobby) lobby.style.display = "block";
+	if (live) live.style.display = "none";
+	if (result) result.style.display = "none";
+}
+
+function startExam(track = "n5") {
+	clearInterval(examData.timerInterval);
+	examData.track = track;
+	examData.questions = generateExamQuestions(track);
+	examData.currentIndex = 0;
+	examData.timeRemaining = 900; // 15 mins
+	examData.isSubmitted = false;
+	examData.score = 0;
+
+	const lobby = document.getElementById("exam-lobby-container");
+	const live = document.getElementById("exam-live-container");
+	const result = document.getElementById("exam-result-container");
+	if (lobby) lobby.style.display = "none";
+	if (live) live.style.display = "block";
+	if (result) result.style.display = "none";
+
+	const badge = document.getElementById("exam-live-badge");
+	if (badge) {
+		badge.textContent = track === "n5" ? "[JLPT N5 EXAM]" : "[JLPT N4 EXAM]";
+		badge.className = "fc-track-badge " + (track === "n5" ? "badge-beginner" : "badge-advanced");
+	}
+
+	renderExamQuestion(0);
+	renderExamPalette();
+	startExamTimer();
+}
+
+function startExamTimer() {
+	clearInterval(examData.timerInterval);
+	updateExamTimerDisplay();
+
+	examData.timerInterval = setInterval(() => {
+		examData.timeRemaining--;
+		updateExamTimerDisplay();
+
+		if (examData.timeRemaining <= 0) {
+			clearInterval(examData.timerInterval);
+			submitExam(true);
+		}
+	}, 1000);
+}
+
+function updateExamTimerDisplay() {
+	const mins = Math.floor(examData.timeRemaining / 60);
+	const secs = examData.timeRemaining % 60;
+	const txt = document.getElementById("exam-timer-text");
+	const badge = document.getElementById("exam-timer-display");
+	if (txt) txt.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+	if (badge) {
+		if (examData.timeRemaining <= 120) {
+			badge.className = "exam-timer-badge";
+		} else {
+			badge.className = "exam-timer-badge normal";
+		}
+	}
+}
+
+function renderExamQuestion(index) {
+	if (index < 0 || index >= examData.questions.length) return;
+	examData.currentIndex = index;
+	const q = examData.questions[index];
+
+	const progressEl = document.getElementById("exam-live-progress");
+	if (progressEl) progressEl.textContent = `Câu ${index + 1} / ${examData.questions.length}`;
+
+	const typeEl = document.getElementById("exam-q-type");
+	if (typeEl) {
+		typeEl.textContent = q.typeName;
+		typeEl.className = `exam-q-type ${q.type}`;
+	}
+
+	const promptEl = document.getElementById("exam-q-prompt");
+	if (promptEl) promptEl.textContent = q.prompt;
+
+	const subEl = document.getElementById("exam-q-sub");
+	if (subEl) subEl.textContent = q.sub;
+
+	const flagBtn = document.getElementById("btn-exam-flag");
+	const flagText = document.getElementById("btn-flag-text");
+	if (flagBtn) {
+		flagBtn.classList.toggle("active", Boolean(q.flagged));
+		if (flagText) flagText.textContent = q.flagged ? "Đã đặt cờ" : "Đặt cờ xem lại";
+	}
+
+	const optsContainer = document.getElementById("exam-options-list");
+	if (optsContainer) {
+		optsContainer.innerHTML = "";
+		const keys = ["A", "B", "C", "D"];
+		q.options.forEach((optText, optIdx) => {
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = "exam-opt-btn" + (q.userAnswer === optIdx ? " selected" : "");
+			btn.innerHTML = `
+				<span class="exam-opt-key">${keys[optIdx]}</span>
+				<span>${optText}</span>
+			`;
+			btn.addEventListener("click", () => {
+				q.userAnswer = optIdx;
+				soundEffects.play("flip");
+				renderExamQuestion(examData.currentIndex);
+				renderExamPalette();
+			});
+			optsContainer.appendChild(btn);
+		});
+	}
+
+	const btnPrev = document.getElementById("btn-exam-prev");
+	const btnNext = document.getElementById("btn-exam-next");
+	if (btnPrev) btnPrev.style.visibility = index === 0 ? "hidden" : "visible";
+	if (btnNext) btnNext.textContent = index === examData.questions.length - 1 ? "Xem lại bài" : "Câu tiếp theo →";
+}
+
+function renderExamPalette() {
+	const grid = document.getElementById("exam-palette-grid");
+	if (!grid) return;
+	grid.innerHTML = "";
+
+	let answeredCount = 0;
+	examData.questions.forEach((q, idx) => {
+		if (q.userAnswer !== null) answeredCount++;
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.className = "palette-btn";
+		btn.textContent = String(idx + 1);
+
+		if (idx === examData.currentIndex) btn.classList.add("current");
+		if (q.userAnswer !== null) btn.classList.add("answered");
+		if (q.flagged) btn.classList.add("flagged");
+
+		btn.addEventListener("click", () => {
+			renderExamQuestion(idx);
+			renderExamPalette();
+		});
+		grid.appendChild(btn);
+	});
+
+	const countTxt = document.getElementById("palette-count-text");
+	if (countTxt) countTxt.textContent = `${answeredCount}/${examData.questions.length} đã làm`;
+}
+
+function toggleExamFlag() {
+	const q = examData.questions[examData.currentIndex];
+	if (!q) return;
+	q.flagged = !q.flagged;
+	renderExamQuestion(examData.currentIndex);
+	renderExamPalette();
+}
+
+function submitExam(isAuto = false) {
+	if (!isAuto) {
+		const unanswered = examData.questions.filter(q => q.userAnswer === null).length;
+		let confirmMsg = "Bạn có chắc chắn muốn nộp bài thi ngay bây giờ?";
+		if (unanswered > 0) {
+			confirmMsg = `Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài không?`;
+		}
+		if (!confirm(confirmMsg)) return;
+	}
+
+	clearInterval(examData.timerInterval);
+	examData.isSubmitted = true;
+
+	let correctCount = 0;
+	examData.questions.forEach(q => {
+		if (q.userAnswer === q.correctIndex) {
+			correctCount++;
+		}
+	});
+	examData.score = correctCount;
+
+	const isPass = correctCount >= 12;
+	if (isPass) {
+		soundEffects.play("level-up");
+		addPoints(examData.track === "n5" ? 100 : 150, `Vượt qua kỳ thi thử JLPT ${examData.track.toUpperCase()}`);
+	} else {
+		soundEffects.play("wrong");
+		addPoints(20, `Tham gia kỳ thi thử JLPT ${examData.track.toUpperCase()}`);
+	}
+
+	showExamResults();
+}
+
+function showExamResults() {
+	document.getElementById("exam-lobby-container").style.display = "none";
+	document.getElementById("exam-live-container").style.display = "none";
+	document.getElementById("exam-result-container").style.display = "block";
+
+	const score = examData.score;
+	const isPass = score >= 12;
+	const candidateName = (state.user && state.user.name) ? state.user.name : (state.name || "HỌC VIÊN NIHONGO");
+	const trackName = examData.track === "n5" ? "JLPT N5 (SƠ CẤP)" : "JLPT N4 (TRUNG CẤP)";
+
+	let rating = "CHƯA ĐẠT";
+	if (score >= 18) rating = "XUẤT SẮC (S)";
+	else if (score >= 15) rating = "GIỎI (A)";
+	else if (score >= 12) rating = "ĐẠT CHUẨN (PASS)";
+
+	const certName = document.getElementById("cert-candidate-name");
+	if (certName) certName.textContent = candidateName.toUpperCase();
+
+	const certScore = document.getElementById("cert-score-val");
+	if (certScore) certScore.textContent = `${score} / 20 (${Math.round((score / 20) * 100)}%)`;
+
+	const certLevel = document.getElementById("cert-level-val");
+	if (certLevel) certLevel.textContent = trackName;
+
+	const certRating = document.getElementById("cert-rating-val");
+	if (certRating) {
+		certRating.textContent = rating;
+		certRating.style.color = isPass ? "#10b981" : "#ef4444";
+	}
+
+	const certCode = document.getElementById("cert-code-val");
+	if (certCode) {
+		const randomCode = Math.floor(10000 + Math.random() * 90000);
+		certCode.textContent = `CERT-${examData.track.toUpperCase()}-${randomCode}`;
+	}
+
+	const certDate = document.getElementById("cert-date-val");
+	if (certDate) {
+		const now = new Date();
+		certDate.textContent = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+	}
+
+	const certDesc = document.getElementById("cert-desc-text");
+	if (certDesc) {
+		certDesc.textContent = isPass
+			? `Đã hoàn thành xuất sắc kỳ thi mô phỏng chuẩn hóa quốc tế ${trackName}, đạt tiêu chuẩn kiến thức từ vựng và ngữ pháp phản xạ giao tiếp.`
+			: `Đã tham gia kỳ thi mô phỏng chuẩn hóa quốc tế ${trackName}. Hãy tiếp tục rèn luyện từ vựng và ôn tập để vượt qua bài thi ở lần kế tiếp!`;
+	}
+
+	renderExamReviewList();
+}
+
+function renderExamReviewList() {
+	const container = document.getElementById("exam-review-list");
+	if (!container) return;
+	container.innerHTML = "";
+
+	const keys = ["A", "B", "C", "D"];
+	examData.questions.forEach((q, idx) => {
+		const isCorrect = q.userAnswer === q.correctIndex;
+		const userAnsText = q.userAnswer !== null ? `${keys[q.userAnswer]}. ${q.options[q.userAnswer]}` : "Chưa trả lời";
+		const correctAnsText = `${keys[q.correctIndex]}. ${q.options[q.correctIndex]}`;
+
+		const item = document.createElement("div");
+		item.style.cssText = `background:var(--card); border:1px solid ${isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius:12px; padding:16px; text-align:left;`;
+		item.innerHTML = `
+			<div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+				<strong style="color:var(--text);">Câu ${idx + 1}: ${q.prompt}</strong>
+				<span style="font-size:12px; font-weight:700; color:${isCorrect ? '#10b981' : '#ef4444'};">
+					${isCorrect ? 'Chính xác (+1)' : 'Sai / Chưa đạt'}
+				</span>
+			</div>
+			<div style="font-size:13px; color:var(--muted); margin-bottom:6px;">Lựa chọn của bạn: <b style="color:${isCorrect ? '#10b981' : '#ef4444'};">${userAnsText}</b></div>
+			<div style="font-size:13px; color:#10b981; margin-bottom:6px;">Đáp án đúng: <b>${correctAnsText}</b></div>
+			<div style="font-size:12px; color:var(--muted); font-style:italic; background:var(--panel); padding:8px 12px; border-radius:6px; margin-top:6px;">
+				Giải thích: ${q.explanation}
+			</div>
+		`;
+		container.appendChild(item);
+	});
+}
+
+function initExam() {
+	document.getElementById("btn-start-exam-n5")?.addEventListener("click", () => startExam("n5"));
+	document.getElementById("btn-start-exam-n4")?.addEventListener("click", () => startExam("n4"));
+	document.getElementById("exam-select-n5")?.addEventListener("click", () => startExam("n5"));
+	document.getElementById("exam-select-n4")?.addEventListener("click", () => startExam("n4"));
+	
+	document.getElementById("btn-exam-back")?.addEventListener("click", () => setActiveView("home"));
+	document.getElementById("btn-exam-submit-early")?.addEventListener("click", () => submitExam(false));
+	document.getElementById("btn-exam-flag")?.addEventListener("click", toggleExamFlag);
+
+	document.getElementById("btn-exam-prev")?.addEventListener("click", () => {
+		if (examData.currentIndex > 0) {
+			renderExamQuestion(examData.currentIndex - 1);
+			renderExamPalette();
+		}
+	});
+
+	document.getElementById("btn-exam-next")?.addEventListener("click", () => {
+		if (examData.currentIndex < examData.questions.length - 1) {
+			renderExamQuestion(examData.currentIndex + 1);
+			renderExamPalette();
+		} else {
+			submitExam(false);
+		}
+	});
+
+	document.getElementById("btn-print-cert")?.addEventListener("click", () => window.print());
+
+	document.getElementById("btn-toggle-exam-review")?.addEventListener("click", () => {
+		const rev = document.getElementById("exam-review-details");
+		if (rev) {
+			rev.style.display = rev.style.display === "none" ? "block" : "none";
+		}
+	});
+
+	document.getElementById("btn-exam-done-home")?.addEventListener("click", () => setActiveView("home"));
+}
+
 function initNav() {
 	document.querySelectorAll("[data-nav]").forEach((btn) => {
 		btn.addEventListener("click", () => {
@@ -2259,6 +2670,7 @@ function initKeyboardShortcuts() {
 }
 
 function boot() {
+	initExam();
 	initKeyboardShortcuts();
 	loadFromStorage();
 	hydrateUI();
