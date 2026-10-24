@@ -31,7 +31,8 @@ const state = {
 	theme: "dark",
 	selectedFcTopic: null,
 	selectedSnTopic: null,
-	selectedTrack: "all",
+	selectedTrack: "n5",
+	selectedQuizTrack: "n5",
 	showRomaji: true,
 	history: []
 };
@@ -43,768 +44,896 @@ const FLASHCARDS = [
 		"romaji": "Konnichiwa",
 		"vi": "Xin chào",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "先生、こんにちは。",
 			"romaji": "Sensei, konnichiwa.",
 			"vi": "Chào thầy/cô giáo ạ."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "ありがとう",
 		"romaji": "Arigatou",
 		"vi": "Cảm ơn",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "手伝ってくれて本当にありがとう。",
 			"romaji": "Tetsudatte kurete hontou ni arigatou.",
 			"vi": "Thật sự cảm ơn bạn đã giúp đỡ tôi."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "さようなら",
 		"romaji": "Sayounara",
 		"vi": "Tạm biệt",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "また明日、さようなら。",
 			"romaji": "Mata ashita, sayounara.",
 			"vi": "Hẹn gặp lại ngày mai, tạm biệt nhé."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "はじめまして",
 		"romaji": "Hajimemashite",
 		"vi": "Rất vui được gặp bạn",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "はじめまして、ナムと申します。",
 			"romaji": "Hajimemashite, Namu to moushimasu.",
 			"vi": "Rất hân hạnh được gặp, tôi tên là Nam."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "おはよう",
 		"romaji": "Ohayou",
 		"vi": "Chào buổi sáng",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "おはようございます、今日も頑張りましょう。",
 			"romaji": "Ohayou gozaimasu, kyou mo gambarimashou.",
 			"vi": "Chúc buổi sáng tốt lành, hôm nay cùng cố gắng nhé."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "こんばんは",
 		"romaji": "Konbanwa",
 		"vi": "Chào buổi tối",
 		"topic": "greetings",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "みなさん、こんばんは。",
 			"romaji": "Minasan, konbanwa.",
 			"vi": "Chào buổi tối tất cả mọi người."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "すみません",
 		"romaji": "Sumimasen",
 		"vi": "Xin lỗi / Làm phiền",
 		"topic": "greetings",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "すみません、今何時ですか？",
 			"romaji": "Sumimasen, ima nanji desu ka?",
 			"vi": "Xin lỗi, cho tôi hỏi bây giờ là mấy giờ?"
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "よろしく",
 		"romaji": "Yoroshiku",
 		"vi": "Xin nhờ giúp đỡ",
 		"topic": "greetings",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "これからもよろしくお願いいたします。",
 			"romaji": "Korekara mo yoroshiku onegai itashimasu.",
 			"vi": "Từ nay về sau xin kính nhờ anh/chị giúp đỡ nhiều."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "水",
 		"romaji": "Mizu",
 		"vi": "Nước uống",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "冷たい水を一杯ください。",
 			"romaji": "Tsumetai mizu wo ippai kudasai.",
 			"vi": "Làm ơn cho tôi một cốc nước lạnh."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "ご飯",
 		"romaji": "Gohan",
 		"vi": "Cơm / Bữa ăn",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "朝ご飯をしっかり食べました。",
 			"romaji": "Asagohan wo shikkari tabemashita.",
 			"vi": "Tôi đã ăn bữa sáng rất đầy đủ."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "美味しい",
 		"romaji": "Oishii",
 		"vi": "Ngon miệng",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "この料理はとても美味しいです。",
 			"romaji": "Kono ryouri wa totemo oishii desu.",
 			"vi": "Món ăn này rất ngon miệng."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "お茶",
 		"romaji": "Ocha",
 		"vi": "Trà xanh",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "温かい緑茶を飲みます。",
 			"romaji": "Atatakai ryokucha wo nomimasu.",
 			"vi": "Tôi uống một tách trà xanh ấm."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "肉",
 		"romaji": "Niku",
 		"vi": "Thịt",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "牛肉のうどんを注文しました。",
 			"romaji": "Gyuuniku no udon wo chuumon shimashita.",
 			"vi": "Tôi đã gọi một tô mì udon thịt bò."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "魚",
 		"romaji": "Sakana",
 		"vi": "Cá",
 		"topic": "dining",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "日本の刺身は新鮮な魚を使います。",
 			"romaji": "Nihon no sashimi wa shinsenna sakana wo tsukaimasu.",
 			"vi": "Món sashimi Nhật dùng cá rất tươi."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "注文",
 		"romaji": "Chuumon",
 		"vi": "Gọi món / Đặt hàng",
 		"topic": "dining",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "すみません、注文をお願いします。",
 			"romaji": "Sumimasen, chuumon wo onegaishimasu.",
 			"vi": "Xin lỗi, cho tôi xin phép gọi món ạ."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "会計",
 		"romaji": "Kaikei",
 		"vi": "Thanh toán hóa đơn",
 		"topic": "dining",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "お会計は別々でお願いします。",
 			"romaji": "Okaikei wa betsubetsu de onegaishimasu.",
 			"vi": "Làm ơn thanh toán tiền riêng từng người giúp tôi."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "駅",
 		"romaji": "Eki",
 		"vi": "Nhà ga",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "駅の前で友達と待ち合わせをします。",
 			"romaji": "Eki no mae de tomodachi to machiawase wo shimasu.",
 			"vi": "Tôi hẹn gặp bạn ở trước nhà ga."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "電車",
 		"romaji": "Densha",
 		"vi": "Tàu điện",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "次の電車はあと5分で来ます。",
 			"romaji": "Tsugi no densha wa ato gofun de kimasu.",
 			"vi": "Chuyến tàu điện tiếp theo sẽ đến sau 5 phút nữa."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "切符",
 		"romaji": "Kippu",
 		"vi": "Vé tàu / xe",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "切符売り場はあちらです。",
 			"romaji": "Kippu uriba wa achira desu.",
 			"vi": "Quầy bán vé ở đằng kia ạ."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "車",
 		"romaji": "Kuruma",
 		"vi": "Xe hơi / Ô tô",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "車で安全に運転してください。",
 			"romaji": "Kuruma de anzen ni unten shite kudasai.",
 			"vi": "Xin hãy lái xe ô tô thật an toàn."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "バス",
 		"romaji": "Basu",
 		"vi": "Xe buýt",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "バスに乗って大学へ通っています。",
 			"romaji": "Basu ni notte daigaku e kayotte imasu.",
 			"vi": "Tôi đi xe buýt đến trường đại học hàng ngày."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "空港",
 		"romaji": "Kuukou",
 		"vi": "Sân bay",
 		"topic": "transportation",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "成田空港まで特急で行きます。",
 			"romaji": "Narita kuukou made tokkyuu de ikimasu.",
 			"vi": "Tôi đi đến sân bay Narita bằng tàu tốc hành."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "乗り換え",
 		"romaji": "Norikae",
 		"vi": "Đổi tuyến tàu / xe",
 		"topic": "transportation",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "次の駅で銀座線に乗り換えます。",
 			"romaji": "Tsugi no eki de Ginza-sen ni norikaemasu.",
 			"vi": "Tại ga tiếp theo, tôi sẽ chuyển sang tuyến Ginza."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "出発",
 		"romaji": "Shuppatsu",
 		"vi": "Khởi hành",
 		"topic": "transportation",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "列車は定刻通りに出発しました。",
 			"romaji": "Ressha wa teikoku doori ni shuppatsu shimashita.",
 			"vi": "Chuyến tàu đã khởi hành đúng giờ quy định."
-		}
+		},
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "買い物",
 		"romaji": "Kaimono",
 		"vi": "Mua sắm",
 		"topic": "shopping",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "週末にスーパーへ買い物に行きます。",
 			"romaji": "Shuumatsu ni suupaa e kaimono ni ikimasu.",
 			"vi": "Cuối tuần tôi đi siêu thị để mua sắm."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "いくら",
 		"romaji": "Ikura",
 		"vi": "Bao nhiêu tiền",
 		"topic": "shopping",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "この辞書はいくらですか？",
 			"romaji": "Kono jisho wa ikura desu ka?",
 			"vi": "Cuốn từ điển này có giá bao nhiêu tiền?"
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "高い",
 		"romaji": "Takai",
 		"vi": "Đắt đỏ / Cao",
 		"topic": "shopping",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "このカメラは少し高いですが品質が良いです。",
 			"romaji": "Kono kamera wa sukoshi takai desu ga hinshitsu ga yoi desu.",
 			"vi": "Chiếc máy ảnh này hơi đắt nhưng chất lượng rất tốt."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "安い",
 		"romaji": "Yasui",
 		"vi": "Rẻ / Tiết kiệm",
 		"topic": "shopping",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "この店の商品はとても安いです。",
 			"romaji": "Kono mise no shouhin wa totemo yasui desu.",
 			"vi": "Hàng hóa ở tiệm này rất rẻ."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "店",
 		"romaji": "Mise",
 		"vi": "Cửa hàng / Tiệm",
 		"topic": "shopping",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "駅の近くに美味しいパンの店があります。",
 			"romaji": "Eki no chikaku ni oishii pan no mise ga arimasu.",
 			"vi": "Gần nhà ga có một tiệm bánh mì rất ngon."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "割引",
 		"romaji": "Waribiki",
 		"vi": "Giảm giá / Khuyến mãi",
 		"topic": "shopping",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "会員カードで10%割引になります。",
 			"romaji": "Kaiin kaado de jippaasento waribiki ni narimasu.",
 			"vi": "Với thẻ thành viên, bạn sẽ được giảm giá 10%."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "レシート",
 		"romaji": "Reshiito",
 		"vi": "Hóa đơn biên lai",
 		"topic": "shopping",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "レシートをいただけますか？",
 			"romaji": "Reshiito wo itadakemasu ka?",
 			"vi": "Cho tôi xin hóa đơn thanh toán được không ạ?"
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "袋",
 		"romaji": "Fukuro",
 		"vi": "Túi đựng",
 		"topic": "shopping",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "レジ袋は結構です、マイバッグがあります。",
 			"romaji": "Rejibukuro wa kekkou desu, maibaggu ga arimasu.",
 			"vi": "Tôi không cần túi nilon ạ, tôi có đem túi riêng rồi."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "家族",
 		"romaji": "Kazoku",
 		"vi": "Gia đình",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "私の家族は4人です。",
 			"romaji": "Watashi no kazoku wa yonin desu.",
 			"vi": "Gia đình tôi có bốn thành viên."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "父",
 		"romaji": "Chichi",
 		"vi": "Bố (của tôi)",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "父は会社員で毎朝早く出勤します。",
 			"romaji": "Chichi wa kaishain de maiasa hayaku shutkin shimasu.",
 			"vi": "Bố tôi là nhân viên văn phòng, mỗi sáng đều đi làm sớm."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "母",
 		"romaji": "Haha",
 		"vi": "Mẹ (của tôi)",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "母の作る料理が一番好きです。",
 			"romaji": "Haha no tsukuru ryouri ga ichiban suki desu.",
 			"vi": "Tôi thích nhất những món ăn do chính mẹ nấu."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "友達",
 		"romaji": "Tomodachi",
 		"vi": "Bạn bè",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "週末に友達と映画を見ました。",
 			"romaji": "Shuumatsu ni tomodachi to eiga wo mimashita.",
 			"vi": "Cuối tuần tôi cùng bạn đi xem phim."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "兄",
 		"romaji": "Ani",
 		"vi": "Anh trai (của tôi)",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "兄は東京の大学に通っています。",
 			"romaji": "Ani wa Tokyo no daigaku ni kayotte imasu.",
 			"vi": "Anh trai tôi đang theo học đại học ở Tokyo."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "妹",
 		"romaji": "Imouto",
 		"vi": "Em gái (của tôi)",
 		"topic": "family",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "妹は音楽を聴くことが好きです。",
 			"romaji": "Imouto wa ongaku wo kiku koto ga suki desu.",
 			"vi": "Em gái tôi rất thích nghe âm nhạc."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "両親",
 		"romaji": "Ryoushin",
 		"vi": "Cha mẹ / Phụ huynh",
 		"topic": "family",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "休みに両親に手紙を書きました。",
 			"romaji": "Yasumi ni ryoushin ni tegami wo kakimashita.",
 			"vi": "Vào kỳ nghỉ, tôi đã viết một lá thư gửi cha mẹ."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "約束",
 		"romaji": "Yakusoku",
 		"vi": "Cuộc hẹn / Lời hứa",
 		"topic": "family",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "今夜大切な約束があります。",
 			"romaji": "Konya taisetsuna yakusoku ga arimasu.",
 			"vi": "Tối nay tôi có một cuộc hẹn quan trọng."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "今日",
 		"romaji": "Kyou",
 		"vi": "Hôm nay",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "今日はとても充実した一日でした。",
 			"romaji": "Kyou wa totemo juujitsu shita ichinichi deshita.",
 			"vi": "Hôm nay là một ngày trọn vẹn và ý nghĩa."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "明日",
 		"romaji": "Ashita",
 		"vi": "Ngày mai",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "明日日本語のテストがあります。",
 			"romaji": "Ashita nihongo no tesuto ga arimasu.",
 			"vi": "Ngày mai tôi có bài kiểm tra tiếng Nhật."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "時間",
 		"romaji": "Jikan",
 		"vi": "Thời gian / Giờ giấc",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "時間を大切に使いましょう。",
 			"romaji": "Jikan wo taisetsu ni tsukaimashou.",
 			"vi": "Hãy sử dụng thời gian một cách thật trân quý."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "一つ",
 		"romaji": "Hitotsu",
 		"vi": "Một cái (đơn vị)",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "これを一ついただけますか？",
 			"romaji": "Kore wo hitotsu itadakemasu ka?",
 			"vi": "Cho tôi xin một cái này được không ạ?"
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "二つ",
 		"romaji": "Futatsu",
 		"vi": "Hai cái (đơn vị)",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "りんごを二つ買いました。",
 			"romaji": "Ringo wo futatsu kaimashita.",
 			"vi": "Tôi đã mua hai quả táo."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "毎日",
 		"romaji": "Mainichi",
 		"vi": "Mỗi ngày / Hàng ngày",
 		"topic": "numbers",
-		"track": "beginner",
+		"track": "n5",
 		"example": {
 			"jp": "毎日30分日本語を勉強します。",
 			"romaji": "Mainichi sanjuppun nihongo wo benkyou shimasu.",
 			"vi": "Hàng ngày tôi dành 30 phút để học tiếng Nhật."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "来週",
 		"romaji": "Raishuu",
 		"vi": "Tuần sau",
 		"topic": "numbers",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "来週から新しいクラスが始まります。",
 			"romaji": "Raishuu kara atarashii kurasu ga hajimarimasu.",
 			"vi": "Từ tuần sau, lớp học mới sẽ chính thức bắt đầu."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "予定",
 		"romaji": "Yotei",
 		"vi": "Kế hoạch / Dự định",
 		"topic": "numbers",
-		"track": "advanced",
+		"track": "n5",
 		"example": {
 			"jp": "今週末の予定を教えてください。",
 			"romaji": "Konshuumatsu no yotei wo oshiete kudasai.",
 			"vi": "Hãy chia sẻ cho tôi kế hoạch cuối tuần này của bạn nhé."
-		}
+		},
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "会社",
 		"romaji": "Kaisha",
 		"vi": "Công ty",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "毎日地下鉄で会社へ向かいます。",
 			"romaji": "Mainichi chikatetsu de kaisha e mukaimasu.",
 			"vi": "Mỗi ngày tôi đều đi tàu điện ngầm đến công ty."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "仕事",
 		"romaji": "Shigoto",
 		"vi": "Công việc",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "今の仕事はとてもやりがいがあります。",
 			"romaji": "Ima no shigoto wa totemo yarigai ga arimasu.",
 			"vi": "Công việc hiện tại đem lại cho tôi rất nhiều động lực."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "会議",
 		"romaji": "Kaigi",
 		"vi": "Cuộc họp",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "午後2時から企画会議があります。",
 			"romaji": "Gogo niji kara kikaku kaigi ga arimasu.",
 			"vi": "Lúc 2 giờ chiều sẽ có một cuộc họp lên kế hoạch."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "書類",
 		"romaji": "Shorui",
 		"vi": "Tài liệu / Hồ sơ",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "この書類を提出してください。",
 			"romaji": "Kono shorui wo teishutsu shite kudasai.",
 			"vi": "Xin vui lòng nộp tập tài liệu này."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "電話",
 		"romaji": "Denwa",
 		"vi": "Điện thoại / Cuộc gọi",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "お客様から電話がありました。",
 			"romaji": "Okyakusama kara denwa ga arimashita.",
 			"vi": "Vừa có cuộc điện thoại gọi đến từ khách hàng."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "休憩",
 		"romaji": "Kyuukei",
 		"vi": "Nghỉ ngơi / Giải lao",
 		"topic": "work",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "10分間休憩しましょう。",
 			"romaji": "Juppunkan kyuukei shimashou.",
 			"vi": "Chúng ta cùng nghỉ giải lao khoảng 10 phút nhé."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "連絡",
 		"romaji": "Renraku",
 		"vi": "Liên lạc / Thông báo",
 		"topic": "work",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "決まり次第メールでご連絡します。",
 			"romaji": "Kimari shidai meeru de gorenraku shimasu.",
 			"vi": "Ngay khi có quyết định, tôi sẽ liên lạc qua thư điện tử."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "準備",
 		"romaji": "Junbi",
 		"vi": "Chuẩn bị",
 		"topic": "work",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "明日のプレゼンの準備を終えました。",
 			"romaji": "Ashita no purezen no junbi wo oemashita.",
 			"vi": "Tôi đã hoàn thành công tác chuẩn bị cho buổi thuyết trình ngày mai."
-		}
+		},
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "天気",
 		"romaji": "Tenki",
 		"vi": "Thời tiết",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "今日の天気予報を見ましたか？",
 			"romaji": "Kyou no tenki yohou wo mimashita ka?",
 			"vi": "Bạn đã xem bản tin dự báo thời tiết hôm nay chưa?"
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "雨",
 		"romaji": "Ame",
 		"vi": "Mưa",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "傘を持って出かけましょう、雨が降ります。",
 			"romaji": "Kasa wo motte dekakemashou, ame ga furimasu.",
 			"vi": "Hãy đem theo ô khi ra ngoài nhé, trời sắp mưa đấy."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "晴れ",
 		"romaji": "Hare",
 		"vi": "Nắng ráo / Trong xanh",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "青空が広がって気持ちの良い晴れです。",
 			"romaji": "Aozora ga hirogatte kimochi no yoi hare desu.",
 			"vi": "Bầu trời xanh trong, hôm nay là ngày nắng thật dễ chịu."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "暑い",
 		"romaji": "Atsui",
 		"vi": "Nóng bức (thời tiết)",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "今年の夏は特に暑いです。",
 			"romaji": "Kotoshi no natsu wa tokuni atsui desu.",
 			"vi": "Mùa hè năm nay thời tiết đặc biệt nóng bức."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "寒い",
 		"romaji": "Samui",
 		"vi": "Lạnh buốt (thời tiết)",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "外は風が強くてとても寒いです。",
 			"romaji": "Soto wa kaze ga tsuyokute totemo samui desu.",
 			"vi": "Bên ngoài gió to và rất lạnh buốt."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "雪",
 		"romaji": "Yuki",
 		"vi": "Tuyết rơi",
 		"topic": "weather",
-		"track": "beginner",
+		"track": "n4",
 		"example": {
 			"jp": "冬になると山に白い雪が積もります。",
 			"romaji": "Fuyu ni naru to yama ni shiroi yuki ga tsumorimasu.",
 			"vi": "Khi mùa đông đến, tuyết trắng phủ dày khắp đỉnh núi."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "季節",
 		"romaji": "Kisetsu",
 		"vi": "Mùa trong năm",
 		"topic": "weather",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "日本には四季という四つの季節があります。",
 			"romaji": "Nihon ni wa shiki to iu yottsu no kisetsu ga arimasu.",
 			"vi": "Nước Nhật có bốn mùa rất rõ nét."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "気温",
 		"romaji": "Kion",
 		"vi": "Nhiệt độ không khí",
 		"topic": "weather",
-		"track": "advanced",
+		"track": "n4",
 		"example": {
 			"jp": "今日の最高気温は25度です。",
 			"romaji": "Kyou no saikou kion wa nijuugodo desu.",
 			"vi": "Nhiệt độ cao nhất trong ngày hôm nay là 25 độ C."
-		}
+		},
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	}
 ];
 
@@ -1129,15 +1258,26 @@ function resetFlashcardView() {
 }
 
 function updateTopicCounts() {
+	const n5Card = document.getElementById("track-card-n5");
+	const n4Card = document.getElementById("track-card-n4");
+	const allBtn = document.getElementById("track-btn-all");
+	if (n5Card) n5Card.classList.toggle("active", state.selectedTrack === "n5");
+	if (n4Card) n4Card.classList.toggle("active", state.selectedTrack === "n4");
+	if (allBtn) allBtn.classList.toggle("active", state.selectedTrack === "all");
+
 	document.querySelectorAll("#fc-topic-selector .topic-card").forEach(card => {
 		const topic = card.getAttribute("data-fc-topic");
+		const track = card.getAttribute("data-track");
 		const countEl = card.querySelector(".topic-count");
+		
+		if (state.selectedTrack === "all" || track === state.selectedTrack) {
+			card.style.display = "flex";
+		} else {
+			card.style.display = "none";
+		}
+
 		if (topic && countEl) {
-			const count = FLASHCARDS.filter(f => {
-				const matchTopic = f.topic === topic;
-				const matchTrack = state.selectedTrack === "all" || f.track === state.selectedTrack;
-				return matchTopic && matchTrack;
-			}).length;
+			const count = FLASHCARDS.filter(f => f.topic === topic).length;
 			countEl.textContent = `${count} từ vựng`;
 		}
 	});
@@ -1292,8 +1432,8 @@ function renderFlashcard() {
 	// Track badge
 	const trackBadge = document.getElementById("fc-track-badge");
 	if (trackBadge) {
-		trackBadge.textContent = data.track === "beginner" ? "[SƠ CẤP]" : "[NÂNG CAO]";
-		trackBadge.className = "fc-track-badge " + (data.track === "beginner" ? "badge-beginner" : "badge-advanced");
+		trackBadge.textContent = data.stageTitle ? `[${data.stageTitle}]` : (data.track === "n5" ? "[JLPT N5 • SƠ CẤP]" : "[JLPT N4 • TRUNG CẤP]");
+		trackBadge.className = "fc-track-badge " + (data.track === "n5" ? "badge-beginner" : "badge-advanced");
 	}
 
 	// Memorization status (No emojis)
@@ -1407,19 +1547,21 @@ function initFlashcards() {
 		});
 	});
 
-	// Track filter tabs ([ALL], [BEGINNER], [ADVANCED])
-	document.querySelectorAll(".track-tab").forEach((tab) => {
-		tab.addEventListener("click", () => {
-			document.querySelectorAll(".track-tab").forEach(t => t.classList.remove("active"));
-			tab.classList.add("active");
-			state.selectedTrack = tab.getAttribute("data-track") || "all";
-			state.flashIdx = 0;
-			updateTopicCounts();
-			const studyContainer = document.getElementById("fc-study-container");
-			if (studyContainer && studyContainer.style.display !== "none") {
-				renderFlashcard();
-			}
-		});
+	// 2-Track Selection Cards ([JLPT N5], [JLPT N4], [ALL])
+	document.getElementById("track-card-n5")?.addEventListener("click", () => {
+		state.selectedTrack = "n5";
+		state.flashIdx = 0;
+		updateTopicCounts();
+	});
+	document.getElementById("track-card-n4")?.addEventListener("click", () => {
+		state.selectedTrack = "n4";
+		state.flashIdx = 0;
+		updateTopicCounts();
+	});
+	document.getElementById("track-btn-all")?.addEventListener("click", () => {
+		state.selectedTrack = "all";
+		state.flashIdx = 0;
+		updateTopicCounts();
 	});
 
 	// Romaji toggle button
@@ -1699,8 +1841,12 @@ function shuffle(arr) {
 }
 
 function buildQuizQuestion() {
-	const correct = FLASHCARDS[Math.floor(Math.random() * FLASHCARDS.length)];
-	const pool = FLASHCARDS.map(f => f.vi);
+	const trackPool = (state.selectedQuizTrack && state.selectedQuizTrack !== "all")
+		? FLASHCARDS.filter(f => f.track === state.selectedQuizTrack)
+		: FLASHCARDS;
+	const poolList = trackPool.length >= 4 ? trackPool : FLASHCARDS;
+	const correct = poolList[Math.floor(Math.random() * poolList.length)];
+	const pool = poolList.map(f => f.vi);
 	const others = pool.filter(v => v !== correct.vi);
 	shuffle(others);
 	const options = [correct.vi, ...others.slice(0, 3)];
@@ -1822,6 +1968,17 @@ function initQuiz() {
 	const navs = document.querySelectorAll('[data-nav="quiz"]');
 	navs.forEach(nav => {
 		nav.addEventListener("click", () => {
+			quizRound = 1;
+			quizScore = 0;
+			renderQuizQuestion();
+		});
+	});
+
+	document.querySelectorAll(".quiz-track-btn").forEach(btn => {
+		btn.addEventListener("click", () => {
+			document.querySelectorAll(".quiz-track-btn").forEach(b => b.classList.remove("active"));
+			btn.classList.add("active");
+			state.selectedQuizTrack = btn.getAttribute("data-quiz-track") || "n5";
 			quizRound = 1;
 			quizScore = 0;
 			renderQuizQuestion();

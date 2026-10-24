@@ -306,6 +306,14 @@ function loadAllData() {
     loadLeaderboard();
 }
 
+// Academic JLPT Rank Helper
+function getLevelRank(level) {
+    if (level <= 2) return { code: "[N5-BASIC]", label: "Sơ cấp N5" };
+    if (level <= 5) return { code: "[N5-PRO]", label: "Trung cấp N5" };
+    if (level <= 9) return { code: "[N4-CORE]", label: "Nâng cao N4" };
+    return { code: "[MASTER]", label: "Cao cấp Master" };
+}
+
 // ================= Table Renderers =================
 function renderOverviewRecent() {
     const tbody = document.getElementById('overview-recent-tbody');
@@ -314,6 +322,7 @@ function renderOverviewRecent() {
 
     const recent = cachedUsers.slice(0, 5);
     recent.forEach(u => {
+        const rank = getLevelRank(u.level || 1);
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
@@ -326,7 +335,10 @@ function renderOverviewRecent() {
                 </div>
             </td>
             <td><span class="role-badge ${u.role}">${u.role === 'admin' ? 'Admin' : 'Học viên'}</span></td>
-            <td><span class="level-pill">Lv ${u.level}</span> <span style="color:var(--admin-muted); font-size:12px;">(${u.points} pts)</span></td>
+            <td>
+                <span class="level-pill">Lv ${u.level}</span>
+                <span class="rank-badge" style="font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); margin-left:4px;">${rank.code}</span>
+            </td>
             <td><span style="color:#10b981; font-weight:700;">${u.progress || 0}</span> từ</td>
             <td>
                 <button class="btn btn-outline btn-sm" onclick="openUserHistory('${escapeHtml(u.email)}')">Xem lịch sử</button>
@@ -388,7 +400,8 @@ function renderUsersTable() {
             <td><span class="role-badge ${u.role}">${u.role === 'admin' ? 'Admin' : 'Học viên'}</span></td>
             <td>
                 <span class="level-pill">Lv ${u.level}</span>
-                <span style="color:#10b981; font-weight:700; margin-left:6px;">${u.points} pts</span>
+                <span class="rank-badge" style="font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); margin-left:4px;">${getLevelRank(u.level || 1).code}</span>
+                <div style="color:#10b981; font-weight:700; font-size:12px; margin-top:3px;">${u.points} pts</div>
             </td>
             <td>
                 <div class="progress-wrap">
