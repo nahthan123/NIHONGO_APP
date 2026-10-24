@@ -31,6 +31,7 @@ const state = {
 	theme: "dark",
 	selectedFcTopic: null,
 	selectedSnTopic: null,
+	selectedSnTrack: "n5",
 	selectedTrack: "n5",
 	selectedQuizTrack: "n5",
 	showRomaji: true,
@@ -942,122 +943,194 @@ const SENTENCES = [
 	{
 		"jp": "おはようございます。",
 		"vi": "Chào buổi sáng tốt lành.",
-		"topic": "greetings"
+		"topic": "greetings",
+		"track": "n5",
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "お元気ですか？",
 		"vi": "Dạo này bạn có khỏe không?",
-		"topic": "greetings"
+		"topic": "greetings",
+		"track": "n5",
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "失礼いたします。",
 		"vi": "Xin phép làm phiền / Xin phép vào.",
-		"topic": "greetings"
+		"topic": "greetings",
+		"track": "n5",
+		"stage": 1,
+		"stageTitle": "N5 • Giai đoạn 1/4 - Chào hỏi"
 	},
 	{
 		"jp": "いただきます。",
 		"vi": "Tôi xin phép dùng bữa.",
-		"topic": "dining"
+		"topic": "dining",
+		"track": "n5",
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "ごちそうさまでした。",
 		"vi": "Cảm ơn vì bữa ăn rất ngon.",
-		"topic": "dining"
+		"topic": "dining",
+		"track": "n5",
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "お水を一杯いただけますか？",
 		"vi": "Cho tôi xin một ly nước được không ạ?",
-		"topic": "dining"
+		"topic": "dining",
+		"track": "n5",
+		"stage": 3,
+		"stageTitle": "N5 • Giai đoạn 3/4 - Ăn uống"
 	},
 	{
 		"jp": "一番近い駅はどこですか？",
 		"vi": "Nhà ga gần nhất nằm ở đâu ạ?",
-		"topic": "transportation"
+		"topic": "transportation",
+		"track": "n4",
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "切符はどこで買えますか？",
 		"vi": "Tôi có thể mua vé ở đâu?",
-		"topic": "transportation"
+		"topic": "transportation",
+		"track": "n4",
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "東京駅までどのくらいかかりますか？",
 		"vi": "Đến ga Tokyo mất khoảng bao lâu?",
-		"topic": "transportation"
+		"topic": "transportation",
+		"track": "n4",
+		"stage": 1,
+		"stageTitle": "N4 • Giai đoạn 1/4 - Giao thông"
 	},
 	{
 		"jp": "これはいくらですか？",
 		"vi": "Cái này giá bao nhiêu tiền vậy?",
-		"topic": "shopping"
+		"topic": "shopping",
+		"track": "n4",
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "これをお願いします。",
 		"vi": "Làm ơn lấy cho tôi món này.",
-		"topic": "shopping"
+		"topic": "shopping",
+		"track": "n4",
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "カードで支払うことはできますか？",
 		"vi": "Tôi có thể thanh toán bằng thẻ được không?",
-		"topic": "shopping"
+		"topic": "shopping",
+		"track": "n4",
+		"stage": 2,
+		"stageTitle": "N4 • Giai đoạn 2/4 - Mua sắm"
 	},
 	{
 		"jp": "ご家族はお元気ですか？",
 		"vi": "Gia đình bạn vẫn khỏe chứ?",
-		"topic": "family"
+		"topic": "family",
+		"track": "n5",
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "両親は故郷に住んでいます。",
 		"vi": "Bố mẹ tôi hiện đang sống ở quê nhà.",
-		"topic": "family"
+		"topic": "family",
+		"track": "n5",
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "また遊びに来てくださいね。",
 		"vi": "Lần sau hãy lại ghé chơi nhé.",
-		"topic": "family"
+		"topic": "family",
+		"track": "n5",
+		"stage": 4,
+		"stageTitle": "N5 • Giai đoạn 4/4 - Gia đình"
 	},
 	{
 		"jp": "今、何時何分ですか？",
 		"vi": "Bây giờ là mấy giờ mấy phút rồi?",
-		"topic": "numbers"
+		"topic": "numbers",
+		"track": "n5",
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "来週の月曜日に会いましょう。",
 		"vi": "Hẹn gặp bạn vào thứ Hai tuần tới nhé.",
-		"topic": "numbers"
+		"topic": "numbers",
+		"track": "n5",
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "少し時間がかかります。",
 		"vi": "Sẽ mất một chút thời gian đấy.",
-		"topic": "numbers"
+		"topic": "numbers",
+		"track": "n5",
+		"stage": 2,
+		"stageTitle": "N5 • Giai đoạn 2/4 - Thời gian & Số"
 	},
 	{
 		"jp": "お疲れ様でした。",
 		"vi": "Mọi người đã vất vả nhiều rồi.",
-		"topic": "work"
+		"topic": "work",
+		"track": "n4",
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "確認して折り返し連絡します。",
 		"vi": "Tôi sẽ kiểm tra rồi liên lạc lại ngay.",
-		"topic": "work"
+		"topic": "work",
+		"track": "n4",
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "資料をメールで送付しました。",
 		"vi": "Tôi đã gửi tài liệu qua thư điện tử rồi.",
-		"topic": "work"
+		"topic": "work",
+		"track": "n4",
+		"stage": 3,
+		"stageTitle": "N4 • Giai đoạn 3/4 - Công việc"
 	},
 	{
 		"jp": "今日はとても良い天気ですね。",
 		"vi": "Hôm nay thời tiết đẹp quá nhỉ.",
-		"topic": "weather"
+		"topic": "weather",
+		"track": "n4",
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "明日は雨が降るそうです。",
 		"vi": "Nghe nói ngày mai trời sẽ đổ mưa.",
-		"topic": "weather"
+		"topic": "weather",
+		"track": "n4",
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	},
 	{
 		"jp": "寒くなりましたのでお体に気をつけて。",
 		"vi": "Trời trở lạnh rồi, bạn nhớ giữ gìn sức khỏe nhé.",
-		"topic": "weather"
+		"topic": "weather",
+		"track": "n4",
+		"stage": 4,
+		"stageTitle": "N4 • Giai đoạn 4/4 - Thời tiết"
 	}
 ];
 
@@ -1075,6 +1148,110 @@ const TOPIC_NAMES = {
 // Timer variables
 let quizTimerInterval = null;
 let quizTimeRemaining = 10;
+
+// Lightweight Native Web Audio Sound Effects (0 External Dependencies)
+const soundEffects = {
+	ctx: null,
+	enabled: true,
+	init() {
+		if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+			const AudioCtx = window.AudioContext || window.webkitAudioContext;
+			this.ctx = new AudioCtx();
+		}
+	},
+	play(type) {
+		if (!this.enabled) return;
+		try {
+			this.init();
+			if (!this.ctx) return;
+			if (this.ctx.state === 'suspended') {
+				this.ctx.resume();
+			}
+			const now = this.ctx.currentTime;
+
+			if (type === 'correct') {
+				// Harmonic two-tone chime (587Hz D5 -> 880Hz A5)
+				const osc1 = this.ctx.createOscillator();
+				const osc2 = this.ctx.createOscillator();
+				const gain = this.ctx.createGain();
+
+				osc1.type = 'sine';
+				osc2.type = 'sine';
+				osc1.frequency.setValueAtTime(587.33, now);
+				osc1.frequency.setValueAtTime(880.00, now + 0.1);
+				osc2.frequency.setValueAtTime(880.00, now);
+				osc2.frequency.setValueAtTime(1174.66, now + 0.1);
+
+				gain.gain.setValueAtTime(0.12, now);
+				gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+				osc1.connect(gain);
+				osc2.connect(gain);
+				gain.connect(this.ctx.destination);
+
+				osc1.start(now);
+				osc2.start(now);
+				osc1.stop(now + 0.35);
+				osc2.stop(now + 0.35);
+			} else if (type === 'wrong') {
+				// Soft low buzzer (220Hz -> 140Hz)
+				const osc = this.ctx.createOscillator();
+				const gain = this.ctx.createGain();
+
+				osc.type = 'triangle';
+				osc.frequency.setValueAtTime(220, now);
+				osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+
+				gain.gain.setValueAtTime(0.15, now);
+				gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+				osc.connect(gain);
+				gain.connect(this.ctx.destination);
+
+				osc.start(now);
+				osc.stop(now + 0.25);
+			} else if (type === 'flip') {
+				// Clean gentle click
+				const osc = this.ctx.createOscillator();
+				const gain = this.ctx.createGain();
+
+				osc.type = 'sine';
+				osc.frequency.setValueAtTime(440, now);
+				osc.frequency.exponentialRampToValueAtTime(220, now + 0.06);
+
+				gain.gain.setValueAtTime(0.06, now);
+				gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+				osc.connect(gain);
+				gain.connect(this.ctx.destination);
+
+				osc.start(now);
+				osc.stop(now + 0.06);
+			} else if (type === 'level-up') {
+				// Ascending celebration arpeggio
+				[523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+					const osc = this.ctx.createOscillator();
+					const gain = this.ctx.createGain();
+					const noteTime = now + (i * 0.08);
+
+					osc.type = 'sine';
+					osc.frequency.setValueAtTime(freq, noteTime);
+
+					gain.gain.setValueAtTime(0.1, noteTime);
+					gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.25);
+
+					osc.connect(gain);
+					gain.connect(this.ctx.destination);
+
+					osc.start(noteTime);
+					osc.stop(noteTime + 0.25);
+				});
+			}
+		} catch (e) {
+			// AudioContext not supported or restricted, ignore
+		}
+	}
+};
 
 function loadFromStorage() {
 	const userRaw = localStorage.getItem(STORAGE_KEYS.user);
@@ -1468,8 +1645,37 @@ function updateRomajiToggleUI() {
 
 // Sentence View Logic
 function getFilteredSentences() {
-	if (!state.selectedSnTopic) return SENTENCES;
-	return SENTENCES.filter(s => s.topic === state.selectedSnTopic);
+	return SENTENCES.filter(s => {
+		const matchTopic = !state.selectedSnTopic || s.topic === state.selectedSnTopic;
+		const matchTrack = state.selectedSnTrack === "all" || s.track === state.selectedSnTrack;
+		return matchTopic && matchTrack;
+	});
+}
+
+function updateSentenceTopicCounts() {
+	const n5Card = document.getElementById("sn-track-card-n5");
+	const n4Card = document.getElementById("sn-track-card-n4");
+	const allBtn = document.getElementById("sn-track-btn-all");
+	if (n5Card) n5Card.classList.toggle("active", state.selectedSnTrack === "n5");
+	if (n4Card) n4Card.classList.toggle("active", state.selectedSnTrack === "n4");
+	if (allBtn) allBtn.classList.toggle("active", state.selectedSnTrack === "all");
+
+	document.querySelectorAll("#sn-topic-selector .topic-card").forEach(card => {
+		const topic = card.getAttribute("data-sn-topic");
+		const track = card.getAttribute("data-track");
+		const countEl = card.querySelector(".topic-count");
+
+		if (state.selectedSnTrack === "all" || track === state.selectedSnTrack) {
+			card.style.display = "flex";
+		} else {
+			card.style.display = "none";
+		}
+
+		if (topic && countEl) {
+			const count = SENTENCES.filter(s => s.topic === topic).length;
+			countEl.textContent = `${count} mẫu câu`;
+		}
+	});
 }
 
 function resetSentenceView() {
@@ -1480,6 +1686,7 @@ function resetSentenceView() {
 	if (sel) sel.style.display = "block";
 	if (study) study.style.display = "none";
 	if (title) title.textContent = "Mẫu câu thông dụng";
+	updateSentenceTopicCounts();
 }
 
 function selectSentenceTopic(topic) {
@@ -1500,6 +1707,12 @@ function renderSentence() {
 	const data = list[state.sentenceIdx % list.length];
 	document.getElementById("sn-jp").textContent = data.jp;
 	document.getElementById("sn-vi").textContent = data.vi;
+
+	const trackBadge = document.getElementById("sn-track-badge");
+	if (trackBadge) {
+		trackBadge.textContent = data.stageTitle ? `[${data.stageTitle}]` : (data.track === "n5" ? "[JLPT N5 • SƠ CẤP]" : "[JLPT N4 • TRUNG CẤP]");
+		trackBadge.className = "fc-track-badge " + (data.track === "n5" ? "badge-beginner" : "badge-advanced");
+	}
 }
 
 function addPoints(amount = 10, activityName = "Học tập") {
@@ -1579,8 +1792,8 @@ function initFlashcards() {
 	const btnNext = document.getElementById("btn-fc-next");
 	const btnBackTopic = document.getElementById("btn-fc-back-topic");
 	const btnExSpeak = document.getElementById("btn-fc-ex-speak");
-	
-	btnFlip?.addEventListener("click", () => { card.classList.toggle("flipped"); });
+	card?.addEventListener("click", () => { card.classList.toggle("flipped"); soundEffects.play("flip"); });
+	btnFlip?.addEventListener("click", (e) => { e.stopPropagation(); card.classList.toggle("flipped"); soundEffects.play("flip"); });
 	btnSpeak?.addEventListener("click", () => { 
 		const list = getFilteredFlashcards();
 		if (list.length === 0) return;
@@ -1619,6 +1832,23 @@ function initSentences() {
 		});
 	});
 
+	// 2-Track Selection Cards for Sentences
+	document.getElementById("sn-track-card-n5")?.addEventListener("click", () => {
+		state.selectedSnTrack = "n5";
+		state.sentenceIdx = 0;
+		updateSentenceTopicCounts();
+	});
+	document.getElementById("sn-track-card-n4")?.addEventListener("click", () => {
+		state.selectedSnTrack = "n4";
+		state.sentenceIdx = 0;
+		updateSentenceTopicCounts();
+	});
+	document.getElementById("sn-track-btn-all")?.addEventListener("click", () => {
+		state.selectedSnTrack = "all";
+		state.sentenceIdx = 0;
+		updateSentenceTopicCounts();
+	});
+
 	const btnSpeak = document.getElementById("btn-sn-speak");
 	const btnNext = document.getElementById("btn-sn-next");
 	const btnBackTopic = document.getElementById("btn-sn-back-topic");
@@ -1638,6 +1868,7 @@ function initSentences() {
 		renderSentence(); 
 	});
 	btnBackTopic?.addEventListener("click", resetSentenceView);
+	updateSentenceTopicCounts();
 }
 
 function initProfile() {
@@ -1933,6 +2164,7 @@ function handleQuizAnswer(selectedIndex) {
 		quizScore++;
 		if (feedback) { feedback.textContent = "Chính xác! (+10đ)"; feedback.style.color = "#4ade80"; }
 	} else {
+		soundEffects.play("wrong");
 		if (selectedIndex >= 0 && opts[selectedIndex]) opts[selectedIndex].classList.add("wrong");
 		if (opts[currentQuizData.correctIndex]) opts[currentQuizData.correctIndex].classList.add("correct");
 		if (feedback) { feedback.textContent = selectedIndex === -1 ? "Hết giờ!" : "Sai rồi!"; feedback.style.color = "#fca5a5"; }
@@ -1950,6 +2182,7 @@ function showQuizResult(score) {
 	const box = document.createElement('div');
 	box.style.cssText = "background:var(--bg); padding:32px; border-radius:16px; text-align:center; max-width:90%; width:320px; box-shadow:0 10px 25px rgba(0,0,0,0.5);";
 	
+	if (score >= 7) { soundEffects.play("level-up"); }
 	let msg = score >= 8 ? "Xuất sắc! Đạt chuẩn ghi nhớ." : score >= 5 ? "Khá tốt! Hãy tiếp tục duy trì." : "Cần rèn luyện thêm từ vựng.";
 	
 	box.innerHTML = '<h2 style="margin-top:0; font-size:24px;">Kết quả</h2><div style="font-size:48px; margin:16px 0; font-weight:bold; color:var(--primary)">' + score + '/10</div><p style="margin-bottom:24px; color:var(--muted); font-size:16px;">' + msg + '</p><button id="btn-quiz-done" style="background:var(--primary); color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; font-size:16px;">Nhận ' + (score * 10) + ' Điểm</button>';

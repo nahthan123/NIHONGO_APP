@@ -1689,13 +1689,15 @@ button, input, select, textarea {
   box-shadow: 0 8px 24px var(--shadow);
 }
 
-.track-card.active[data-track="n5"] {
+.track-card.active[data-track="n5"],
+.track-card.active[data-sn-track="n5"] {
   border-color: #10b981;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, var(--card) 100%);
   box-shadow: 0 0 0 1px #10b981, 0 8px 25px rgba(16, 185, 129, 0.2);
 }
 
-.track-card.active[data-track="n4"] {
+.track-card.active[data-track="n4"],
+.track-card.active[data-sn-track="n4"] {
   border-color: #38bdf8;
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%);
   box-shadow: 0 0 0 1px #38bdf8, 0 8px 25px rgba(56, 189, 248, 0.2);

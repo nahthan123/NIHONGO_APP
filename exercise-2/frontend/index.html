@@ -374,59 +374,110 @@
 
       <!-- Topic Selection Section -->
       <div id="sn-topic-selector" class="content">
-        <div class="section-badge-center">CHỌN CHỦ ĐỀ HỘI THOẠI</div>
-        <p class="section-lead-text">Rèn luyện phản xạ ngữ cảnh với các câu nói chuẩn</p>
+        <div class="section-badge-center">LỘ TRÌNH MẪU CÂU HỘI THOẠI</div>
+        <p class="section-lead-text">Rèn luyện phản xạ giao tiếp thực tế theo từng cấp độ và tình huống cuộc sống</p>
+
+        <!-- 2-Track Progressive Cards for Sentences -->
+        <div class="tracks-container">
+          <div class="track-card active" data-sn-track="n5" id="sn-track-card-n5">
+            <div class="track-card-header">
+              <span class="track-pill n5-pill">JLPT N5</span>
+              <span class="track-stage-indicator">4 Giai đoạn • 12 Mẫu câu</span>
+            </div>
+            <div class="track-card-title">Mẫu câu Sơ cấp (N5)</div>
+            <div class="track-card-desc">Cấu trúc giao tiếp thường nhật, chào hỏi, dùng bữa, hỏi giờ và thăm hỏi gia đình.</div>
+            <div class="track-card-footer">
+              <span class="track-badge-progress">Độ khó: Giao tiếp căn bản</span>
+              <span class="track-status-dot"></span>
+            </div>
+          </div>
+
+          <div class="track-card" data-sn-track="n4" id="sn-track-card-n4">
+            <div class="track-card-header">
+              <span class="track-pill n4-pill">JLPT N4</span>
+              <span class="track-stage-indicator">4 Giai đoạn • 12 Mẫu câu</span>
+            </div>
+            <div class="track-card-title">Mẫu câu Trung cấp (N4)</div>
+            <div class="track-card-desc">Tình huống thực tế di chuyển ga tàu, giao dịch thanh toán, trao đổi công sở và dự báo thời tiết.</div>
+            <div class="track-card-footer">
+              <span class="track-badge-progress">Độ khó: Giao tiếp thực địa</span>
+              <span class="track-status-dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-switch-all">
+          <button class="track-all-btn" data-sn-track="all" id="sn-track-btn-all" type="button">Xem tất cả 8 chủ đề mẫu câu (24 câu)</button>
+        </div>
+
         <div class="topic-grid">
-          <div class="topic-card" data-sn-topic="greetings">
+          <!-- N5 Stages -->
+          <div class="topic-card" data-sn-topic="greetings" data-track="n5">
+            <span class="stage-badge n5">N5 • Giai đoạn 1/4</span>
             <div class="topic-icon-wrap bg-emerald">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
             </div>
             <div class="topic-name">Chào hỏi</div>
             <div class="topic-count">3 mẫu câu</div>
           </div>
-          <div class="topic-card" data-sn-topic="dining">
-            <div class="topic-icon-wrap bg-sky">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"></path><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M10 8h4"></path><path d="M6 12C6 7 9 4 12 4s6 3 6 8"></path></svg>
-            </div>
-            <div class="topic-name">Ăn uống</div>
-            <div class="topic-count">3 mẫu câu</div>
-          </div>
-          <div class="topic-card" data-sn-topic="transportation">
-            <div class="topic-icon-wrap bg-violet">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M4 8h16"></path><path d="M8 21l-2 3"></path><path d="M16 21l2 3"></path><path d="M10 15h4"></path></svg>
-            </div>
-            <div class="topic-name">Giao thông</div>
-            <div class="topic-count">3 mẫu câu</div>
-          </div>
-          <div class="topic-card" data-sn-topic="shopping">
-            <div class="topic-icon-wrap bg-amber">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-            </div>
-            <div class="topic-name">Mua sắm</div>
-            <div class="topic-count">3 mẫu câu</div>
-          </div>
-          <div class="topic-card" data-sn-topic="family">
-            <div class="topic-icon-wrap bg-rose">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            </div>
-            <div class="topic-name">Gia đình</div>
-            <div class="topic-count">3 mẫu câu</div>
-          </div>
-          <div class="topic-card" data-sn-topic="numbers">
+
+          <div class="topic-card" data-sn-topic="numbers" data-track="n5">
+            <span class="stage-badge n5">N5 • Giai đoạn 2/4</span>
             <div class="topic-icon-wrap bg-teal">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             </div>
             <div class="topic-name">Thời gian & Số</div>
             <div class="topic-count">3 mẫu câu</div>
           </div>
-          <div class="topic-card" data-sn-topic="work">
+
+          <div class="topic-card" data-sn-topic="dining" data-track="n5">
+            <span class="stage-badge n5">N5 • Giai đoạn 3/4</span>
+            <div class="topic-icon-wrap bg-sky">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"></path><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M10 8h4"></path><path d="M6 12C6 7 9 4 12 4s6 3 6 8"></path></svg>
+            </div>
+            <div class="topic-name">Ăn uống</div>
+            <div class="topic-count">3 mẫu câu</div>
+          </div>
+
+          <div class="topic-card" data-sn-topic="family" data-track="n5">
+            <span class="stage-badge n5">N5 • Giai đoạn 4/4</span>
+            <div class="topic-icon-wrap bg-rose">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="topic-name">Gia đình</div>
+            <div class="topic-count">3 mẫu câu</div>
+          </div>
+
+          <!-- N4 Stages -->
+          <div class="topic-card" data-sn-topic="transportation" data-track="n4">
+            <span class="stage-badge n4">N4 • Giai đoạn 1/4</span>
+            <div class="topic-icon-wrap bg-violet">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M4 8h16"></path><path d="M8 21l-2 3"></path><path d="M16 21l2 3"></path><path d="M10 15h4"></path></svg>
+            </div>
+            <div class="topic-name">Giao thông</div>
+            <div class="topic-count">3 mẫu câu</div>
+          </div>
+
+          <div class="topic-card" data-sn-topic="shopping" data-track="n4">
+            <span class="stage-badge n4">N4 • Giai đoạn 2/4</span>
+            <div class="topic-icon-wrap bg-amber">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            </div>
+            <div class="topic-name">Mua sắm</div>
+            <div class="topic-count">3 mẫu câu</div>
+          </div>
+
+          <div class="topic-card" data-sn-topic="work" data-track="n4">
+            <span class="stage-badge n4">N4 • Giai đoạn 3/4</span>
             <div class="topic-icon-wrap bg-indigo">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             </div>
             <div class="topic-name">Công việc</div>
             <div class="topic-count">3 mẫu câu</div>
           </div>
-          <div class="topic-card" data-sn-topic="weather">
+
+          <div class="topic-card" data-sn-topic="weather" data-track="n4">
+            <span class="stage-badge n4">N4 • Giai đoạn 4/4</span>
             <div class="topic-icon-wrap bg-sky">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
             </div>
@@ -438,6 +489,9 @@
 
       <!-- Sentence Study Section -->
       <div id="sn-study-container" class="content" style="display:none;">
+        <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+          <span class="fc-track-badge badge-beginner" id="sn-track-badge">[JLPT N5 • SƠ CẤP]</span>
+        </div>
         <div class="sentence-card">
           <div class="sentence-header-tag">MẪU CÂU GIAO TIẾP</div>
           <div class="jp" id="sn-jp">おはようございます。</div>
