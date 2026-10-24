@@ -1473,3 +1473,180 @@ button, input, select, textarea {
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
   }
 }
+
+/* ========================================================
+   TRACK FILTER & SEQUENTIAL STUDY STYLES (MINIMALIST)
+   ======================================================== */
+.track-filter-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0 24px;
+}
+
+.track-tab {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.track-tab:hover {
+  color: var(--text);
+  border-color: var(--primary);
+  background: var(--card-hover);
+}
+
+.track-tab.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Study Topbar */
+.fc-study-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.fc-track-badge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.fc-track-badge.badge-beginner {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.fc-track-badge.badge-advanced {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.fc-btn-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.fc-btn-toggle:hover {
+  border-color: var(--primary);
+  background: var(--card-hover);
+}
+
+.toggle-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-indicator.on {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.toggle-indicator.off {
+  background: #64748b;
+}
+
+/* Sequential Reinforcement: Immediate Applied Contextual Sentence Card */
+.fc-example-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin-top: 18px;
+  box-shadow: 0 4px 16px var(--shadow);
+  transition: all 0.25s ease;
+  text-align: left;
+}
+
+.fc-example-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.example-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.example-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.btn-audio-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-audio-mini:hover {
+  background: var(--accent);
+  color: #0b1120;
+}
+
+.example-jp {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.example-romaji {
+  font-size: 13.5px;
+  color: var(--accent);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.example-vi {
+  font-size: 14.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
