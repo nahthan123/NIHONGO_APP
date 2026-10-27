@@ -37,7 +37,9 @@ const state = {
 	selectedTrack: "n5",
 	selectedQuizTrack: "n5",
 	showRomaji: true,
-	history: []
+	history: [],
+	weakFilter: "all",
+	isWeakDrillMode: false
 };
 
 // Expanded 64-item Academic Vocabulary Database with Contextual Example Sentences
@@ -1376,6 +1378,13 @@ function updateHeaderStats() {
 		const memorizedCount = (state.user && state.user.memorizedWords) ? state.user.memorizedWords.length : 0;
 		heroMemEl.textContent = `${memorizedCount}/${total}`;
 	}
+
+	// update hero weak count and badge
+	const heroWeakEl = document.getElementById("hero-weak-count");
+	const weakBadgeEl = document.getElementById("weak-badge-count");
+	const weakCount = (state.user && state.user.weakWords) ? state.user.weakWords.length : 0;
+	if (heroWeakEl) heroWeakEl.textContent = String(weakCount);
+	if (weakBadgeEl) weakBadgeEl.textContent = `${weakCount} từ`;
 }
 
 function addHistoryEntry(action) {
@@ -1418,6 +1427,14 @@ function renderProfileHistory() {
 
 // Flashcard Topic & Track Logic
 function getFilteredFlashcards() {
+	if (state.isWeakDrillMode) {
+		const weakSet = new Set((state.user && state.user.weakWords) || []);
+		return FLASHCARDS.filter(f => {
+			const matchWeak = weakSet.has(f.jp);
+			const matchTrack = state.selectedTrack === "all" || f.track === state.selectedTrack;
+			return matchWeak && matchTrack;
+		});
+	}
 	return FLASHCARDS.filter(f => {
 		const matchTopic = !state.selectedFcTopic || f.topic === state.selectedFcTopic;
 		const matchTrack = state.selectedTrack === "all" || f.track === state.selectedTrack;
@@ -1510,7 +1527,9 @@ function toggleMemorized() {
 	}).then(res => res.json()).then(data => {
 		if (data.success) {
 			state.user.memorizedWords = data.memorizedWords;
+			if (data.weakWords) state.user.weakWords = data.weakWords;
 			saveUser();
+			updateHeaderStats();
 			updateFlashcardProgress();
 			renderFlashcard();
 		}
@@ -1559,6 +1578,12 @@ function setActiveView(name) {
 	}
 	if (name === 'profile') {
 		renderProfileHistory();
+	}
+	if (name === 'weakwords') {
+		renderWeakWordsView();
+	}
+	if (name !== 'flashcards') {
+		state.isWeakDrillMode = false;
 	}
 }
 
@@ -1781,6 +1806,7 @@ function generateExamQuestions(track = "n5") {
 				typeName: "Từ vựng • Nghĩa từ vựng",
 				prompt: `Từ 「${item.jp}」 có nghĩa tiếng Việt là gì?`,
 				sub: `Phiên âm Romaji: ${item.romaji}`,
+				targetWord: item.jp,
 				options,
 				correctIndex: options.indexOf(item.vi),
 				correctAnswer: item.vi,
@@ -1797,6 +1823,7 @@ function generateExamQuestions(track = "n5") {
 				typeName: "Từ vựng • Chữ viết Kanji / Kana",
 				prompt: `Nghĩa 「${item.vi}」 trong tiếng Nhật viết là gì?`,
 				sub: `Phiên âm: ${item.romaji}`,
+				targetWord: item.jp,
 				options,
 				correctIndex: options.indexOf(item.jp),
 				correctAnswer: item.jp,
@@ -2017,6 +2044,10 @@ function submitExam(isAuto = false) {
 	examData.questions.forEach(q => {
 		if (q.userAnswer === q.correctIndex) {
 			correctCount++;
+		} else {
+			if (q.type === "vocab" && q.targetWord) {
+				addWeakWord(q.targetWord);
+			}
 		}
 	});
 	examData.score = correctCount;
@@ -2113,6 +2144,183 @@ function renderExamReviewList() {
 		`;
 		container.appendChild(item);
 	});
+}
+
+
+// ========================================================
+// SPACED REPETITION / WEAK WORDS SYSTEM
+// ========================================================
+function addWeakWord(wordJp) {
+	if (!state.user) return;
+	if (!state.user.weakWords) state.user.weakWords = [];
+	if (!state.user.weakWords.includes(wordJp)) {
+		state.user.weakWords.push(wordJp);
+	}
+	if (state.user.memorizedWords) {
+		const mIdx = state.user.memorizedWords.indexOf(wordJp);
+		if (mIdx > -1) state.user.memorizedWords.splice(mIdx, 1);
+	}
+	saveUser();
+	updateHeaderStats();
+	
+	fetch('/api/users/add-weak-word', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email: state.user.email, word: wordJp })
+	}).then(res => res.json()).then(data => {
+		if (data.success) {
+			state.user.weakWords = data.weakWords;
+			state.user.memorizedWords = data.memorizedWords;
+			saveUser();
+			updateHeaderStats();
+		}
+	}).catch(() => {});
+}
+
+function removeWeakWord(wordJp) {
+	if (!state.user) return;
+	if (state.user.weakWords) {
+		const idx = state.user.weakWords.indexOf(wordJp);
+		if (idx > -1) state.user.weakWords.splice(idx, 1);
+	}
+	saveUser();
+	updateHeaderStats();
+	renderWeakWordsView();
+	
+	fetch('/api/users/remove-weak-word', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email: state.user.email, word: wordJp })
+	}).then(res => res.json()).then(data => {
+		if (data.success) {
+			state.user.weakWords = data.weakWords;
+			saveUser();
+			updateHeaderStats();
+			renderWeakWordsView();
+		}
+	}).catch(() => {});
+}
+
+function renderWeakWordsView() {
+	const userWeakList = (state.user && state.user.weakWords) || [];
+	const weakSet = new Set(userWeakList);
+	const weakCards = FLASHCARDS.filter(f => weakSet.has(f.jp));
+
+	const totalCount = weakCards.length;
+	const n5Count = weakCards.filter(f => f.track === "n5").length;
+	const n4Count = weakCards.filter(f => f.track === "n4").length;
+
+	const allCountEl = document.getElementById("weak-filter-all-count");
+	const n5CountEl = document.getElementById("weak-filter-n5-count");
+	const n4CountEl = document.getElementById("weak-filter-n4-count");
+	if (allCountEl) allCountEl.textContent = totalCount;
+	if (n5CountEl) n5CountEl.textContent = n5Count;
+	if (n4CountEl) n4CountEl.textContent = n4Count;
+
+	const drillBtn = document.getElementById("btn-weak-drill");
+	const emptyBox = document.getElementById("weak-words-empty");
+	const grid = document.getElementById("weak-words-grid");
+
+	if (totalCount === 0) {
+		if (drillBtn) drillBtn.style.display = "none";
+		if (emptyBox) emptyBox.style.display = "block";
+		if (grid) grid.innerHTML = "";
+		return;
+	}
+
+	if (drillBtn) drillBtn.style.display = "inline-flex";
+	if (emptyBox) emptyBox.style.display = "none";
+
+	const filtered = weakCards.filter(f => {
+		if (state.weakFilter === "n5") return f.track === "n5";
+		if (state.weakFilter === "n4") return f.track === "n4";
+		return true;
+	});
+
+	if (grid) {
+		grid.innerHTML = filtered.map(card => {
+			const trackBadge = card.track === "n5" 
+				? '<span class="fc-track-badge badge-beginner" style="font-size:10.5px; padding:2px 7px;">[JLPT N5]</span>' 
+				: '<span class="fc-track-badge badge-advanced" style="font-size:10.5px; padding:2px 7px;">[JLPT N4]</span>';
+			
+			return `
+				<div class="weak-card" data-word="${card.jp}">
+					<div>
+						<div class="weak-card-top">
+							<div class="weak-card-jp">${card.jp}</div>
+							${trackBadge}
+						</div>
+						<div class="weak-card-romaji">${card.romaji}</div>
+						<div class="weak-card-vi">${card.vi}</div>
+					</div>
+					<div class="weak-card-actions">
+						<button class="btn ghost btn-sm btn-speak-weak" type="button" data-speak="${card.jp}">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+							Phát âm
+						</button>
+						<button class="btn-mastered btn-resolve-weak" type="button" data-word="${card.jp}">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+							Đã thuộc ✓ (+15đ)
+						</button>
+					</div>
+				</div>
+			`;
+		}).join("");
+
+		grid.querySelectorAll(".btn-speak-weak").forEach(btn => {
+			btn.addEventListener("click", () => {
+				const word = btn.getAttribute("data-speak");
+				speakJapanese(word);
+			});
+		});
+
+		grid.querySelectorAll(".btn-resolve-weak").forEach(btn => {
+			btn.addEventListener("click", () => {
+				const word = btn.getAttribute("data-word");
+				soundEffects.play("correct");
+				addPoints(15, `Hoàn thành ôn tập từ khó: ${word}`);
+				
+				if (!state.user.memorizedWords) state.user.memorizedWords = [];
+				if (!state.user.memorizedWords.includes(word)) {
+					state.user.memorizedWords.push(word);
+				}
+				removeWeakWord(word);
+			});
+		});
+	}
+}
+
+function initWeakWords() {
+	document.querySelectorAll("[data-weak-filter]").forEach(btn => {
+		btn.addEventListener("click", () => {
+			document.querySelectorAll("[data-weak-filter]").forEach(b => b.classList.remove("active"));
+			btn.classList.add("active");
+			state.weakFilter = btn.getAttribute("data-weak-filter");
+			renderWeakWordsView();
+		});
+	});
+
+	const drillBtn = document.getElementById("btn-weak-drill");
+	if (drillBtn) {
+		drillBtn.addEventListener("click", () => {
+			const userWeakList = (state.user && state.user.weakWords) || [];
+			if (userWeakList.length === 0) return;
+			
+			state.isWeakDrillMode = true;
+			state.flashIdx = 0;
+			state.selectedFcTopic = null;
+			state.selectedTrack = state.weakFilter === "n5" ? "n5" : state.weakFilter === "n4" ? "n4" : "all";
+			
+			setActiveView("flashcards");
+			const sel = document.getElementById("fc-topic-selector");
+			const study = document.getElementById("fc-study-container");
+			const title = document.getElementById("fc-title");
+			if (sel) sel.style.display = "none";
+			if (study) study.style.display = "block";
+			if (title) title.textContent = "Luyện tập Sổ tay Từ khó (" + userWeakList.length + " từ)";
+			renderFlashcard();
+		});
+	}
 }
 
 function initExam() {
@@ -2579,6 +2787,7 @@ function handleQuizAnswer(selectedIndex) {
 		if (selectedIndex >= 0 && opts[selectedIndex]) opts[selectedIndex].classList.add("wrong");
 		if (opts[currentQuizData.correctIndex]) opts[currentQuizData.correctIndex].classList.add("correct");
 		if (feedback) { feedback.textContent = selectedIndex === -1 ? "Hết giờ!" : "Sai rồi!"; feedback.style.color = "#fca5a5"; }
+		if (currentQuizData && currentQuizData.correct && currentQuizData.correct.jp) { addWeakWord(currentQuizData.correct.jp); }
 	}
 	
 	setTimeout(() => {

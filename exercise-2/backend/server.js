@@ -138,7 +138,8 @@ app.get('/api/users/me', (req, res) => {
             level: user.level,
             role: user.role,
             history: user.history || [],
-            memorizedWords: user.memorizedWords || []
+            memorizedWords: user.memorizedWords || [],
+            weakWords: user.weakWords || []
         }
     });
 });
@@ -168,7 +169,8 @@ app.post('/api/auth/register', (req, res) => {
         points: startPoints,
         level: calcLevel(startPoints),
         history: [{ action: 'Tạo tài khoản mới', timestamp: new Date().toISOString() }],
-        memorizedWords: []
+        memorizedWords: [],
+        weakWords: []
     };
 
     users.push(newUser);
@@ -183,7 +185,8 @@ app.post('/api/auth/register', (req, res) => {
             level: newUser.level,
             role: newUser.role,
             history: newUser.history,
-            memorizedWords: newUser.memorizedWords
+            memorizedWords: newUser.memorizedWords,
+            weakWords: newUser.weakWords
         }
     });
 });
@@ -214,7 +217,8 @@ app.post('/api/auth/login', (req, res) => {
             level: user.level,
             role: user.role,
             history: user.history || [],
-            memorizedWords: user.memorizedWords || []
+            memorizedWords: user.memorizedWords || [],
+            weakWords: user.weakWords || []
         }
     });
 });
@@ -308,9 +312,49 @@ app.post('/api/users/toggle-word', (req, res) => {
     } else {
         user.memorizedWords.push(word);
         isMemorized = true;
+        // If memorized, remove from weak words
+        if (user.weakWords) {
+            const wIdx = user.weakWords.indexOf(word);
+            if (wIdx > -1) user.weakWords.splice(wIdx, 1);
+        }
     }
     saveUsers();
-    res.json({ success: true, memorizedWords: user.memorizedWords, isMemorized });
+    res.json({ success: true, memorizedWords: user.memorizedWords, weakWords: user.weakWords || [], isMemorized });
+});
+
+// POST /api/users/add-weak-word
+app.post('/api/users/add-weak-word', (req, res) => {
+    const { email, word } = req.body;
+    if (!email || !word) return res.status(400).json({ success: false, message: 'Email and word required' });
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (!user.weakWords) user.weakWords = [];
+    if (!user.weakWords.includes(word)) {
+        user.weakWords.push(word);
+    }
+    // If it was memorized, remove it from memorized
+    if (user.memorizedWords) {
+        const mIdx = user.memorizedWords.indexOf(word);
+        if (mIdx > -1) user.memorizedWords.splice(mIdx, 1);
+    }
+    saveUsers();
+    res.json({ success: true, weakWords: user.weakWords, memorizedWords: user.memorizedWords || [] });
+});
+
+// POST /api/users/remove-weak-word
+app.post('/api/users/remove-weak-word', (req, res) => {
+    const { email, word } = req.body;
+    if (!email || !word) return res.status(400).json({ success: false, message: 'Email and word required' });
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (user.weakWords) {
+        const wIdx = user.weakWords.indexOf(word);
+        if (wIdx > -1) user.weakWords.splice(wIdx, 1);
+    }
+    saveUsers();
+    res.json({ success: true, weakWords: user.weakWords || [] });
 });
 
 // GET /api/users/leaderboard

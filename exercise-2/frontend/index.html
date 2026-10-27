@@ -87,6 +87,10 @@
             <div class="mini-stat-val" id="hero-memorized">0/64</div>
             <div class="mini-stat-label">Từ đã thuộc</div>
           </div>
+          <div class="mini-stat-card">
+            <div class="mini-stat-val" id="hero-weak-count" style="color:#f43f5e;">0</div>
+            <div class="mini-stat-label">Từ cần ôn</div>
+          </div>
         </div>
       </div>
 
@@ -132,6 +136,20 @@
           <div class="card-body">
             <div class="card-title">Thi thử JLPT</div>
             <div class="card-sub">Kỳ thi chuẩn hóa 20 câu N5/N4, tính giờ áp lực 15 phút & cấp Chứng chỉ số</div>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+
+        <button class="card action card-weakwords" data-nav="weakwords">
+          <div class="card-icon-box bg-rose">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              Sổ tay từ khó
+              <span class="weak-badge-pill" id="weak-badge-count">0 từ</span>
+            </div>
+            <div class="card-sub">Ôn tập tập trung các từ chưa thuộc hoặc làm sai bài thi (Spaced Repetition)</div>
           </div>
           <div class="card-arrow">→</div>
         </button>
@@ -745,6 +763,52 @@
           <div id="exam-review-list" style="display:flex; flex-direction:column; gap:14px;"></div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Spaced Repetition / Weak Words Notebook View -->
+  <section id="view-weakwords" class="view">
+    <div class="view-container">
+      <header class="view-header">
+        <button class="btn ghost back-btn" data-nav="home">← Trang chủ</button>
+        <h1>Sổ tay từ khó & Ôn tập</h1>
+        <div class="spacer"></div>
+      </header>
+      
+      <main class="content">
+        <div class="section-badge-center">SPACED REPETITION NOTEBOOK</div>
+        <p class="section-lead-text">Tự động lưu các từ bạn làm sai trong bài thi hoặc đánh dấu chưa thuộc để rèn luyện ghi nhớ sâu</p>
+
+        <!-- Toolbar: Filters & Quick Practice Button -->
+        <div class="weak-toolbar">
+          <div class="weak-filter-group">
+            <button class="weak-filter-btn active" data-weak-filter="all" type="button">Tất cả (<span id="weak-filter-all-count">0</span>)</button>
+            <button class="weak-filter-btn" data-weak-filter="n5" type="button">JLPT N5 (<span id="weak-filter-n5-count">0</span>)</button>
+            <button class="weak-filter-btn" data-weak-filter="n4" type="button">JLPT N4 (<span id="weak-filter-n4-count">0</span>)</button>
+          </div>
+          <button class="btn primary btn-sm" id="btn-weak-drill" type="button" style="display:none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Luyện tập từ khó (+15đ/từ)
+          </button>
+        </div>
+
+        <!-- Weak Words Grid -->
+        <div class="weak-grid" id="weak-words-grid">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Empty State (When 0 weak words) -->
+        <div class="empty-state-box" id="weak-words-empty" style="display:none;">
+          <div class="empty-icon-seal">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <h3 style="font-size:18px; margin-bottom:8px; color:var(--text);">Sổ tay hiện đang trống</h3>
+          <p style="font-size:13.5px; color:var(--muted); line-height:1.5; margin-bottom:18px;">
+            Tuyệt vời! Bạn không có từ vựng khó nào cần ôn tập lúc này. Khi làm sai câu hỏi trong bài Quiz hoặc Thi thử, hệ thống sẽ tự động lưu từ đó vào đây.
+          </p>
+          <button class="btn primary" data-nav="flashcards" type="button">Học thêm từ mới →</button>
+        </div>
+      </main>
     </div>
   </section>
 
