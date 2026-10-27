@@ -39,7 +39,12 @@ const state = {
 	showRomaji: true,
 	history: [],
 	weakFilter: "all",
-	isWeakDrillMode: false
+	isWeakDrillMode: false,
+	selectedListeningTrack: "all",
+	currentListeningLesson: null,
+	listeningPlaybackRate: 1.0,
+	dictationMode: "fill",
+	userBlankAnswers: {}
 };
 
 // Expanded 64-item Academic Vocabulary Database with Contextual Example Sentences
@@ -1327,11 +1332,15 @@ function getLevelRank(level) {
 	return { code: "[MASTER]", label: "Cao cấp Master" };
 }
 
-function speak(text, lang = "ja-JP") {
+function speak(text, lang = "ja-JP", rate = 0.9, onEnd = null) {
 	if (!("speechSynthesis" in window)) return;
 	const utter = new SpeechSynthesisUtterance(text);
 	utter.lang = lang;
-	utter.rate = 0.9;
+	utter.rate = rate || 0.9;
+	if (onEnd) {
+		utter.onend = onEnd;
+		utter.onerror = onEnd;
+	}
 	window.speechSynthesis.cancel();
 	window.speechSynthesis.speak(utter);
 }
@@ -1385,6 +1394,12 @@ function updateHeaderStats() {
 	const weakCount = (state.user && state.user.weakWords) ? state.user.weakWords.length : 0;
 	if (heroWeakEl) heroWeakEl.textContent = String(weakCount);
 	if (weakBadgeEl) weakBadgeEl.textContent = `${weakCount} từ`;
+
+	// update listening badge
+	const listeningBadgeEl = document.getElementById("listening-badge-count");
+	if (listeningBadgeEl && typeof LISTENING_LESSONS !== 'undefined') {
+		listeningBadgeEl.textContent = `${LISTENING_LESSONS.length} bài`;
+	}
 }
 
 function addHistoryEntry(action) {
@@ -1581,6 +1596,9 @@ function setActiveView(name) {
 	}
 	if (name === 'weakwords') {
 		renderWeakWordsView();
+	}
+	if (name === 'listening') {
+		renderListeningLobby();
 	}
 	if (name !== 'flashcards') {
 		state.isWeakDrillMode = false;
@@ -2321,6 +2339,714 @@ function initWeakWords() {
 			renderFlashcard();
 		});
 	}
+}
+
+
+// ========================================================
+// CHOUKAI LISTENING & DICTATION LAB DATABASE & LOGIC
+// ========================================================
+const LISTENING_LESSONS = [
+	{
+		id: "choukai-n5-01",
+		track: "n5",
+		category: "Giao tiếp thường nhật",
+		stars: 1,
+		title: "Chào hỏi ngày mới ở trường",
+		situation: "Học sinh chào thầy giáo và bạn cùng lớp vào buổi sáng trước giờ học.",
+		audioText: "おはようございます。今日もいい天気ですね。",
+		romaji: "Ohayou gozaimasu. Kyou mo ii tenki desu ne.",
+		vi: "Chào buổi sáng thầy ạ. Hôm nay thời tiết cũng đẹp thật đấy nhỉ.",
+		displayTemplate: "[BLANK_0]。今日もいい[BLANK_1]ですね。",
+		blanks: [
+			{ index: 0, answer: "おはようございます", romaji: "ohayou gozaimasu", clue: "Lời chào buổi sáng lịch sự" },
+			{ index: 1, answer: "天気", romaji: "tenki", clue: "Thời tiết" }
+		],
+		options: ["おはようございます", "こんばんは", "天気", "元気", "さようなら"],
+		grammarNote: "• 「おはようございます」: Lời chào lịch sự vào buổi sáng (trước 10h).\n• Trợ từ 「も」 biểu thị sự tương đồng ('cũng').\n• Đuôi câu 「ね」 tìm kiếm sự đồng cảm từ người nghe.",
+		keyWord: "天気"
+	},
+	{
+		id: "choukai-n5-02",
+		track: "n5",
+		category: "Cửa hàng & Dịch vụ",
+		stars: 1,
+		title: "Mua cơm hộp tại cửa hàng tiện lợi (Conbini)",
+		situation: "Nhân viên thu ngân hỏi khách hàng có muốn hâm nóng hộp cơm bento không.",
+		audioText: "いらっしゃいませ。お弁当を温めますか？",
+		romaji: "Irasshaimase. Obentou o atatamemasu ka?",
+		vi: "Kính chào quý khách! Quý khách có muốn làm nóng hộp cơm không ạ?",
+		displayTemplate: "いらっしゃいませ。[BLANK_0]を[BLANK_1]か？",
+		blanks: [
+			{ index: 0, answer: "お弁当", romaji: "obentou", clue: "Cơm hộp" },
+			{ index: 1, answer: "温めます", romaji: "atatamemasu", clue: "Làm nóng / hâm nóng" }
+		],
+		options: ["お弁当", "お茶", "温めます", "冷やします", "袋"],
+		grammarNote: "• 「いらっしゃいませ」: Câu chào cửa hàng chuẩn tại Nhật Bản.\n• Tiền tố 「お」 thêm vào trước danh từ 「弁当」 (obentou) để tăng sự nhã nhặn, tôn trọng khách.",
+		keyWord: "お弁当"
+	},
+	{
+		id: "choukai-n5-03",
+		track: "n5",
+		category: "Đi lại & Hỏi đường",
+		stars: 2,
+		title: "Hỏi đường đến ga xe lửa",
+		situation: "Người đi đường hỏi thăm vị trí nhà ga xe điện ngầm gần nhất.",
+		audioText: "すみません、駅はどこですか？あそこを右に曲がってください。",
+		romaji: "Sumimasen, eki wa doko desu ka? Asoko o migi ni magatte kudasai.",
+		vi: "Xin lỗi, nhà ga ở đâu vậy ạ? Xin hãy rẽ phải ở đằng kia.",
+		displayTemplate: "すみません、[BLANK_0]はどこですか？あそこを[BLANK_1]に曲がってください。",
+		blanks: [
+			{ index: 0, answer: "駅", romaji: "eki", clue: "Nhà ga xe lửa" },
+			{ index: 1, answer: "右", romaji: "migi", clue: "Bên phải" }
+		],
+		options: ["駅", "病院", "右", "左", "まっすぐ"],
+		grammarNote: "• 「すみません」: Xin lỗi / Làm phiền một chút (dùng khi bắt chuyện).\n• Cấu trúc 「～てください」: Đề nghị ai đó làm gì một cách lịch sự.",
+		keyWord: "駅"
+	},
+	{
+		id: "choukai-n5-04",
+		track: "n5",
+		category: "Ăn uống & Nhà hàng",
+		stars: 1,
+		title: "Gọi món tại quán mì Ramen",
+		situation: "Khách gọi món một bát ramen nóng và cốc trà xanh.",
+		audioText: "ラーメンを一つと、お茶をください。",
+		romaji: "Raamen o hitotsu to, ocha o kudasai.",
+		vi: "Cho tôi một tô mì ramen và một phần trà nhé.",
+		displayTemplate: "ラーメンを[BLANK_0]と、[BLANK_1]をください。",
+		blanks: [
+			{ index: 0, answer: "一つ", romaji: "hitotsu", clue: "Một cái / Một phần" },
+			{ index: 1, answer: "お茶", romaji: "ocha", clue: "Trà xanh" }
+		],
+		options: ["一つ", "二つ", "お茶", "水", "コーヒー"],
+		grammarNote: "• Cách đếm đồ vật thông dụng: 一つ (hitotsu - 1 cái), 二つ (futatsu - 2 cái).\n• Trợ từ 「と」 liên kết 2 danh từ: AとB (A và B).",
+		keyWord: "お茶"
+	},
+	{
+		id: "choukai-n5-05",
+		track: "n5",
+		category: "Cửa hàng & Mua sắm",
+		stars: 2,
+		title: "Hỏi giá và thanh toán đồ lưu niệm",
+		situation: "Khách hàng hỏi giá chiếc quạt truyền thống tại phố cổ Asakusa.",
+		audioText: "これはいくらですか？それは千五百円です。",
+		romaji: "Kore wa ikura desu ka? Sore wa sen gohyaku en desu.",
+		vi: "Cái này giá bao nhiêu vậy? Cái đó là một nghìn năm trăm yên.",
+		displayTemplate: "これは[BLANK_0]ですか？それは[BLANK_1]です。",
+		blanks: [
+			{ index: 0, answer: "いくら", romaji: "ikura", clue: "Bao nhiêu tiền" },
+			{ index: 1, answer: "千五百円", romaji: "sen gohyaku en", clue: "1500 yên" }
+		],
+		options: ["いくら", "何", "千五百円", "二千円", "五百円"],
+		grammarNote: "• Đại từ chỉ định: これ (cái này - gần người nói), それ (cái đó - gần người nghe).\n• 「いくら」: Từ để hỏi giá cả trong tiếng Nhật.",
+		keyWord: "いくら"
+	},
+	{
+		id: "choukai-n5-06",
+		track: "n5",
+		category: "Giao tiếp thường nhật",
+		stars: 1,
+		title: "Tự giới thiệu bản thân (Jikoshoukai)",
+		situation: "Học viên mới giới thiệu bản thân trước lớp học tiếng Nhật.",
+		audioText: "初めまして、ナムと申します。ベトナムから来ました。",
+		romaji: "Hajimemashite, Namu to moushimasu. Betonamu kara kimashita.",
+		vi: "Rất vui được gặp mọi người, tôi tên là Nam. Tôi đến từ Việt Nam.",
+		displayTemplate: "[BLANK_0]、ナムと申します。[BLANK_1]から来ました。",
+		blanks: [
+			{ index: 0, answer: "初めまして", romaji: "hajimemashite", clue: "Chào lần đầu gặp mặt" },
+			{ index: 1, answer: "ベトナム", romaji: "betonamu", clue: "Việt Nam" }
+		],
+		options: ["初めまして", "こんにちは", "ベトナム", "日本", "アメリカ"],
+		grammarNote: "• 「初めまして」: Lời mở đầu bắt buộc khi gặp ai đó lần đầu tiên.\n• 「〜と申します」: Thể khiêm nhường ngữ của 'tôi tên là...'.\n• 「〜から来ました」: Đến từ...",
+		keyWord: "初めまして"
+	},
+	{
+		id: "choukai-n5-07",
+		track: "n5",
+		category: "Hẹn hò & Giải trí",
+		stars: 2,
+		title: "Rủ bạn đi xem phim cuối tuần",
+		situation: "Hai người bạn hẹn nhau đi rạp chiếu phim vào ngày mai.",
+		audioText: "明日、一緒に映画を見に行きませんか？何時に会いましょうか。",
+		romaji: "Ashita, issho ni eiga o mi ni ikimasen ka? Nanji ni aimashou ka.",
+		vi: "Ngày mai cậu có muốn cùng đi xem phim không? Mấy giờ chúng mình gặp nhau nhỉ?",
+		displayTemplate: "明日、一緒に[BLANK_0]を見に行きませんか？[BLANK_1]に会いましょうか。",
+		blanks: [
+			{ index: 0, answer: "映画", romaji: "eiga", clue: "Phim ảnh" },
+			{ index: 1, answer: "何時", romaji: "nanji", clue: "Mấy giờ" }
+		],
+		options: ["映画", "本", "何時", "どこ", "何曜日"],
+		grammarNote: "• Cấu trúc rủ rê lịch sự: 「V-masen ka?」 (Cùng làm ... không?).\n• Cấu trúc đề xuất chủ động: 「V-mashou ka?」 (Chúng ta cùng làm ... nhé?).",
+		keyWord: "映画"
+	},
+	{
+		id: "choukai-n5-08",
+		track: "n5",
+		category: "Giao tiếp thường nhật",
+		stars: 1,
+		title: "Cảm ơn và tạm biệt sau buổi gặp",
+		situation: "Nói lời cảm ơn chân thành sau một ngày đi chơi vui vẻ.",
+		audioText: "今日はとても楽しかったです。どうもありがとうございました。",
+		romaji: "Kyou wa totemo tanoshikatta desu. Doumo arigatou gozaimashita.",
+		vi: "Hôm nay tôi đã rất vui. Cảm ơn bạn rất nhiều nhé.",
+		displayTemplate: "今日はとても[BLANK_0]です。どうも[BLANK_1]。",
+		blanks: [
+			{ index: 0, answer: "楽しかった", romaji: "tanoshikatta", clue: "Đã rất vui" },
+			{ index: 1, answer: "ありがとうございました", romaji: "arigatou gozaimashita", clue: "Cảm ơn trang trọng" }
+		],
+		options: ["楽しかった", "忙しかった", "ありがとうございました", "すみませんでした", "お疲れ様"],
+		grammarNote: "• Tính từ đuôi -i chuyển sang quá khứ: 楽しい (tanoshii) -> 楽しかった (tanoshikatta).\n• 「どうもありがとうございました」: Cảm ơn sự việc đã diễn ra trong quá khứ.",
+		keyWord: "楽しい"
+	},
+	{
+		id: "choukai-n4-01",
+		track: "n4",
+		category: "Công việc & Trường học",
+		stars: 2,
+		title: "Gọi điện xin phép nghỉ ốm",
+		situation: "Nhân viên bị sốt gọi điện đến công ty xin phép trưởng phòng nghỉ làm.",
+		audioText: "少し熱があるので、今日会社を休ませていただけませんか？",
+		romaji: "Sukoshi netsu ga aru node, kyou kaisha o yasumasete itadakemasen ka?",
+		vi: "Vì em bị sốt nhẹ nên hôm nay em có thể xin phép nghỉ làm được không ạ?",
+		displayTemplate: "少し[BLANK_0]があるので、今日会社を[BLANK_1]いただけませんか？",
+		blanks: [
+			{ index: 0, answer: "熱", romaji: "netsu", clue: "Cơn sốt / bị sốt" },
+			{ index: 1, answer: "休ませて", romaji: "yasumasete", clue: "Cho phép nghỉ" }
+		],
+		options: ["熱", "風邪", "休ませて", "行かせて", "働かせて"],
+		grammarNote: "• Trợ từ chỉ nguyên nhân lịch sự: 「〜ので」 (bởi vì).\n• Mẫu câu xin phép tôn kính cực chuẩn N4: 「〜させていただけませんか」 (Làm ơn cho phép tôi...).",
+		keyWord: "熱"
+	},
+	{
+		id: "choukai-n4-02",
+		track: "n4",
+		category: "Công việc & Baito",
+		stars: 2,
+		title: "Phỏng vấn xin việc làm thêm (Baito)",
+		situation: "Người phỏng vấn hỏi về lịch rảnh có thể đi làm mỗi tuần.",
+		audioText: "週に何日くらい働くことができますか？週に三日働けます。",
+		romaji: "Shuu ni nannichi kurai hataraku koto ga dekimasu ka? Shuu ni mikka hatarakemasu.",
+		vi: "Một tuần bạn có thể làm việc khoảng mấy ngày? Tôi có thể làm 3 ngày một tuần ạ.",
+		displayTemplate: "週に何日くらい[BLANK_0]ことができますか？週に[BLANK_1]働けます。",
+		blanks: [
+			{ index: 0, answer: "働く", romaji: "hataraku", clue: "Làm việc" },
+			{ index: 1, answer: "三日", romaji: "mikka", clue: "3 ngày" }
+		],
+		options: ["働く", "休む", "三日", "二日", "四日"],
+		grammarNote: "• Cấu trúc khả năng N4: 「V(từ điển) + ことができる」 hoặc thể khả năng 「働けます」 (có thể làm việc).\n• 「〜くらい」 biểu thị mức độ áng chừng.",
+		keyWord: "働く"
+	},
+	{
+		id: "choukai-n4-03",
+		track: "n4",
+		category: "Học tập & Thư viện",
+		stars: 2,
+		title: "Hỏi thủ tục mượn sách thư viện",
+		situation: "Học sinh muốn mượn sách tham khảo nhưng chưa làm thẻ thư viện.",
+		audioText: "この本を借りたいのですが、カードを持っていません。",
+		romaji: "Kono hon o karitai no desu ga, kaado o motte imasen.",
+		vi: "Tôi muốn mượn quyển sách này, nhưng tôi chưa có thẻ thư viện ạ.",
+		displayTemplate: "この本を[BLANK_0]のですが、[BLANK_1]を持っていません。",
+		blanks: [
+			{ index: 0, answer: "借りたい", romaji: "karitai", clue: "Muốn mượn" },
+			{ index: 1, answer: "カード", romaji: "kaado", clue: "Thẻ thư viện (Card)" }
+		],
+		options: ["借りたい", "買いたい", "カード", "お金", "名前"],
+		grammarNote: "• Đuôi câu 「〜たいのですが」: Thể hiện mong muốn một cách uyển chuyển, mở đầu cho lời nhờ cậy.\n• 借りる (kariru): Mượn của người khác.",
+		keyWord: "借りる"
+	},
+	{
+		id: "choukai-n4-04",
+		track: "n4",
+		category: "Công việc & Văn phòng",
+		stars: 2,
+		title: "Nhờ hướng dẫn sử dụng máy photocopy",
+		situation: "Nhân viên mới nhờ đồng nghiệp chỉ cách photo tài liệu 2 mặt.",
+		audioText: "コピー機の使い方がよく分からないので、教えていただけませんか？",
+		romaji: "Kopiiki no tsukaikata ga yoku wakaranai node, oshiete itadakemasen ka?",
+		vi: "Tôi chưa rõ cách dùng máy photocopy lắm, bạn có thể chỉ giúp tôi được không?",
+		displayTemplate: "コピー機の[BLANK_0]がよく分からないので、[BLANK_1]いただけませんか？",
+		blanks: [
+			{ index: 0, answer: "使い方", romaji: "tsukaikata", clue: "Cách sử dụng" },
+			{ index: 1, answer: "教えて", romaji: "oshiete", clue: "Chỉ bảo / Dạy" }
+		],
+		options: ["使い方", "作り方", "教えて", "直して", "貸して"],
+		grammarNote: "• Mẫu cấu tạo danh từ chỉ cách làm: 「V(bỏ masu) + 方 (kata)」 (Ví dụ: 使い方: cách dùng, 読み方: cách đọc).\n• 「〜ていただけませんか」: Nhờ vả lịch sự N4.",
+		keyWord: "使い方"
+	},
+	{
+		id: "choukai-n4-05",
+		track: "n4",
+		category: "Du lịch & Đặt phòng",
+		stars: 3,
+		title: "Đặt phòng khách sạn qua điện thoại",
+		situation: "Khách gọi đến khách sạn Kyoto để đặt phòng đơn cho chuyến công tác.",
+		audioText: "来週の土曜日に、一人部屋を予約したいのですが、空いていますか？",
+		romaji: "Raishuu no doyoubi ni, hitoribeya o yoyaku shitai no desu ga, aite imasu ka?",
+		vi: "Thứ bảy tuần tới tôi muốn đặt một phòng đơn, khách sạn còn phòng trống không ạ?",
+		displayTemplate: "来週の土曜日に、一人部屋を[BLANK_0]したいのですが、[BLANK_1]いますか？",
+		blanks: [
+			{ index: 0, answer: "予約", romaji: "yoyaku", clue: "Đặt trước / Đặt chỗ" },
+			{ index: 1, answer: "空いて", romaji: "aite", clue: "Còn trống" }
+		],
+		options: ["予約", "案内", "空いて", "閉まって", "泊まって"],
+		grammarNote: "• 「予約する」: Đặt trước (phòng, vé xe, bàn ăn).\n• 「空く (aku) -> 空いている (aite iru)」: Ở trạng thái còn trống.",
+		keyWord: "予約"
+	},
+	{
+		id: "choukai-n4-06",
+		track: "n4",
+		category: "Công việc & Văn phòng",
+		stars: 3,
+		title: "Báo cáo công việc hoàn thành với cấp trên",
+		situation: "Nhân viên nộp bản thảo tài liệu dự án cho trưởng phòng xem duyệt.",
+		audioText: "課長、頼まれていた資料の確認が終わりました。見ていただけますか？",
+		romaji: "Kachou, tanomarete ita shiryou no kakunin ga owarimashita. Mite itadakemasu ka?",
+		vi: "Thưa trưởng phòng, tài liệu anh nhờ em kiểm tra đã xong rồi ạ. Anh xem qua giúp em được không ạ?",
+		displayTemplate: "課長、頼まれていた[BLANK_0]の確認が終わりました。[BLANK_1]いただけますか？",
+		blanks: [
+			{ index: 0, answer: "資料", romaji: "shiryou", clue: "Tài liệu / Hồ sơ" },
+			{ index: 1, answer: "見て", romaji: "mite", clue: "Xem qua" }
+		],
+		options: ["資料", "写真", "見て", "書いて", "送って"],
+		grammarNote: "• 「頼まれていた」: Thể bị động quá khứ (đã được nhờ vả).\n• 「確認が終わりました」: Việc kiểm tra/xác nhận đã hoàn thành.",
+		keyWord: "資料"
+	},
+	{
+		id: "choukai-n4-07",
+		track: "n4",
+		category: "Tương lai & Định hướng",
+		stars: 3,
+		title: "Trình bày kế hoạch tương lai",
+		situation: "Bạn trẻ chia sẻ nguyện vọng làm kỹ sư phần mềm tại Nhật Bản sau khi tốt nghiệp.",
+		audioText: "大学を卒業したら、日本のIT企業で働きたいと思っています。",
+		romaji: "Daigaku o sotsugyou shitara, Nihon no aiti- kigyou de hatarakitai to omotte imasu.",
+		vi: "Sau khi tốt nghiệp đại học, tôi dự định muốn làm việc tại một doanh nghiệp CNTT ở Nhật.",
+		displayTemplate: "大学を[BLANK_0]したら、日本のIT企業で働きたいと[BLANK_1]います。",
+		blanks: [
+			{ index: 0, answer: "卒業", romaji: "sotsugyou", clue: "Tốt nghiệp" },
+			{ index: 1, answer: "思って", romaji: "omotte", clue: "Nghĩ / Dự định" }
+		],
+		options: ["卒業", "入学", "思って", "言って", "知って"],
+		grammarNote: "• Cấu trúc điều kiện N4: 「V-tara」 (Sau khi ... thì ...).\n• Mẫu câu dự định dài hạn: 「〜たいと思っています」 (Đã và đang ấp ủ mong muốn làm...).",
+		keyWord: "卒業"
+	},
+	{
+		id: "choukai-n4-08",
+		track: "n4",
+		category: "Cửa hàng & Công nghệ",
+		stars: 3,
+		title: "Tư vấn mua máy tính xách tay tại Akihabara",
+		situation: "Khách hàng nhờ nhân viên siêu thị điện máy gợi ý dòng laptop pin trâu và nhẹ.",
+		audioText: "軽くてバッテリーが長持ちするパソコンを探しているのですが。",
+		romaji: "Karukute batterii ga nagamochi suru pasokon o sagashite iru no desu ga.",
+		vi: "Tôi đang tìm một chiếc máy tính xách tay vừa nhẹ lại vừa dùng được pin lâu ạ.",
+		displayTemplate: "[BLANK_0]てバッテリーが長持ちするパソコンを[BLANK_1]いるのですが。",
+		blanks: [
+			{ index: 0, answer: "軽く", romaji: "karuku", clue: "Nhẹ (dạng liên kết)" },
+			{ index: 1, answer: "探して", romaji: "sagashite", clue: "Đang tìm kiếm" }
+		],
+		options: ["軽く", "重く", "探して", "使って", "売って"],
+		grammarNote: "• Nối tính từ đuôi -i: 軽い (karui) -> 軽くて (karukute - nhẹ và...).\n• 「探しているのですが」: Đang tìm kiếm... (đuôi câu mở lời nhờ tư vấn).",
+		keyWord: "軽い"
+	}
+];
+
+function renderListeningLobby() {
+	const lobby = document.getElementById("listening-lobby-container");
+	const player = document.getElementById("listening-player-container");
+	if (lobby) lobby.style.display = "block";
+	if (player) player.style.display = "none";
+
+	const completedList = (state.user && state.user.completedLessons) || [];
+	const completedSet = new Set(completedList);
+
+	const total = LISTENING_LESSONS.length;
+	const n5Lessons = LISTENING_LESSONS.filter(l => l.track === "n5");
+	const n4Lessons = LISTENING_LESSONS.filter(l => l.track === "n4");
+
+	const allCountEl = document.getElementById("listening-filter-all-count");
+	const n5CountEl = document.getElementById("listening-filter-n5-count");
+	const n4CountEl = document.getElementById("listening-filter-n4-count");
+	const statPill = document.getElementById("listening-completed-stat");
+	const badgeCount = document.getElementById("listening-badge-count");
+
+	if (allCountEl) allCountEl.textContent = total;
+	if (n5CountEl) n5CountEl.textContent = n5Lessons.length;
+	if (n4CountEl) n4CountEl.textContent = n4Lessons.length;
+	if (statPill) statPill.textContent = `Đã hoàn thành: ${completedList.length} / ${total}`;
+	if (badgeCount) badgeCount.textContent = `${total} bài`;
+
+	const filtered = LISTENING_LESSONS.filter(l => {
+		if (state.selectedListeningTrack === "n5") return l.track === "n5";
+		if (state.selectedListeningTrack === "n4") return l.track === "n4";
+		return true;
+	});
+
+	const grid = document.getElementById("listening-lessons-grid");
+	if (grid) {
+		grid.innerHTML = filtered.map(l => {
+			const isCompleted = completedSet.has(l.id);
+			const trackBadge = l.track === "n5" 
+				? '<span class="fc-track-badge badge-beginner" style="font-size:10.5px; padding:2px 7px;">[JLPT N5]</span>' 
+				: '<span class="fc-track-badge badge-advanced" style="font-size:10.5px; padding:2px 7px;">[JLPT N4]</span>';
+			const stars = "★".repeat(l.stars) + "☆".repeat(3 - l.stars);
+			const statusHtml = isCompleted
+				? '<span class="listening-status-indicator completed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Đã hoàn thành (+25đ)</span>'
+				: '<span class="listening-status-indicator">Chưa luyện tập</span>';
+
+			return `
+				<div class="listening-card" data-lesson-id="${l.id}">
+					<div>
+						<div class="listening-card-top">
+							<span class="listening-cat-tag">${l.category}</span>
+							<div style="display:flex; align-items:center; gap:8px;">
+								<span class="listening-diff-stars">${stars}</span>
+								${trackBadge}
+							</div>
+						</div>
+						<div class="listening-card-title">${l.title}</div>
+						<div class="listening-card-situation">${l.situation}</div>
+					</div>
+					<div class="listening-card-bottom">
+						${statusHtml}
+						<button class="btn ghost btn-xs" type="button">Luyện nghe →</button>
+					</div>
+				</div>
+			`;
+		}).join("");
+
+		grid.querySelectorAll(".listening-card").forEach(card => {
+			card.addEventListener("click", () => {
+				const id = card.getAttribute("data-lesson-id");
+				startListeningLesson(id);
+			});
+		});
+	}
+}
+
+function startListeningLesson(lessonId) {
+	const lesson = LISTENING_LESSONS.find(l => l.id === lessonId);
+	if (!lesson) return;
+
+	state.currentListeningLesson = lesson;
+	state.userBlankAnswers = {};
+	state.dictationMode = "fill";
+
+	const lobby = document.getElementById("listening-lobby-container");
+	const player = document.getElementById("listening-player-container");
+	if (lobby) lobby.style.display = "none";
+	if (player) player.style.display = "block";
+
+	// Header & overview
+	const trackBadge = document.getElementById("player-track-badge");
+	if (trackBadge) {
+		trackBadge.textContent = lesson.track === "n5" ? "[JLPT N5 • SƠ CẤP]" : "[JLPT N4 • TRUNG CẤP]";
+		trackBadge.className = "listening-header-badge " + (lesson.track === "n5" ? "badge-beginner" : "badge-advanced");
+	}
+
+	const catTag = document.getElementById("player-cat-tag");
+	const diffStars = document.getElementById("player-diff-stars");
+	const titleEl = document.getElementById("player-lesson-title");
+	const situationEl = document.getElementById("player-lesson-situation");
+
+	if (catTag) catTag.textContent = lesson.category;
+	if (diffStars) diffStars.textContent = "★".repeat(lesson.stars) + "☆".repeat(3 - lesson.stars);
+	if (titleEl) titleEl.textContent = lesson.title;
+	if (situationEl) situationEl.textContent = "Tình huống: " + lesson.situation;
+
+	// Reset audio visuals
+	stopAudioVisuals();
+
+	// Render dictation workspace
+	renderDictationUI();
+
+	// Hide result panel
+	const resPanel = document.getElementById("dictation-result-panel");
+	if (resPanel) resPanel.style.display = "none";
+
+	// Auto play audio once
+	setTimeout(() => {
+		playCurrentLessonAudio();
+	}, 300);
+}
+
+function renderDictationUI() {
+	const lesson = state.currentListeningLesson;
+	if (!lesson) return;
+
+	// Switch tabs
+	document.querySelectorAll(".dictation-tab").forEach(tab => {
+		tab.classList.toggle("active", tab.getAttribute("data-dmode") === state.dictationMode);
+	});
+
+	const fillCard = document.getElementById("dictation-mode-fill");
+	const fullCard = document.getElementById("dictation-mode-full");
+	if (fillCard) fillCard.style.display = state.dictationMode === "fill" ? "block" : "none";
+	if (fullCard) fullCard.style.display = state.dictationMode === "full" ? "block" : "none";
+
+	if (state.dictationMode === "fill") {
+		// Sentence container
+		const container = document.getElementById("dictation-sentence-container");
+		if (container) {
+			let html = lesson.displayTemplate;
+			lesson.blanks.forEach(b => {
+				const val = state.userBlankAnswers[b.index] || "";
+				const blankHtml = `<span class="dictation-blank ${val ? 'filled' : ''}" data-blank-idx="${b.index}">${val || '...'}</span>`;
+				html = html.replace(`[BLANK_${b.index}]`, blankHtml);
+			});
+			container.innerHTML = html;
+
+			container.querySelectorAll(".dictation-blank").forEach(el => {
+				el.addEventListener("click", () => {
+					const idx = parseInt(el.getAttribute("data-blank-idx"), 10);
+					if (state.userBlankAnswers[idx]) {
+						delete state.userBlankAnswers[idx];
+						renderDictationUI();
+					}
+				});
+			});
+		}
+
+		// Wordbank chips
+		const chipsContainer = document.getElementById("wordbank-chips-container");
+		if (chipsContainer) {
+			const usedWords = new Set(Object.values(state.userBlankAnswers));
+			chipsContainer.innerHTML = lesson.options.map(opt => {
+				const isUsed = usedWords.has(opt);
+				return `<button class="wordbank-chip ${isUsed ? 'used' : ''}" data-word="${opt}" type="button">${opt}</button>`;
+			}).join("");
+
+			chipsContainer.querySelectorAll(".wordbank-chip").forEach(chip => {
+				chip.addEventListener("click", () => {
+					const word = chip.getAttribute("data-word");
+					// Find first empty blank
+					const emptyBlank = lesson.blanks.find(b => !state.userBlankAnswers[b.index]);
+					if (emptyBlank) {
+						state.userBlankAnswers[emptyBlank.index] = word;
+						renderDictationUI();
+					}
+				});
+			});
+		}
+	} else {
+		const fullInput = document.getElementById("dictation-full-input");
+		if (fullInput) fullInput.value = "";
+	}
+}
+
+function playCurrentLessonAudio() {
+	const lesson = state.currentListeningLesson;
+	if (!lesson) return;
+
+	const wave = document.getElementById("audio-wave-anim");
+	const statusLabel = document.getElementById("audio-status-label");
+	const icon = document.getElementById("icon-play-state");
+
+	if (wave) wave.classList.add("playing");
+	if (statusLabel) statusLabel.textContent = "Đang phát âm thanh... (" + state.listeningPlaybackRate + "x)";
+	if (icon) {
+		icon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+	}
+
+	speak(lesson.audioText, "ja-JP", state.listeningPlaybackRate, () => {
+		stopAudioVisuals();
+	});
+}
+
+function stopAudioVisuals() {
+	const wave = document.getElementById("audio-wave-anim");
+	const statusLabel = document.getElementById("audio-status-label");
+	const icon = document.getElementById("icon-play-state");
+
+	if (wave) wave.classList.remove("playing");
+	if (statusLabel) statusLabel.textContent = "Bấm nút tròn để nghe lại hội thoại";
+	if (icon) {
+		icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+	}
+}
+
+function checkDictationAnswer() {
+	const lesson = state.currentListeningLesson;
+	if (!lesson) return;
+
+	let isCorrect = true;
+
+	if (state.dictationMode === "fill") {
+		lesson.blanks.forEach(b => {
+			const userAns = (state.userBlankAnswers[b.index] || "").trim().toLowerCase();
+			const targetAns = b.answer.trim().toLowerCase();
+			const targetRomaji = (b.romaji || "").trim().toLowerCase();
+			if (userAns !== targetAns && userAns !== targetRomaji) {
+				isCorrect = false;
+			}
+		});
+
+		// Highlight blanks
+		document.querySelectorAll(".dictation-blank").forEach(el => {
+			const idx = parseInt(el.getAttribute("data-blank-idx"), 10);
+			const b = lesson.blanks.find(x => x.index === idx);
+			if (b) {
+				const userAns = (state.userBlankAnswers[idx] || "").trim().toLowerCase();
+				const ok = userAns === b.answer.trim().toLowerCase() || userAns === (b.romaji || "").trim().toLowerCase();
+				el.className = "dictation-blank filled " + (ok ? "correct" : "wrong");
+				if (!ok) {
+					el.textContent = b.answer;
+				}
+			}
+		});
+	} else {
+		const fullInput = document.getElementById("dictation-full-input");
+		const rawUser = fullInput ? fullInput.value.trim().toLowerCase().replace(/[\s,.!?。、！？]/g, "") : "";
+		const rawTargetJp = lesson.audioText.trim().toLowerCase().replace(/[\s,.!?。、！？]/g, "");
+		const rawTargetRomaji = lesson.romaji.trim().toLowerCase().replace(/[\s,.!?。、！？]/g, "");
+		
+		isCorrect = rawUser === rawTargetJp || rawUser === rawTargetRomaji;
+	}
+
+	// Show Result Panel
+	const resPanel = document.getElementById("dictation-result-panel");
+	const badge = document.getElementById("result-icon-badge");
+	const headline = document.getElementById("result-headline");
+	const sub = document.getElementById("result-sub");
+	const jpEl = document.getElementById("result-jp");
+	const romajiEl = document.getElementById("result-romaji");
+	const viEl = document.getElementById("result-vi");
+	const grammarEl = document.getElementById("result-grammar-note");
+
+	if (jpEl) jpEl.textContent = lesson.audioText;
+	if (romajiEl) romajiEl.textContent = lesson.romaji;
+	if (viEl) viEl.textContent = lesson.vi;
+	if (grammarEl) grammarEl.textContent = lesson.grammarNote;
+
+	if (isCorrect) {
+		soundEffects.play("correct");
+		if (badge) { badge.textContent = "✓"; badge.className = "result-icon-badge correct"; }
+		if (headline) headline.textContent = "Chính xác xuất sắc! (+25 điểm)";
+		if (sub) sub.textContent = "Bạn đã lắng nghe và nắm bắt hoàn hảo ngữ âm của bài học.";
+
+		completeListeningLesson(lesson.id, lesson.title);
+	} else {
+		soundEffects.play("wrong");
+		if (badge) { badge.textContent = "✕"; badge.className = "result-icon-badge wrong"; }
+		if (headline) headline.textContent = "Chưa chính xác hoàn toàn!";
+		if (sub) sub.textContent = "Đừng lo lắng! Hãy xem lại transcript mẫu và nghe lại để ghi nhớ.";
+	}
+
+	if (resPanel) {
+		resPanel.style.display = "block";
+		resPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+	}
+}
+
+function completeListeningLesson(lessonId, lessonTitle) {
+	if (!state.user) {
+		addPoints(25, `Hoàn thành bài luyện nghe Choukai: ${lessonTitle}`);
+		return;
+	}
+
+	if (!state.user.completedLessons) state.user.completedLessons = [];
+	if (!state.user.completedLessons.includes(lessonId)) {
+		state.user.completedLessons.push(lessonId);
+		state.points = (state.points || 0) + 25;
+		state.level = calcLevel(state.points);
+		addHistoryEntry(`Hoàn thành bài luyện nghe Choukai: ${lessonTitle}`);
+		saveUser();
+		savePoints();
+		updateHeaderStats();
+
+		fetch('/api/users/complete-lesson', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email: state.user.email, lessonId, lessonTitle })
+		}).then(res => res.json()).then(data => {
+			if (data.success) {
+				state.user.completedLessons = data.completedLessons;
+				state.user.points = data.points;
+				state.user.level = data.level;
+				saveUser();
+				updateHeaderStats();
+			}
+		}).catch(() => {});
+	}
+}
+
+function initListening() {
+	// Filter buttons
+	document.querySelectorAll("[data-listening-filter]").forEach(btn => {
+		btn.addEventListener("click", () => {
+			document.querySelectorAll("[data-listening-filter]").forEach(b => b.classList.remove("active"));
+			btn.classList.add("active");
+			state.selectedListeningTrack = btn.getAttribute("data-listening-filter");
+			renderListeningLobby();
+		});
+	});
+
+	// Back to lobby button
+	document.getElementById("btn-listening-back-lobby")?.addEventListener("click", () => {
+		window.speechSynthesis?.cancel();
+		stopAudioVisuals();
+		renderListeningLobby();
+	});
+
+	// Audio circle play button
+	document.getElementById("btn-play-audio")?.addEventListener("click", () => {
+		playCurrentLessonAudio();
+	});
+
+	// Speed chips
+	document.querySelectorAll(".speed-chip").forEach(chip => {
+		chip.addEventListener("click", () => {
+			document.querySelectorAll(".speed-chip").forEach(c => c.classList.remove("active"));
+			chip.classList.add("active");
+			state.listeningPlaybackRate = parseFloat(chip.getAttribute("data-speed")) || 1.0;
+			playCurrentLessonAudio();
+		});
+	});
+
+	// Dictation mode tabs
+	document.querySelectorAll(".dictation-tab").forEach(tab => {
+		tab.addEventListener("click", () => {
+			state.dictationMode = tab.getAttribute("data-dmode");
+			renderDictationUI();
+		});
+	});
+
+	// Clear / Reset button
+	document.getElementById("btn-dictation-clear")?.addEventListener("click", () => {
+		state.userBlankAnswers = {};
+		renderDictationUI();
+		const resPanel = document.getElementById("dictation-result-panel");
+		if (resPanel) resPanel.style.display = "none";
+	});
+
+	// Check answer button
+	document.getElementById("btn-dictation-check")?.addEventListener("click", checkDictationAnswer);
+
+	// Replay script audio
+	document.getElementById("btn-replay-script")?.addEventListener("click", () => {
+		if (state.currentListeningLesson) {
+			speak(state.currentListeningLesson.audioText, "ja-JP", state.listeningPlaybackRate);
+		}
+	});
+
+	// Save weak word from listening
+	document.getElementById("btn-save-listening-weak")?.addEventListener("click", function() {
+		if (state.currentListeningLesson && state.currentListeningLesson.keyWord) {
+			addWeakWord(state.currentListeningLesson.keyWord);
+			this.textContent = "Đã lưu vào Sổ tay ✓";
+			this.style.color = "#10b981";
+			soundEffects.play("correct");
+		}
+	});
+
+	// Next listening lesson
+	document.getElementById("btn-listening-next-lesson")?.addEventListener("click", () => {
+		if (!state.currentListeningLesson) return;
+		const curIdx = LISTENING_LESSONS.findIndex(l => l.id === state.currentListeningLesson.id);
+		const nextLesson = LISTENING_LESSONS[(curIdx + 1) % LISTENING_LESSONS.length];
+		startListeningLesson(nextLesson.id);
+	});
 }
 
 function initExam() {

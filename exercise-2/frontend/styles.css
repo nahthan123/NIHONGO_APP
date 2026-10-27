@@ -2456,5 +2456,674 @@ button, input, select, textarea {
   margin: 0 auto 16px;
 }
 
+/* ========================================================
+   CHOUKAI LISTENING & DICTATION LAB
+   ======================================================== */
+.card-icon-box.bg-emerald {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.listening-badge-pill {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.listening-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  margin-bottom: 22px;
+}
+
+.listening-filter-group {
+  display: flex;
+  gap: 8px;
+}
+
+.listening-filter-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.listening-filter-btn:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.listening-filter-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.listening-stat-pill {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.listening-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 680px) {
+  .listening-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .listening-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.listening-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px var(--shadow);
+  transition: all 0.22s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.listening-card:hover {
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.12);
+}
+
+.listening-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.listening-cat-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.listening-diff-stars {
+  color: #fbbf24;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.listening-card-title {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.listening-card-situation {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+.listening-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.listening-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.listening-status-indicator.completed {
+  color: #10b981;
+}
+
+/* Player Workspace */
+.listening-workspace {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.listening-header-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.listening-scenario-info {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  margin-bottom: 18px;
+}
+
+.listening-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.listening-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.listening-situation {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Audio Console */
+.audio-console-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 18px var(--shadow);
+}
+
+.audio-waveform-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  margin-bottom: 18px;
+  background: var(--panel);
+  border-radius: var(--radius-md);
+}
+
+.wave-bar {
+  width: 4px;
+  height: 8px;
+  background: var(--muted);
+  border-radius: 999px;
+  transition: all 0.25s ease;
+}
+
+.audio-waveform-container.playing .wave-bar {
+  background: #10b981;
+  animation: wavePulse 1s ease-in-out infinite alternate;
+}
+
+.audio-waveform-container.playing .wave-bar:nth-child(1) { animation-delay: 0.1s; height: 16px; }
+.audio-waveform-container.playing .wave-bar:nth-child(2) { animation-delay: 0.3s; height: 32px; }
+.audio-waveform-container.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 24px; }
+.audio-waveform-container.playing .wave-bar:nth-child(4) { animation-delay: 0.5s; height: 40px; }
+.audio-waveform-container.playing .wave-bar:nth-child(5) { animation-delay: 0.15s; height: 28px; }
+.audio-waveform-container.playing .wave-bar:nth-child(6) { animation-delay: 0.4s; height: 36px; }
+.audio-waveform-container.playing .wave-bar:nth-child(7) { animation-delay: 0.25s; height: 20px; }
+.audio-waveform-container.playing .wave-bar:nth-child(8) { animation-delay: 0.45s; height: 34px; }
+.audio-waveform-container.playing .wave-bar:nth-child(9) { animation-delay: 0.1s; height: 18px; }
+.audio-waveform-container.playing .wave-bar:nth-child(10) { animation-delay: 0.35s; height: 26px; }
+
+@keyframes wavePulse {
+  0% { transform: scaleY(0.4); opacity: 0.5; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+.audio-main-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-audio-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #0b1120;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+}
+
+.btn-audio-circle:hover {
+  transform: scale(1.06);
+  background: #059669;
+}
+
+.btn-audio-circle:active {
+  transform: scale(0.96);
+}
+
+.audio-control-info {
+  flex: 1;
+}
+
+.audio-status-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.audio-speed-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.speed-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.speed-chip {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.speed-chip:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.speed-chip.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border-color: #10b981;
+}
+
+/* Dictation Tabs & Cards */
+.dictation-tabs {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 18px;
+}
+
+.dictation-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.dictation-tab:hover {
+  color: var(--text);
+}
+
+.dictation-tab.active {
+  color: #10b981;
+  border-bottom-color: #10b981;
+}
+
+.dictation-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.dictation-prompt-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.dictation-sentence-display {
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  font-size: 21px;
+  line-height: 2;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.dictation-blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  height: 38px;
+  padding: 0 12px;
+  margin: 0 6px;
+  background: rgba(16, 185, 129, 0.08);
+  border-bottom: 2.5px solid #10b981;
+  border-radius: 4px 4px 0 0;
+  color: #10b981;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: all 0.15s;
+}
+
+.dictation-blank:hover {
+  background: rgba(16, 185, 129, 0.18);
+}
+
+.dictation-blank.filled {
+  color: var(--text);
+  border-bottom-color: var(--muted);
+}
+
+.dictation-blank.correct {
+  background: rgba(16, 185, 129, 0.2);
+  border-bottom-color: #10b981;
+  color: #10b981;
+}
+
+.dictation-blank.wrong {
+  background: rgba(239, 68, 68, 0.2);
+  border-bottom-color: #ef4444;
+  color: #ef4444;
+}
+
+.dictation-wordbank-container {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+
+.wordbank-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.wordbank-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wordbank-chip {
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.wordbank-chip:hover {
+  border-color: #10b981;
+  color: #10b981;
+  transform: translateY(-1px);
+}
+
+.wordbank-chip.used {
+  opacity: 0.4;
+  pointer-events: none;
+  border-style: dashed;
+}
+
+/* Full Dictation Input */
+.dictation-input-wrapper {
+  margin-top: 10px;
+}
+
+.dictation-textarea {
+  width: 100%;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 16px;
+  color: var(--text);
+  font-family: inherit;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.dictation-textarea:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+/* Action Bar */
+.dictation-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+/* Result Panel */
+.dictation-result-panel {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 8px 24px var(--shadow);
+  animation: fadeIn 0.3s ease;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.result-icon-badge.correct {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1.5px solid rgba(16, 185, 129, 0.3);
+}
+
+.result-icon-badge.wrong {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1.5px solid rgba(239, 68, 68, 0.3);
+}
+
+.result-headline {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.result-sub {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.result-script-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.script-row {
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.script-row:last-child {
+  margin-bottom: 0;
+}
+
+.script-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.script-val.jp-text {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+  padding-right: 36px;
+  display: block;
+}
+
+.script-val.romaji-text {
+  font-size: 13.5px;
+  color: var(--accent);
+  font-style: italic;
+  display: block;
+}
+
+.script-val.vi-text {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.btn-speak-script {
+  position: absolute;
+  top: 14px;
+  right: 0;
+  padding: 4px 8px;
+}
+
+.result-grammar-box {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.grammar-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grammar-content {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.result-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+
 
 

@@ -139,7 +139,8 @@ app.get('/api/users/me', (req, res) => {
             role: user.role,
             history: user.history || [],
             memorizedWords: user.memorizedWords || [],
-            weakWords: user.weakWords || []
+            weakWords: user.weakWords || [],
+            completedLessons: user.completedLessons || []
         }
     });
 });
@@ -170,7 +171,8 @@ app.post('/api/auth/register', (req, res) => {
         level: calcLevel(startPoints),
         history: [{ action: 'Tạo tài khoản mới', timestamp: new Date().toISOString() }],
         memorizedWords: [],
-        weakWords: []
+        weakWords: [],
+        completedLessons: []
     };
 
     users.push(newUser);
@@ -186,7 +188,8 @@ app.post('/api/auth/register', (req, res) => {
             role: newUser.role,
             history: newUser.history,
             memorizedWords: newUser.memorizedWords,
-            weakWords: newUser.weakWords
+            weakWords: newUser.weakWords,
+            completedLessons: newUser.completedLessons
         }
     });
 });
@@ -218,7 +221,8 @@ app.post('/api/auth/login', (req, res) => {
             role: user.role,
             history: user.history || [],
             memorizedWords: user.memorizedWords || [],
-            weakWords: user.weakWords || []
+            weakWords: user.weakWords || [],
+            completedLessons: user.completedLessons || []
         }
     });
 });
@@ -355,6 +359,34 @@ app.post('/api/users/remove-weak-word', (req, res) => {
     }
     saveUsers();
     res.json({ success: true, weakWords: user.weakWords || [] });
+});
+
+// POST /api/users/complete-lesson
+app.post('/api/users/complete-lesson', (req, res) => {
+    const { email, lessonId, lessonTitle } = req.body;
+    if (!email || !lessonId) return res.status(400).json({ success: false, message: 'Email and lessonId required' });
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (!user.completedLessons) user.completedLessons = [];
+    const isNew = !user.completedLessons.includes(lessonId);
+    if (isNew) {
+        user.completedLessons.push(lessonId);
+        user.points = (user.points || 0) + 25;
+        user.level = calcLevel(user.points);
+        if (!user.history) user.history = [];
+        const actionText = lessonTitle ? `Hoàn thành bài luyện nghe Choukai: ${lessonTitle}` : `Hoàn thành bài luyện nghe Choukai: ${lessonId}`;
+        user.history.unshift({ action: actionText, timestamp: new Date().toISOString() });
+        if (user.history.length > 50) user.history.pop();
+    }
+    saveUsers();
+    res.json({
+        success: true,
+        completedLessons: user.completedLessons,
+        points: user.points,
+        level: user.level,
+        isNew
+    });
 });
 
 // GET /api/users/leaderboard

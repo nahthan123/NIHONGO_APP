@@ -154,6 +154,20 @@
           <div class="card-arrow">→</div>
         </button>
 
+        <button class="card action card-listening" data-nav="listening">
+          <div class="card-icon-box bg-emerald">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              Luyện nghe Choukai
+              <span class="listening-badge-pill" id="listening-badge-count">16 bài</span>
+            </div>
+            <div class="card-sub">Luyện nghe tương tác N5/N4, chỉnh tốc độ 0.75x–1.25x & chép chính tả phản xạ</div>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+
         <button class="card action card-leaderboard" data-nav="leaderboard">
           <div class="card-icon-box bg-amber">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
@@ -812,6 +826,185 @@
     </div>
   </section>
 
+  <!-- Choukai Listening & Dictation Lab View -->
+  <section id="view-listening" class="view">
+    <div class="view-container">
+      <!-- 1. Lobby: List of listening scenarios -->
+      <div id="listening-lobby-container">
+        <header class="view-header">
+          <button class="btn ghost back-btn" data-nav="home">← Trang chủ</button>
+          <h1>Phòng Luyện Nghe Choukai</h1>
+          <div class="spacer"></div>
+        </header>
+
+        <main class="content">
+          <div class="section-badge-center">CHOUKAI LISTENING & DICTATION LAB</div>
+          <p class="section-lead-text">Rèn luyện phản xạ nghe tiếng Nhật thực tế, kiểm soát tốc độ âm thanh và thử thách chép chính tả</p>
+
+          <!-- Toolbar: Filters & Stats -->
+          <div class="listening-toolbar">
+            <div class="listening-filter-group">
+              <button class="listening-filter-btn active" data-listening-filter="all" type="button">Tất cả (<span id="listening-filter-all-count">16</span>)</button>
+              <button class="listening-filter-btn" data-listening-filter="n5" type="button">JLPT N5 (<span id="listening-filter-n5-count">8</span>)</button>
+              <button class="listening-filter-btn" data-listening-filter="n4" type="button">JLPT N4 (<span id="listening-filter-n4-count">8</span>)</button>
+            </div>
+            <div class="listening-stat-pill" id="listening-completed-stat">Đã hoàn thành: 0 / 16</div>
+          </div>
+
+          <!-- Lessons Grid -->
+          <div class="listening-grid" id="listening-lessons-grid">
+            <!-- Injected by JavaScript -->
+          </div>
+        </main>
+      </div>
+
+      <!-- 2. Player: Interactive Listening & Dictation Workspace -->
+      <div id="listening-player-container" style="display:none;">
+        <header class="view-header">
+          <button class="btn ghost back-btn" id="btn-listening-back-lobby">← Danh sách bài nghe</button>
+          <div class="listening-header-badge" id="player-track-badge">[JLPT N5]</div>
+          <div class="spacer"></div>
+        </header>
+
+        <main class="content">
+          <div class="listening-workspace">
+            <!-- Scenario Overview Card -->
+            <div class="listening-scenario-info">
+              <div class="listening-meta-row">
+                <span class="listening-cat-tag" id="player-cat-tag">Giao tiếp thường nhật</span>
+                <span class="listening-diff-stars" id="player-diff-stars">★★☆</span>
+              </div>
+              <h2 class="listening-title" id="player-lesson-title">Chào hỏi ngày mới ở trường</h2>
+              <p class="listening-situation" id="player-lesson-situation">Tình huống: Học sinh gặp giáo viên và bạn cùng lớp vào buổi sáng trước giờ vào lớp.</p>
+            </div>
+
+            <!-- Audio Controller Console -->
+            <div class="audio-console-card">
+              <div class="audio-waveform-container" id="audio-wave-anim">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+
+              <div class="audio-main-controls">
+                <button class="btn-audio-circle" id="btn-play-audio" title="Phát âm thanh" type="button">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="icon-play-state"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+                <div class="audio-control-info">
+                  <div class="audio-status-label" id="audio-status-label">Bấm nút tròn để nghe hội thoại</div>
+                  <div class="audio-speed-chips">
+                    <span class="speed-label">Tốc độ:</span>
+                    <button class="speed-chip" data-speed="0.75" type="button">0.75x (Chậm)</button>
+                    <button class="speed-chip active" data-speed="1.0" type="button">1.0x (Chuẩn)</button>
+                    <button class="speed-chip" data-speed="1.25" type="button">1.25x (Nhanh)</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dictation Mode Switcher -->
+            <div class="dictation-tabs">
+              <button class="dictation-tab active" data-dmode="fill" type="button">1. Điền từ còn thiếu</button>
+              <button class="dictation-tab" data-dmode="full" type="button">2. Chép chính tả toàn câu</button>
+            </div>
+
+            <!-- Mode 1: Fill in the blank -->
+            <div id="dictation-mode-fill" class="dictation-card">
+              <div class="dictation-prompt-text">Lắng nghe âm thanh và chọn/điền các từ còn thiếu trong khung dưới:</div>
+              <div class="dictation-sentence-display" id="dictation-sentence-container">
+                <!-- Injected blanks -->
+              </div>
+              <div class="dictation-wordbank-container" id="dictation-wordbank">
+                <div class="wordbank-title">Ngân hàng từ vựng gợi ý (Bấm để điền):</div>
+                <div class="wordbank-chips" id="wordbank-chips-container">
+                  <!-- Word chips -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Mode 2: Full dictation -->
+            <div id="dictation-mode-full" class="dictation-card" style="display:none;">
+              <div class="dictation-prompt-text">Nghe kỹ toàn bộ câu và gõ lại bằng Hiragana hoặc Romaji:</div>
+              <div class="dictation-input-wrapper">
+                <textarea id="dictation-full-input" class="dictation-textarea" rows="3" placeholder="Gõ những gì bạn nghe được tại đây... (Ví dụ: konnichiwa hoặc こんにちは)"></textarea>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="dictation-action-bar">
+              <button class="btn ghost btn-sm" id="btn-dictation-clear" type="button">Làm lại</button>
+              <button class="btn primary" id="btn-dictation-check" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Kiểm tra kết quả
+              </button>
+            </div>
+
+            <!-- Feedback & Explanation Panel -->
+            <div id="dictation-result-panel" class="dictation-result-panel" style="display:none;">
+              <div class="result-header" id="result-status-header">
+                <div class="result-icon-badge" id="result-icon-badge">✓</div>
+                <div>
+                  <div class="result-headline" id="result-headline">Chính xác xuất sắc! (+25 điểm)</div>
+                  <div class="result-sub" id="result-sub">Bạn đã bắt trọn các âm tiết của bài nghe.</div>
+                </div>
+              </div>
+
+              <!-- Full Transcript -->
+              <div class="result-script-box">
+                <div class="script-row">
+                  <span class="script-label">Tiếng Nhật (Kanji/Kana):</span>
+                  <span class="script-val jp-text" id="result-jp">おはようございます。今日もいい天気ですね。</span>
+                  <button class="btn ghost btn-xs btn-speak-script" id="btn-replay-script" title="Nghe lại transcript" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                  </button>
+                </div>
+                <div class="script-row">
+                  <span class="script-label">Phiên âm Romaji:</span>
+                  <span class="script-val romaji-text" id="result-romaji">Ohayou gozaimasu. Kyou mo ii tenki desu ne.</span>
+                </div>
+                <div class="script-row">
+                  <span class="script-label">Nghĩa tiếng Việt:</span>
+                  <span class="script-val vi-text" id="result-vi">Chào buổi sáng. Hôm nay thời tiết cũng đẹp nhỉ.</span>
+                </div>
+              </div>
+
+              <!-- Grammar & Culture Notes -->
+              <div class="result-grammar-box">
+                <div class="grammar-title">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  Điểm ngữ pháp & Lưu ý giao tiếp
+                </div>
+                <div class="grammar-content" id="result-grammar-note">
+                  - 「おはようございます」: Lời chào buổi sáng lịch sự dùng với cấp trên, thầy cô giáo hoặc đồng nghiệp.
+                  - Trợ từ 「も」 mang nghĩa "cũng", biểu thị sự tương đồng.
+                  - Đuôi câu 「ね」 dùng để tìm kiếm sự đồng cảm từ người nghe.
+                </div>
+              </div>
+
+              <!-- Next Actions -->
+              <div class="result-actions">
+                <button class="btn ghost" id="btn-save-listening-weak" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  Thêm từ khó vào Sổ tay
+                </button>
+                <button class="btn primary" id="btn-listening-next-lesson" type="button">
+                  Bài nghe tiếp theo →
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
   <!-- Leaderboard / Points View -->
   <section id="view-leaderboard" class="view">
     <div class="view-container">
@@ -981,6 +1174,6 @@
     </button>
   </nav>
 
-  <script src="app.js?v=2.2"></script>
+  <script src="app.js?v=2.3"></script>
 </body>
 </html>
